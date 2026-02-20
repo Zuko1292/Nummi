@@ -13,8 +13,15 @@ namespace Nummi.GameCode.Sprites
         public Background(Game1 gameRoot, Texture2D currentbg)
             : base(gameRoot, currentbg, new Vector2(gameRoot._screenBounds.Width / 2, gameRoot._screenBounds.Height / 2), false, false)
         {
-            _layerDepth = 0.9f;
+            _layerDepth = 1f;
             _texture = currentbg;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            _position = _gameRoot._player._position;
+
+            base.Update(gameTime);
         }
     }
 }

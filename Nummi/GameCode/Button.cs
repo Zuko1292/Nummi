@@ -70,7 +70,7 @@ namespace Nummi
                 origin,
                 _scale,
                 SpriteEffects.None,
-                0f
+                0.01f
             );
         }
 

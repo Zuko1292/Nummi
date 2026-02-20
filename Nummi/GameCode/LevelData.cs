@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Nummi.GameCode.Sprites;
+using System.Diagnostics;
 
 namespace Nummi
 {
     public static class LevelData
     {
 
-        public static int LastLevelIndex = 0;
+        public static int LastLevelIndex = 1;
 
         public static void SpawnLevel(int level, Game1 gameRoot)
         {
@@ -22,8 +24,13 @@ namespace Nummi
                     gameRoot._player = new SpritePlayer(gameRoot, TilePos(3, 6), true);
                     gameRoot._spriteList.Add(gameRoot._player);
 
+                    gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("HeadsLevelBackgroundPlaceholder"));
+                    gameRoot._spriteList.Add(gameRoot._levelBackground);
 
-
+                    break;
+                case 1:
+                    gameRoot._player = new SpritePlayer(gameRoot, TilePos(3, 6), true);
+                    gameRoot._spriteList.Add(gameRoot._player);
                     break;
             }
         }

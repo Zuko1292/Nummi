@@ -36,7 +36,7 @@ namespace Nummi.GameCode.Sprites
         #region ***** Constructors *****
 
         public SpritePlayer(Game1 gameRoot, Vector2 position, bool canMove)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Player"), position, canMove, true)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("PlayerPlaceHolder"), position, canMove, true)
         {
             _restitution = 0.0f;
             _friction = 0.25f;
@@ -62,9 +62,10 @@ namespace Nummi.GameCode.Sprites
 
             // Idle UP
             animations.Add(new List<Rectangle>());
+            animations[0].Add(new Rectangle(0, 0, 32, 32));
 
             // Idle DOWN
-             animations.Add(new List<Rectangle>());
+            animations.Add(new List<Rectangle>());
 
             // Idle SIDE
 
@@ -144,6 +145,7 @@ namespace Nummi.GameCode.Sprites
 
 
             float inputX = 0f;
+            float inputY = 0f;
             // Movement
             if (!_isKnockedback && !_isBlocking)
             {
@@ -157,6 +159,20 @@ namespace Nummi.GameCode.Sprites
                     inputX += 1f;
                     _isMoving = true;
                 }
+                if (GBL.KeyHold(Keys.W) || GBL.KeyHold(Keys.Up))
+                {
+                    inputY -= 1f;
+                    _isMoving = true;
+                }
+                if (GBL.KeyHold(Keys.S) || GBL.KeyHold(Keys.Down))
+                {
+                    inputY += 1f;
+                    _isMoving = true;
+                }
+
+                _velocity.X = inputX * _moveSpeed;
+
+                _velocity.Y = inputY * _moveSpeed;
             }
 
             // Clamp horizontal speed

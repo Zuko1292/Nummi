@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Nummi.GameCode;
 using Nummi.GameCode.Sprites;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Nummi
@@ -20,7 +21,6 @@ namespace Nummi
 
         public GameState _gameState;
         public int _currentLevel;
-        public int _currentLives;
         public int _prepForNextLevel = -1;
         protected float _stateTimer;
         protected bool _coinLvl = false;
@@ -33,7 +33,7 @@ namespace Nummi
 
         public SpritePlayer _player;
         TextButton playButton;
-        Background _mainMenuBackground;
+        public Background _levelBackground;
 
         public List<Sprite> _spriteList = new List<Sprite>();
         public List<Sprite> _newSpriteList = new List<Sprite>();
@@ -69,14 +69,14 @@ namespace Nummi
 
             switch (_gameState)
             {
-                case GameState.Title: UpdateTitle(); break;
-                case GameState.MainMenu: UpdateMainMenu(); break;
-                case GameState.HeadsLevel: UpdateHeadsLevel(); break;
-                case GameState.TailsLevel: UpdateTailsLevel(); break;
-                case GameState.Settings: UpdateSettings(); break;
-                case GameState.Guide: UpdateGuide(); break;
-                case GameState.Paused: UpdatePaused(); break;
-                case GameState.DeathScreen: UpdateDeathScreen(); break;
+                case GameState.Title: UpdateTitle(gameTime); break;
+                case GameState.MainMenu: UpdateMainMenu(gameTime); break;
+                case GameState.HeadsLevel: UpdateHeadsLevel(gameTime); break;
+                case GameState.TailsLevel: UpdateTailsLevel(gameTime); break;
+                case GameState.Settings: UpdateSettings(gameTime); break;
+                case GameState.Guide: UpdateGuide(gameTime); break;
+                case GameState.Paused: UpdatePaused(gameTime); break;
+                case GameState.DeathScreen: UpdateDeathScreen(gameTime); break;
                 default: StartTitle(); break;
             }
 
@@ -85,12 +85,12 @@ namespace Nummi
             base.Update(gameTime);
         }
 
-        public void UpdateTitle()
+        public void UpdateTitle(GameTime gameTime)
         {
             if (GBL.KeyPress(Keys.Enter)) StartMainMenu();
         }
 
-        public void UpdateMainMenu()
+        public void UpdateMainMenu(GameTime gameTime)
         {
             playButton.Update();
 
@@ -98,40 +98,61 @@ namespace Nummi
             {
                 StartHeadsLevel(1);
             }
+        }
 
-            if (_mainMenuBackground == null)
+        public void UpdateHeadsLevel(GameTime gameTime)
+        {
+            if(GBL.KeyPress(Keys.Escape))
             {
-                _mainMenuBackground = new Background(this, Content.Load<Texture2D>("MainMenuBackgroundPlaceholder"));
-                _spriteList.Add(_mainMenuBackground);
+                SetPaused(true);
+            }
+            foreach (Sprite eachSprite in _spriteList)
+            {
+                eachSprite.Update(gameTime);
+                if (_prepForNextLevel >= 0)
+                {
+                    break;
+                }
+            }
+
+            _spriteList.AddRange(_newSpriteList);
+            _newSpriteList.Clear();
+            _spriteList.RemoveAll(deadSprite => deadSprite.Dead);
+            if (_prepForNextLevel >= 0)
+            {
+                StartHeadsLevel(_prepForNextLevel);
+                _prepForNextLevel = -1;
+            }
+
+            if (_currentLevel == 0) _coinLvl = true;
+
+            if (!_spriteList.OfType<SpritePlayer>().Any())
+            {
+                PlayerDied();
             }
         }
 
-        public void UpdateHeadsLevel()
-        {
-            Debug.WriteLine("Updating Heads Level");
-        }
-
-        public void UpdateTailsLevel()
+        public void UpdateTailsLevel(GameTime gameTime)
         {
 
         }
 
-        public void UpdateSettings()
+        public void UpdateSettings(GameTime gameTime)
         {
 
         }
 
-        public void UpdateGuide()
+        public void UpdateGuide(GameTime gameTime)
         {
 
         }
 
-        public void UpdatePaused()
+        public void UpdatePaused(GameTime gameTime)
         {
 
         }
 
-        public void UpdateDeathScreen()
+        public void UpdateDeathScreen(GameTime gameTime)
         {
 
         }
@@ -251,6 +272,14 @@ namespace Nummi
         }
         public void DrawMainMenu()
         {
+            GBL.spriteBatch.Draw(Content.Load<Texture2D>("MainMenuBackgroundPlaceHolder"),
+                new Rectangle(0, 0, _screenBounds.Width, _screenBounds.Height),
+                null,
+                Color.White,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0.04f);
             playButton.Draw();
             
         }
@@ -279,7 +308,46 @@ namespace Nummi
 
         }
 
-        
+        public void StartNewGame()
+        {
+            _player = null;
+
+            _health = 3;
+            StartHeadsLevel(0);
+
+            _spriteList.Clear();
+            _newSpriteList.Clear();
+
+            
+        }
+
+        public void PlayerDied()
+        {
+            _health--;
+
+            if(_health <= 0)
+            {
+                StartDeathScreen();
+            }
+            else
+            {
+                StartHeadsLevel(_currentLevel);
+            }
+        }
+
+        public void NextLevel()
+        {
+            if (_currentLevel >= LevelData.LastLevelIndex)
+            {
+                StartTitle();
+            }
+            // otherwise, start the next level.
+            else
+            {
+                _currentLevel++;
+                StartHeadsLevel(_currentLevel);
+            }
+        }
 
 
         #region ***** Utility Functions *****
