@@ -21,6 +21,8 @@ namespace Nummi.GameCode.Sprites
         {
             _position = _gameRoot._player._position;
 
+            Debug.WriteLine("Background");
+
             base.Update(gameTime);
         }
     }

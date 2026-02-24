@@ -1,14 +1,14 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Code_For_Nummi;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Nummi.GameCode;
 using Nummi.GameCode.Sprites;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Nummi
 {
@@ -17,7 +17,7 @@ namespace Nummi
 
         public Texture2D _defaultTxr;
 
-        public Rectangle _screenBounds = new Rectangle(0, 0, 800, 480);
+        public Rectangle _screenBounds;
 
         public GameState _gameState;
         public int _currentLevel;
@@ -34,6 +34,7 @@ namespace Nummi
         public SpritePlayer _player;
         TextButton playButton;
         public Background _levelBackground;
+        private FollowCamera _camera;
 
         public List<Sprite> _spriteList = new List<Sprite>();
         public List<Sprite> _newSpriteList = new List<Sprite>();
@@ -43,15 +44,25 @@ namespace Nummi
             GBL.GDM = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            GBL.GDM.PreferredBackBufferWidth = 800;
+            GBL.GDM.PreferredBackBufferHeight =  480;
+            GBL.GDM.ApplyChanges();
+
+            _camera = new FollowCamera(GBL.GDM.GraphicsDevice.Viewport);
         }
 
         protected override void Initialize()
         {
+            GBL.Content = Content;
+
             SpriteFont font = Content.Load<SpriteFont>("MyFont");
 
             playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
 
             base.Initialize();
+
+            _screenBounds = GBL.GD.PresentationParameters.Bounds;
         }
 
         protected override void LoadContent()
@@ -130,6 +141,12 @@ namespace Nummi
             {
                 PlayerDied();
             }
+
+            Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
+                    _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
+
+            _camera.Follow(playerCentre);
+            _camera.Update();
         }
 
         public void UpdateTailsLevel(GameTime gameTime)
@@ -185,6 +202,11 @@ namespace Nummi
             _newSpriteList.Clear();
             // spawns the sprites that appear at start of game
             LevelData.SpawnLevel(_currentLevel, this);
+            Debug.WriteLine("Started Heads Level " + level);
+            Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
+                    _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
+            _camera.Follow(playerCentre);
+            _camera.Update();
         }
         // Start Tails level
         public void StartTailsLevel(int level)
@@ -239,7 +261,7 @@ namespace Nummi
         protected override void Draw(GameTime gameTime)
         {
             // starts draw states and add layer depth
-            GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
+            GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, transformMatrix: _camera._transform);
 
             // controls what to draw on each state
             switch (_gameState)
@@ -312,13 +334,17 @@ namespace Nummi
         {
             _player = null;
 
-            _health = 3;
+            _health = 100;
             StartHeadsLevel(0);
+
+            Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
+                    _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
 
             _spriteList.Clear();
             _newSpriteList.Clear();
 
-            
+            _camera.Follow(playerCentre);
+            _camera.Update();
         }
 
         public void PlayerDied()

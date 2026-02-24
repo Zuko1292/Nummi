@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin HeadsLevelBackgroundPlaceHolder.jpg
+#begin HeadsLevelBackgroundPlaceHolder.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:HeadsLevelBackgroundPlaceHolder.jpg
+/build:HeadsLevelBackgroundPlaceHolder.png
 
 #begin MainMenuBackgroundPlaceholder.webp
 /importer:TextureImporter

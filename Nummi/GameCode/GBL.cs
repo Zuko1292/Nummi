@@ -10,7 +10,7 @@ namespace Nummi
     {
         public static ContentManager Content;
         public static GraphicsDeviceManager GDM;
-        public static GraphicsDevice GD;
+        public static GraphicsDevice GD => GDM.GraphicsDevice;
 
         public static SpriteBatch spriteBatch;
 
