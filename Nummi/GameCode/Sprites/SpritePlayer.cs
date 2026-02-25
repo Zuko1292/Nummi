@@ -28,6 +28,7 @@ namespace Nummi.GameCode.Sprites
 
         public bool _isBlocking = false;
         public bool _isMoving = false;
+        private bool _facingLeft = true;
 
         public SpriteEffects _lockedFlipEffect;
 
@@ -36,7 +37,7 @@ namespace Nummi.GameCode.Sprites
         #region ***** Constructors *****
 
         public SpritePlayer(Game1 gameRoot, Vector2 position, bool canMove)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("PlayerPlaceHolder"), position, canMove, true)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Player_SpriteSheet"), position, canMove, true)
         {
             _restitution = 0.0f;
             _friction = 0.25f;
@@ -60,23 +61,54 @@ namespace Nummi.GameCode.Sprites
 
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 
-            // Idle UP
+            // Idle DOWN
             animations.Add(new List<Rectangle>());
             animations[0].Add(new Rectangle(0, 0, 32, 32));
 
-            // Idle DOWN
+            // Idle UP
             animations.Add(new List<Rectangle>());
+            animations[1].Add(new Rectangle(64, 0, 32, 32));
 
-            // Idle SIDE
+            // Idle SIDE RIGHT
+            animations.Add(new List<Rectangle>());
+            animations[2].Add(new Rectangle(32, 0, 32, 32));
 
             // Walking UP
             animations.Add(new List<Rectangle>());
+            animations[3].Add(new Rectangle(0, 96, 32, 32));
+            animations[3].Add(new Rectangle(32, 96, 32, 32));
+            animations[3].Add(new Rectangle(64, 96, 32, 32));
+            animations[3].Add(new Rectangle(96, 96, 32, 32));
+            animations[3].Add(new Rectangle(128, 96, 32, 32));
+            animations[3].Add(new Rectangle(160, 96, 32, 32));
+            animations[3].Add(new Rectangle(192, 96, 32, 32));
+            animations[3].Add(new Rectangle(224, 96, 32, 32));
 
             // Walking DOWN
             animations.Add(new List<Rectangle>());
+            animations[4].Add(new Rectangle(0, 32, 32, 32));
+            animations[4].Add(new Rectangle(32, 32, 32, 32));
+            animations[4].Add(new Rectangle(64, 32, 32, 32));
+            animations[4].Add(new Rectangle(96, 32, 32, 32));
+            animations[4].Add(new Rectangle(128, 32, 32, 32));
+            animations[4].Add(new Rectangle(160, 32, 32, 32));
+            animations[4].Add(new Rectangle(192, 32, 32, 32));
+            animations[4].Add(new Rectangle(224, 32, 32, 32));
 
             // Walking SIDE
             animations.Add(new List<Rectangle>());
+            animations[5].Add(new Rectangle(0, 64, 32, 32));
+            animations[5].Add(new Rectangle(32, 64, 32, 32));
+            animations[5].Add(new Rectangle(64, 64, 32, 32));
+            animations[5].Add(new Rectangle(96, 64, 32, 32));
+            animations[5].Add(new Rectangle(128, 64, 32, 32));
+            animations[5].Add(new Rectangle(160, 64, 32, 32));
+            animations[5].Add(new Rectangle(192, 64, 32, 32));
+            animations[5].Add(new Rectangle(224, 64, 32, 32));
+
+            // IDLE SIDE LEFT
+            animations.Add(new List<Rectangle>());
+            animations[6].Add(new Rectangle(96, 0, 32, 32));
 
             // Dead
             animations.Add(new List<Rectangle>());
@@ -153,26 +185,41 @@ namespace Nummi.GameCode.Sprites
                 {
                     inputX -= 1f;
                     _isMoving = true;
+                    _facingLeft = true;
+                    SetAnimation(5);
                 }
                 if (GBL.KeyHold(Keys.D) || GBL.KeyHold(Keys.Right))
                 {
                     inputX += 1f;
                     _isMoving = true;
+                    _facingLeft = false;
+                    SetAnimation(5);
                 }
                 if (GBL.KeyHold(Keys.W) || GBL.KeyHold(Keys.Up))
                 {
                     inputY -= 1f;
                     _isMoving = true;
+                    SetAnimation(3);
                 }
                 if (GBL.KeyHold(Keys.S) || GBL.KeyHold(Keys.Down))
                 {
                     inputY += 1f;
                     _isMoving = true;
+                    SetAnimation(4);
                 }
 
                 _velocity.X = inputX * _moveSpeed;
 
                 _velocity.Y = inputY * _moveSpeed;
+
+                if(_velocity.X == 0f && _velocity.Y == 0f)
+                {
+                    _isMoving = false;
+                    if (_animIndex == 3) SetAnimation(1);
+                    else if (_animIndex == 4) SetAnimation(0);
+                    else if (_animIndex == 5 && !_facingLeft) SetAnimation(2);
+                    else if (_animIndex == 5 && _facingLeft) SetAnimation(6);
+                }
             }
 
             // Clamp horizontal speed

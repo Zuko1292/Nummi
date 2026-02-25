@@ -107,7 +107,7 @@ namespace Nummi
 
             if(playButton.IsClicked)
             {
-                StartHeadsLevel(1);
+                StartNewGame();
             }
         }
 
@@ -202,7 +202,6 @@ namespace Nummi
             _newSpriteList.Clear();
             // spawns the sprites that appear at start of game
             LevelData.SpawnLevel(_currentLevel, this);
-            Debug.WriteLine("Started Heads Level " + level);
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
                     _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
             _camera.Follow(playerCentre);
