@@ -64,14 +64,17 @@ namespace Nummi.GameCode.Sprites
             // Idle DOWN
             animations.Add(new List<Rectangle>());
             animations[0].Add(new Rectangle(0, 0, 32, 32));
+            animations[0].Add(new Rectangle(128, 0, 32, 32));
 
             // Idle UP
             animations.Add(new List<Rectangle>());
             animations[1].Add(new Rectangle(64, 0, 32, 32));
+            animations[1].Add(new Rectangle(192, 0, 32, 32));
 
             // Idle SIDE RIGHT
             animations.Add(new List<Rectangle>());
             animations[2].Add(new Rectangle(32, 0, 32, 32));
+            animations[2].Add(new Rectangle(160, 0, 32, 32));
 
             // Walking UP
             animations.Add(new List<Rectangle>());
@@ -109,6 +112,7 @@ namespace Nummi.GameCode.Sprites
             // IDLE SIDE LEFT
             animations.Add(new List<Rectangle>());
             animations[6].Add(new Rectangle(96, 0, 32, 32));
+            animations[6].Add(new Rectangle(224, 0, 32, 32));
 
             // Dead
             animations.Add(new List<Rectangle>());
@@ -184,27 +188,23 @@ namespace Nummi.GameCode.Sprites
                 if (GBL.KeyHold(Keys.A) || GBL.KeyHold(Keys.Left))
                 {
                     inputX -= 1f;
-                    _isMoving = true;
                     _facingLeft = true;
                     SetAnimation(5);
                 }
                 if (GBL.KeyHold(Keys.D) || GBL.KeyHold(Keys.Right))
                 {
                     inputX += 1f;
-                    _isMoving = true;
                     _facingLeft = false;
                     SetAnimation(5);
                 }
                 if (GBL.KeyHold(Keys.W) || GBL.KeyHold(Keys.Up))
                 {
                     inputY -= 1f;
-                    _isMoving = true;
                     SetAnimation(3);
                 }
                 if (GBL.KeyHold(Keys.S) || GBL.KeyHold(Keys.Down))
                 {
                     inputY += 1f;
-                    _isMoving = true;
                     SetAnimation(4);
                 }
 
@@ -212,7 +212,17 @@ namespace Nummi.GameCode.Sprites
 
                 _velocity.Y = inputY * _moveSpeed;
 
-                if(_velocity.X == 0f && _velocity.Y == 0f)
+                if(_velocity.X != 0f || _velocity.Y != 0f)
+                {
+                    _isMoving = true;
+                }
+
+                if(_velocity.X != 0f && _velocity.Y != 0f)
+                {
+                    _velocity.Normalize();
+                }
+
+                if (_velocity.X == 0f && _velocity.Y == 0f)
                 {
                     _isMoving = false;
                     if (_animIndex == 3) SetAnimation(1);
