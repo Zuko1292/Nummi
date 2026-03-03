@@ -37,6 +37,11 @@
 /processorParam:TextureFormat=Color
 /build:MainMenuBackgroundPlaceholder.webp
 
+#begin Maps/OpenWorld.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:Maps/OpenWorld.xml
+
 #begin MyFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

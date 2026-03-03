@@ -18,6 +18,7 @@ namespace Nummi
         public Texture2D _defaultTxr;
 
         public Rectangle _screenBounds;
+        public Rectangle _roomBounds;
 
         public GameState _gameState;
         public int _currentLevel;
@@ -35,6 +36,13 @@ namespace Nummi
         TextButton playButton;
         public Background _levelBackground;
         private FollowCamera _camera;
+
+        public Tilemap _tilemap;
+
+        public readonly string[] levelFiles =
+        {
+            "Maps/OpenWorld.xml"
+        };
 
         public List<Sprite> _spriteList = new List<Sprite>();
         public List<Sprite> _newSpriteList = new List<Sprite>();
@@ -63,13 +71,20 @@ namespace Nummi
             base.Initialize();
 
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
+
+            _roomBounds = new Rectangle(
+                (int)_tilemap.TileWidth,
+                (int)_tilemap.TileHeight,
+                _screenBounds.Width - (int)_tilemap.TileWidth * 2,
+                _screenBounds.Width - (int)_tilemap.TileWidth * 2
+                );
         }
 
         protected override void LoadContent()
         {
             GBL.spriteBatch = new SpriteBatch(GraphicsDevice);
 
-
+            _tilemap = Tilemap.FromFile("Maps/OpenWorld.xml");
 
             // TODO: use this.Content to load your game content here
         }

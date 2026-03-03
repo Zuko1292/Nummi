@@ -21,6 +21,8 @@ namespace Nummi
             {
                 case 0:
 
+                    gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[gameRoot._currentLevel]);
+
                     gameRoot._player = new SpritePlayer(gameRoot, TilePos(3, 6), true);
                     gameRoot._spriteList.Add(gameRoot._player);
 
