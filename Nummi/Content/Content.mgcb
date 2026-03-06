@@ -38,9 +38,7 @@
 /build:MainMenuBackgroundPlaceholder.webp
 
 #begin Maps/OpenWorld.xml
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:Maps/OpenWorld.xml
+/copy:Maps/OpenWorld.xml
 
 #begin MyFont.spritefont
 /importer:FontDescriptionImporter
@@ -60,4 +58,16 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Player_SpriteSheet.png
+
+#begin TileSheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:TileSheet.png
 

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
@@ -78,20 +79,20 @@ namespace Nummi
                     );
 
                 Vector2 position = new Vector2(x * TileWidth, y * TileHeight);
-                GBL.spriteBatch.Draw(tile.Texture, destinationRectangle, tile.SourceRectangle, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
+                GBL.spriteBatch.Draw(tile.Texture, destinationRectangle, tile.SourceRectangle, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
             }
         }
 
         // Sets the TileID of the Tiles that should be Solid.
         public bool IsSolidTileID(int tileID)
         {
-            return tileID == 2 || tileID == 4;
+            return tileID == 3 || tileID == 4 || tileID == 5;
         }
 
         // Sets the TileID of the Tiles that should be the Exit.
         public bool IsExitTileID(int tileID)
         {
-            return tileID == 3;
+            return tileID == 4;
         }
 
         // Gets the ID of the Tiles in the world.

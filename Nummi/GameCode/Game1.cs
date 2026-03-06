@@ -85,6 +85,7 @@ namespace Nummi
             GBL.spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _tilemap = Tilemap.FromFile("Maps/OpenWorld.xml");
+            _tilemap.Scale = new Vector2(4.0f, 4.0f);
 
             // TODO: use this.Content to load your game content here
         }
@@ -321,7 +322,7 @@ namespace Nummi
         }
         public void DrawHeadsLevel()
         {
-
+            _tilemap.Draw();
         }
         public void DrawTailsLevel()
         {

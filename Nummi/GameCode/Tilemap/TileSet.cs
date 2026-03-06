@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using System.Xml.Linq;
@@ -39,7 +40,7 @@ namespace Nummi
                 _tiles[i] = new TextureRegion(texture, x, y, tileWidth, tileHeight);
             }
         }
-        // Gets the texture region for the tile from this tileset at the given index.
+        // Gets the texture region for the tile from this tileset at the given index
         public TextureRegion GetTile(int index) => _tiles[index];
 
         // Gets the texture region for the tile from this tileset at the given location.

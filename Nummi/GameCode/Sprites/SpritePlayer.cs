@@ -189,24 +189,24 @@ namespace Nummi.GameCode.Sprites
                 {
                     inputX -= 1f;
                     _facingLeft = true;
-                    SetAnimation(5);
                 }
                 if (GBL.KeyHold(Keys.D) || GBL.KeyHold(Keys.Right))
                 {
                     inputX += 1f;
                     _facingLeft = false;
-                    SetAnimation(5);
                 }
                 if (GBL.KeyHold(Keys.W) || GBL.KeyHold(Keys.Up))
                 {
                     inputY -= 1f;
-                    SetAnimation(3);
                 }
                 if (GBL.KeyHold(Keys.S) || GBL.KeyHold(Keys.Down))
                 {
                     inputY += 1f;
-                    SetAnimation(4);
                 }
+
+                if (_velocity.X != 0 && _velocity.Y == 0) SetAnimation(5);
+                if (_velocity.Y > 0) SetAnimation(4);
+                else if (_velocity.Y < 0) SetAnimation(3);
 
                 _velocity.X = inputX * _moveSpeed;
 
@@ -217,11 +217,6 @@ namespace Nummi.GameCode.Sprites
                     _isMoving = true;
                 }
 
-                if(_velocity.X != 0f && _velocity.Y != 0f)
-                {
-                    _velocity.Normalize();
-                }
-
                 if (_velocity.X == 0f && _velocity.Y == 0f)
                 {
                     _isMoving = false;
@@ -229,6 +224,44 @@ namespace Nummi.GameCode.Sprites
                     else if (_animIndex == 4) SetAnimation(0);
                     else if (_animIndex == 5 && !_facingLeft) SetAnimation(2);
                     else if (_animIndex == 5 && _facingLeft) SetAnimation(6);
+                }
+
+                int futureLeft = (int)_position.X - 16;
+                int futureRight = (int)_position.X + 16;
+                int futureTop = (int)_position.Y - 16;
+                int futureBottom = (int)_position.Y + 16;
+
+                if (_velocity.X > 0)
+                {
+                    if (_gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureTop) ||
+                        _gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureBottom))
+                    {
+                        _velocity.X = 0;
+                    }
+                }
+                if (_velocity.X < 0)
+                {
+                    if (_gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureTop) ||
+                        _gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureBottom))
+                    {
+                        _velocity.X = 0;
+                    }
+                }
+                if (_velocity.Y > 0)
+                {
+                    if (_gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureTop) ||
+                        _gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureBottom))
+                    {
+                        _velocity.Y = 0;
+                    }
+                }
+                if (_velocity.Y < 0)
+                {
+                    if (_gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureTop) ||
+                        _gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureBottom))
+                    {
+                        _velocity.Y = 0;
+                    }
                 }
             }
 
