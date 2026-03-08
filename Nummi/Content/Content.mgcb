@@ -40,6 +40,9 @@
 #begin Maps/OpenWorld.xml
 /copy:Maps/OpenWorld.xml
 
+#begin Maps/OpenWorld2.xml
+/copy:Maps/OpenWorld2.xml
+
 #begin MyFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

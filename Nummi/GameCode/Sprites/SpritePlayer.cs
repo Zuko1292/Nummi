@@ -177,9 +177,6 @@ namespace Nummi.GameCode.Sprites
                 Dead = true;
             }
 
-
-
-
             float inputX = 0f;
             float inputY = 0f;
             // Movement
@@ -224,44 +221,6 @@ namespace Nummi.GameCode.Sprites
                     else if (_animIndex == 4) SetAnimation(0);
                     else if (_animIndex == 5 && !_facingLeft) SetAnimation(2);
                     else if (_animIndex == 5 && _facingLeft) SetAnimation(6);
-                }
-
-                int futureLeft = (int)_position.X - 16;
-                int futureRight = (int)_position.X + 16;
-                int futureTop = (int)_position.Y - 16;
-                int futureBottom = (int)_position.Y + 16;
-
-                if (_velocity.X > 0)
-                {
-                    if (_gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureTop) ||
-                        _gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureBottom))
-                    {
-                        _velocity.X = 0;
-                    }
-                }
-                if (_velocity.X < 0)
-                {
-                    if (_gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureTop) ||
-                        _gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureBottom))
-                    {
-                        _velocity.X = 0;
-                    }
-                }
-                if (_velocity.Y > 0)
-                {
-                    if (_gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureTop) ||
-                        _gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureBottom))
-                    {
-                        _velocity.Y = 0;
-                    }
-                }
-                if (_velocity.Y < 0)
-                {
-                    if (_gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureTop) ||
-                        _gameRoot._tilemap.IsSolidAtWorld(futureLeft, futureBottom))
-                    {
-                        _velocity.Y = 0;
-                    }
                 }
             }
 
