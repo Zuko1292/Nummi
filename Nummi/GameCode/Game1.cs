@@ -164,11 +164,25 @@ namespace Nummi
 
             _camera.Follow(playerCentre);
             _camera.Update();
+
+            if (GBL.KeyPress(Keys.Tab))
+            {
+                StartTailsLevel(0);
+            }
         }
 
         public void UpdateTailsLevel(GameTime gameTime)
         {
+            if (_prepForNextLevel >= 0)
+            {
+                StartTailsLevel(_prepForNextLevel);
+                _prepForNextLevel = -1;
+            }
 
+            if (GBL.KeyPress(Keys.LeftShift))
+            {
+                StartHeadsLevel(0);
+            }
         }
 
         public void UpdateSettings(GameTime gameTime)

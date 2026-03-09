@@ -12,14 +12,16 @@ namespace Nummi
 
         public static void SpawnLevel(int level, Game1 gameRoot)
         {
-            gameRoot._spriteList.Clear();
-            gameRoot._newSpriteList.Clear();
-
-            gameRoot._player = null;
+            
             switch (gameRoot._gameState)
             {
+
                 case GameState.HeadsLevel:
                     gameRoot._currentLevel = level;
+                    gameRoot._spriteList.Clear();
+                    gameRoot._newSpriteList.Clear();
+
+                    gameRoot._player = null;
 
                     switch (level)
                     {
@@ -41,11 +43,16 @@ namespace Nummi
                     }
                     break;
                 case GameState.TailsLevel:
-                    gameRoot._currentLevel = level;
-                    switch(level)
+                    gameRoot._currentLevel = level + LastLevelIndex;
+
+                    gameRoot._spriteList.Clear();
+                    gameRoot._newSpriteList.Clear();
+
+                    gameRoot._player = null;
+                    switch (level)
                     {
                         case 0:
-                            // Put the Tails level logic here
+                            gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("HeadsLevelBackgroundPlaceholder"));
                             break;
                     }
                     break;
