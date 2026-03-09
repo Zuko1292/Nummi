@@ -16,23 +16,38 @@ namespace Nummi
             gameRoot._newSpriteList.Clear();
 
             gameRoot._player = null;
-
-            switch (level)
+            switch (gameRoot._gameState)
             {
-                case 0:
+                case GameState.HeadsLevel:
+                    gameRoot._currentLevel = level;
 
-                    gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[gameRoot._currentLevel]);
+                    switch (level)
+                    {
+                        case 0:
 
-                    gameRoot._player = new SpritePlayer(gameRoot, TilePos(8, 6), true);
-                    gameRoot._spriteList.Add(gameRoot._player);
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[gameRoot._currentLevel]);
 
-                    gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("HeadsLevelBackgroundPlaceholder"));
-                    gameRoot._spriteList.Add(gameRoot._levelBackground);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(8, 6), true);
+                            gameRoot._spriteList.Add(gameRoot._player);
 
+                            gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("HeadsLevelBackgroundPlaceholder"));
+                            gameRoot._spriteList.Add(gameRoot._levelBackground);
+
+                            break;
+                        case 1:
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(3, 6), true);
+                            gameRoot._spriteList.Add(gameRoot._player);
+                            break;
+                    }
                     break;
-                case 1:
-                    gameRoot._player = new SpritePlayer(gameRoot, TilePos(3, 6), true);
-                    gameRoot._spriteList.Add(gameRoot._player);
+                case GameState.TailsLevel:
+                    gameRoot._currentLevel = level;
+                    switch(level)
+                    {
+                        case 0:
+                            // Put the Tails level logic here
+                            break;
+                    }
                     break;
             }
         }

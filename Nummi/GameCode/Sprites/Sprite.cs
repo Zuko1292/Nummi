@@ -174,6 +174,7 @@ namespace Nummi
             if (_dead) return;
 
             UpdateMovement(gameTime);
+            ResolveTilemapCollision(_gameRoot._tilemap);
             UpdateBounds(gameTime);
             UpdateCollision(gameTime);
         }
@@ -236,6 +237,71 @@ namespace Nummi
                 {
                     _hasContact = true;
                     OnCollideEvent(other);
+                }
+            }
+        }
+        public void ResolveTilemapCollision(Tilemap map)
+        {
+            if (!_canCollide) return;
+
+            Rectangle bounds = _collisionBounds;
+
+            int leftTile = (int)(bounds.Left / map.TileWidth);
+            int rightTile = (int)(bounds.Right / map.TileWidth);
+            int topTile = (int)(bounds.Top / map.TileHeight);
+            int bottomTile = (int)(bounds.Bottom / map.TileHeight);
+
+            for (int y = topTile; y <= bottomTile; y++)
+            {
+                for (int x = leftTile; x <= rightTile; x++)
+                {
+                    int worldX = (int)(x * map.TileWidth);
+                    int worldY = (int)(y * map.TileHeight);
+
+                    int tileID = map.GetTileIDAtWorld(worldX, worldY);
+
+                    if (!map.IsSolidTileID(tileID))
+                        continue;
+
+                    if (map.IsExitTileID(tileID))
+                    {
+                        _gameRoot.NextLevel();
+                        return;
+                    }
+
+                    Rectangle tileRect = new Rectangle(
+                        worldX,
+                        worldY,
+                        (int)map.TileWidth,
+                        (int)map.TileHeight
+                    );
+
+                    Rectangle intersection = Rectangle.Intersect(_collisionBounds, tileRect);
+
+                    if (!intersection.IsEmpty)
+                    {
+                        Vector2 depenetration = Vector2.Zero;
+
+                        if (intersection.Height < intersection.Width)
+                        {
+                            depenetration.Y = (_position.Y < tileRect.Center.Y)
+                                ? -intersection.Height
+                                : intersection.Height;
+
+                            _velocity.Y = 0;
+                        }
+                        else
+                        {
+                            depenetration.X = (_position.X < tileRect.Center.X)
+                                ? -intersection.Width
+                                : intersection.Width;
+
+                            _velocity.X = 0;
+                        }
+
+                        _position += depenetration;
+                        _collisionBounds.Location = (_position - (_origin * _collisionScale)).ToPoint();
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Xml;
@@ -31,6 +32,7 @@ namespace Nummi
             Columns = columns;
             Count = Columns * Rows;
             _tiles = new int[Count];
+
         }
         // Sets the tile at the given index in this tilemap to use the tile from
         // the tileset at the specified tileset id.
@@ -92,7 +94,7 @@ namespace Nummi
         // Sets the TileID of the Tiles that should be the Exit.
         public bool IsExitTileID(int tileID)
         {
-            return tileID == 4;
+            return tileID == 0;
         }
 
         // Gets the ID of the Tiles in the world.
@@ -100,6 +102,9 @@ namespace Nummi
         {
             int tileX = (int)(worldX / TileWidth);
             int tileY = (int)(worldY / TileHeight);
+
+            if(tileX < 0 || tileY < 0 || tileX >= Columns || tileY >= Rows)
+                return 0; // Return 0 for out of bounds
 
             int index = tileY * Columns + tileX;
 
