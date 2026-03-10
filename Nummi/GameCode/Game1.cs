@@ -29,7 +29,7 @@ namespace Nummi
         public bool _coinSide = true; // true for heads and false for tails
         public float _health = 100f;
 
-        SpriteFont font;
+        public SpriteFont font;
 
         public float _scaleText = 1.0f;
 
@@ -37,6 +37,8 @@ namespace Nummi
         TextButton playButton;
         public Background _levelBackground;
         private FollowCamera _camera;
+        public SpriteNPC _npc;
+        public DialogBox _box;
 
         public Tilemap _tilemap;
 
@@ -65,7 +67,7 @@ namespace Nummi
         {
             GBL.Content = Content;
 
-            SpriteFont font = Content.Load<SpriteFont>("MyFont");
+            font = Content.Load<SpriteFont>("MyFont");
 
             playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
 

@@ -8,35 +8,101 @@ using Nummi.GameCode.Sprites;
 
 namespace Nummi
 {
-    public class SpriteNPC: SpriteCharacter
+    public class SpriteNPC : SpriteCharacter
     {
         protected bool _isTalking = false;
+        protected float _talkingDuration = 2f;
         protected float _speechTimer = 0f;
+        protected float _walkingArea = 50f;
+        protected bool _canInteract = false;
 
-        public SpriteNPC(Game1 gameRoot, Vector2 position, bool canMove,float speechTimer)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Player_SpriteSheet"), position, canMove)
+        public SpriteNPC(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, float speechTimer)
+            : base(gameRoot, texture, position, canMove)
         {
             _canFlip = true;
             _layerDepth = 0.31f;
+            _texture = texture;
+            _talkingDuration = speechTimer;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
         {
             _frameDuration = 1f / 8f;
-    
+
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
-    
+
             // Idle animation
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 0, 64, 64));
-    
+            animations[0].Add(new Rectangle(0, 0, 32, 32));
+            animations[0].Add(new Rectangle(128, 0, 32, 32));
+
             // Walk animation
             animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(64, 0, 64, 64));
-            animations[1].Add(new Rectangle(128, 0, 64, 64));
-            animations[1].Add(new Rectangle(192, 0, 64, 64));
-            animations[1].Add(new Rectangle(256, 0, 64, 64));
-    
+            animations[1].Add(new Rectangle(0, 64, 32, 32));
+            animations[1].Add(new Rectangle(32, 64, 32, 32));
+            animations[1].Add(new Rectangle(64, 64, 32, 32));
+            animations[1].Add(new Rectangle(96, 64, 32, 32));
+            animations[1].Add(new Rectangle(128, 64, 32, 32));
+            animations[1].Add(new Rectangle(160, 64, 32, 32));
+            animations[1].Add(new Rectangle(192, 64, 32, 32));
+            animations[1].Add(new Rectangle(224, 64, 32, 32));
+
+            // Talking animation
+            animations.Add(new List<Rectangle>());
+            animations[2].Add(new Rectangle(0, 0, 32, 32));
+            animations[2].Add(new Rectangle(32, 0, 32, 32));
+
+            _nextAnim = new List<int>();
+            for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
+
             return animations;
         }
+
+        public override void Update(GameTime gameTime)
+        {
+            _speechTimer -= GBL.DeltaTime;
+
+            if (_speechTimer > 0f)
+            {
+                _isTalking = true;
+                _velocity.X = 0f;
+                SetAnimation(2);
+            }
+            else
+            {
+                _isTalking = false;
+                _gameRoot._player._canMove = true; // Re-enable player movement after talking
+            }
+
+            if(_canMove && !_isTalking)
+            {
+                // Simple back-and-forth movement within the walking area
+                _velocity.X = _walkingArea * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds) * 0.5f; // Oscillate between -walkingArea and +walkingArea
+                SetAnimation(1);
+            }
+
+            if (_collisionBounds.Intersects(_gameRoot._player._collisionBounds) && !_canInteract)
+            {
+                _canInteract = true;
+                if (GBL.KeyPress(Keys.E))
+                {
+                    DialogueTrigger();
+                }
+            }
+            else
+            {
+                _canInteract = false;
+            }
+
+            base.Update(gameTime);
+        }
+
+        public void DialogueTrigger()
+        {
+            _speechTimer = _talkingDuration; // Reset speech timer to 3 seconds
+            _gameRoot._player._canMove = false; // Disable player movement while talking
+            _gameRoot._box = new DialogBox(_gameRoot, _position + new Vector2(0, -40), "Hello there!\nWelcome to the world of Nummi!", "Feel free to explore and talk to other characters!");
+            _gameRoot._newSpriteList.Add(_gameRoot._box);
+        }
+    }
 }

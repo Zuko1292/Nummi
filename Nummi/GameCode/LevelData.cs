@@ -35,6 +35,8 @@ namespace Nummi
                             gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("HeadsLevelBackgroundPlaceholder"));
                             gameRoot._spriteList.Add(gameRoot._levelBackground);
 
+                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Player_SpriteSheet"), TilePos(12, 5), true, 3f));
+
                             break;
                         case 1:
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(3, 6), true);
