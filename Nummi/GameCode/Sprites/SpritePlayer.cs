@@ -201,15 +201,21 @@ namespace Nummi.GameCode.Sprites
                     inputY += 1f;
                 }
 
-                if (_velocity.X != 0 && _velocity.Y == 0) SetAnimation(5);
-                if (_velocity.Y > 0) SetAnimation(4);
-                else if (_velocity.Y < 0) SetAnimation(3);
-
                 _velocity.X = inputX * _moveSpeed;
-
                 _velocity.Y = inputY * _moveSpeed;
 
-                if(_velocity.X != 0f || _velocity.Y != 0f)
+                if (_velocity.X != 0 || _velocity.Y != 0)
+                {
+                    if (_velocity.Y > 0)
+                        SetAnimation(4);
+                    else if (_velocity.Y < 0)
+                        SetAnimation(3);
+                    else
+                        SetAnimation(5);
+                }
+
+
+                if (_velocity.X != 0f || _velocity.Y != 0f)
                 {
                     _isMoving = true;
                 }

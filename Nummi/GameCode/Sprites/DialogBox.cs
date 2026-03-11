@@ -24,13 +24,17 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            _txtPos = (_position + new Vector2(16, 16));
+            _txtPos = (_position - new Vector2(_texture.Width / 2, _texture.Height / 2));
 
             _visibleBounds = new Rectangle((int)_position.X, (int)_position.Y, _texture.Width, _texture.Height);
 
             if(!_textChanged && GBL.KeyPress(Keys.E))
             {
                 _textChanged = true;
+            }
+            else if(_textChanged && GBL.KeyPress(Keys.E))
+            {
+                _dead = true;
             }
 
             base.Update(gameTime);
