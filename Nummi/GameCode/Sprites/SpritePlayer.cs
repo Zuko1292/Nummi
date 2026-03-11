@@ -167,6 +167,8 @@ namespace Nummi.GameCode.Sprites
                 }
             }
 
+            Debug.WriteLine(_frameTimer + "," + _frameDuration);
+
 
             if (Dead) return;
 
