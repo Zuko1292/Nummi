@@ -292,6 +292,8 @@ namespace Nummi
 
         protected override void Draw(GameTime gameTime)
         {
+            GBL.GD.Clear(Color.DarkGreen);
+
             // starts draw states and add layer depth
             GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, transformMatrix: _camera._transform);
 

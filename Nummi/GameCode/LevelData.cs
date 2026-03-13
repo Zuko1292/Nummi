@@ -56,7 +56,10 @@ namespace Nummi
                     switch (level)
                     {
                         case 0:
-                            gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Backgrounds\\HeadsLevelBackgroundPlaceholder"));
+                            gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Backgrounds\\MainMenuBackgroundPlaceholder"));
+                            gameRoot._spriteList.Add(gameRoot._levelBackground);
+
+                            Debug.WriteLine("loaded");
                             break;
                     }
                     break;
