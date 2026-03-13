@@ -37,7 +37,7 @@ namespace Nummi.GameCode.Sprites
         #region ***** Constructors *****
 
         public SpritePlayer(Game1 gameRoot, Vector2 position, bool canMove)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Player_SpriteSheet"), position, canMove, true)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), position, canMove, true)
         {
             _restitution = 0.0f;
             _friction = 0.25f;
@@ -135,18 +135,20 @@ namespace Nummi.GameCode.Sprites
 
         public override void Update(GameTime gameTime)
         {
+
+
             // For Blocking
-            if (GBL.KeyHold(Keys.F))
-            {
-                SetAnimation(4);
-                _isBlocking = true;
-                _velocity.X = 0f;
-            }
-            else if (_animIndex == 4 && !GBL.KeyHold(Keys.F))
-            {
-                SetAnimation(0);
-                _isBlocking = false;
-            }
+            //if (GBL.KeyHold(Keys.F))
+            //{
+            //    SetAnimation(4);
+            //    _isBlocking = true;
+            //    _velocity.X = 0f;
+            //}
+            //else if (_animIndex == 4 && !GBL.KeyHold(Keys.F))
+            //{
+            //    SetAnimation(0);
+            //    _isBlocking = false;
+            //
 
             if (_isKnockedback)
             {
@@ -166,8 +168,6 @@ namespace Nummi.GameCode.Sprites
                     _isInvincible = false;
                 }
             }
-
-            Debug.WriteLine(_frameTimer + "," + _frameDuration);
 
 
             if (Dead) return;

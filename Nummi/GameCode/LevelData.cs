@@ -41,6 +41,8 @@ namespace Nummi
                         case 1:
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(3, 6), true);
                             gameRoot._spriteList.Add(gameRoot._player);
+
+                            
                             break;
                     }
                     break;
