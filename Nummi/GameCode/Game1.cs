@@ -326,7 +326,7 @@ namespace Nummi
         }
         public void DrawMainMenu()
         {
-            GBL.spriteBatch.Draw(Content.Load<Texture2D>("MainMenuBackgroundPlaceHolder"),
+            GBL.spriteBatch.Draw(Content.Load<Texture2D>("Textures\\Backgrounds\\MainMenuBackgroundPlaceHolder"),
                 new Rectangle(0, 0, _screenBounds.Width, _screenBounds.Height),
                 null,
                 Color.White,

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Tilemap>
-    <Tileset tileWidth="32" tileHeight="32">TileSheet</Tileset>
+    <Tileset tileWidth="32" tileHeight="32">Textures\\TileSets\\TileSheet</Tileset>
     <Tiles>
 		05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05 05
 		05 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 01 05

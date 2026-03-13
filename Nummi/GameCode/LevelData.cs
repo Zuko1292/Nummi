@@ -32,10 +32,10 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(8, 6), true);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("HeadsLevelBackgroundPlaceholder"));
+                            gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Backgrounds\\HeadsLevelBackgroundPlaceholder"));
                             gameRoot._spriteList.Add(gameRoot._levelBackground);
 
-                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Player_SpriteSheet"), TilePos(12, 5), true, 3f));
+                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(12, 5), true, 3f));
 
                             break;
                         case 1:
@@ -54,7 +54,7 @@ namespace Nummi
                     switch (level)
                     {
                         case 0:
-                            gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("HeadsLevelBackgroundPlaceholder"));
+                            gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Backgrounds\\HeadsLevelBackgroundPlaceholder"));
                             break;
                     }
                     break;

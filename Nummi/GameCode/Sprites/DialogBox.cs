@@ -15,7 +15,7 @@ namespace Nummi
         bool _textChanged = false;
 
         public DialogBox(Game1 gameRoot, Vector2 position, string first, string second)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Dialog Box"), position, false, false)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\UI\\Dialog Box"), position, false, false)
         {
             _position = position;
             _firstText = first;

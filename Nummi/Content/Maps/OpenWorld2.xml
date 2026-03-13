@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="1">
  <tileset firstgid="1" name="World Tiles" tilewidth="32" tileheight="32" tilecount="5" columns="5">
-  <image source="TileSheet.png" width="160" height="32"/>
+  <image source="Textures\\TileSets\\TileSheet.png" width="160" height="32"/>
  </tileset>
  <layer id="1" name="nonCollision" width="30" height="20">
   <data encoding="csv">
