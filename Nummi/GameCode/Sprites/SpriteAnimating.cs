@@ -91,6 +91,7 @@ namespace Nummi
         // For setting what animation you want
         protected void SetAnimation(int animIndex)
         {
+
             if (animIndex == _animIndex) return;
 
             _animIndex = Math.Clamp(animIndex, 0, _animations.Count - 1);
