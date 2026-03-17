@@ -35,6 +35,7 @@ namespace Nummi
             else if(_textChanged && GBL.KeyPress(Keys.E))
             {
                 _dead = true;
+                _gameRoot._player._canMove = true;
             }
 
             base.Update(gameTime);
