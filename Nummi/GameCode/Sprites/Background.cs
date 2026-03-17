@@ -4,9 +4,9 @@ using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Nummi.GameCode.Sprites;
+using Nummi;
 
-namespace Nummi.GameCode.Sprites
+namespace Nummi
 {
     public class Background : Sprite
     {

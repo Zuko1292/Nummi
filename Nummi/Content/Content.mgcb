@@ -38,6 +38,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Player_SpriteSheet.png
 
+#begin Textures/Animations/Slime Anim-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Slime Anim-Sheet.png
+
 #begin Textures/Backgrounds/HeadsLevelBackgroundPlaceHolder.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -97,6 +109,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Houses/village_house3-1.png.png
+
+#begin Textures/TileSets/Overworld Object Tilesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/TileSets/Overworld Object Tilesheet.png
+
+#begin Textures/TileSets/Overworld Tilesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/TileSets/Overworld Tilesheet.png
 
 #begin Textures/TileSets/TileSheet.png
 /importer:TextureImporter

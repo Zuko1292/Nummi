@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Nummi.GameCode.Sprites;
+using Nummi;
 using System.Diagnostics;
 
 namespace Nummi
@@ -37,6 +37,7 @@ namespace Nummi
 
                             // gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(12, 5), true, 3f));
 
+                            gameRoot._spriteList.Add(new SpriteEnemy(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(12, 5), true, 100));
                             break;
                         case 1:
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(3, 6), true);

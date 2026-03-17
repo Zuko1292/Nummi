@@ -8,8 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using Nummi.GameCode;
-using Nummi.GameCode.Sprites;
+using Nummi;
 
 namespace Nummi
 {
@@ -28,6 +27,7 @@ namespace Nummi
         protected bool _coinLvl = false;
         public bool _coinSide = true; // true for heads and false for tails
         public float _health = 100f;
+        float _aggrorange = 400f;
 
         public SpriteFont font;
 
@@ -132,12 +132,37 @@ namespace Nummi
 
         public void UpdateHeadsLevel(GameTime gameTime)
         {
-            if(GBL.KeyPress(Keys.Escape))
+            Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
+                    _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
+
+            if (GBL.KeyPress(Keys.Escape))
             {
                 SetPaused(true);
             }
             foreach (Sprite eachSprite in _spriteList)
             {
+                if (eachSprite is SpriteEnemy)
+                {
+                    Vector2 enemyCentre = new Vector2(eachSprite._collisionBounds.X + eachSprite._collisionBounds.Width / 2,
+                    eachSprite._collisionBounds.Y + eachSprite._collisionBounds.Height / 2);
+
+                    //Adds an aggro range to enemies so you dont get shot from across the map while in the open.
+                    //This checks the distance from the player to the enemy
+                    //and if they are in range and not behind a solid block they can move and shoot
+                    float distance = Vector2.Distance(playerCentre, enemyCentre);
+
+                    if (distance <= _aggrorange)
+                    {
+
+                        bool canSeePlayer = CanSeePlayer(enemyCentre, playerCentre);
+
+                        if (canSeePlayer == true)
+                        {
+                            eachSprite.Update(gameTime);
+                        }
+                    }
+                    continue;
+                }
                 eachSprite.Update(gameTime);
                 if (_prepForNextLevel >= 0)
                 {
@@ -160,9 +185,6 @@ namespace Nummi
             {
                 PlayerDied();
             }
-
-            Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
-                    _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
 
             _camera.Follow(playerCentre);
             _camera.Update();
@@ -452,6 +474,33 @@ namespace Nummi
         public static Vector2 ClampVec2(Vector2 vector, float max)
         {
             return ClampVec2(vector, 0, max);
+        }
+
+        private bool CanSeePlayer(Vector2 enemyCentre, Vector2 playerCentre)
+        {
+            Vector2 arrow = playerCentre - enemyCentre;
+
+            float distance = arrow.Length();
+
+            if (distance < 0.001f)
+            {
+                return true;
+            }
+
+            Vector2 direction = arrow / distance;
+
+            float stepSize = 16f;
+
+            for (float travelled = 0f; travelled <= distance; travelled += stepSize)
+            {
+                Vector2 samplePoint = enemyCentre + direction * travelled;
+
+                if (_tilemap.IsSolidAtWorld((int)samplePoint.X, (int)samplePoint.Y))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         #endregion ***** Utility Functions *****
