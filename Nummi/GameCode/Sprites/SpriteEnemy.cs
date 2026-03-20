@@ -13,7 +13,7 @@ namespace Nummi
 {
     public class SpriteEnemy : SpriteCharacter
     {
-        protected float _moveSpeed = 3f;
+        protected float _moveSpeed = 50;
         public int _health;
 
         private Vector2 Direction;
@@ -36,34 +36,14 @@ namespace Nummi
         {
             CollisionLayer = CollisionLayer.Enemy;
             CollisionMask = CollisionLayer.All & ~CollisionLayer.Enemy;
-            InitBounds(position, true, new Vector2(1f,1f));
+            InitBounds(position, true, new Vector2(1f, 1f));
             _layerDepth = 0.1f;
             _health = health;
-        }
-
-        protected override List<List<Rectangle>> BuildAnimations()
-        {
-            _frameDuration = 1f / 8f;
-            List<List<Rectangle>> animations = new List<List<Rectangle>>();
-            // Idle animation
-            animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 0, 32, 32));
-            animations[0].Add(new Rectangle(32, 0, 32, 32));
-
-            _nextAnim = new List<int>();
-            for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
-
-            return animations;
         }
 
         public override void Update(GameTime gameTime)
         {
             Direction = _gameRoot._player._position - _position;
-
-            if (Direction.LengthSquared() > 0f)
-            {
-                Direction.Normalize();
-            }
 
             _velocity = Direction * _moveSpeed * GBL.DeltaTime;
 
