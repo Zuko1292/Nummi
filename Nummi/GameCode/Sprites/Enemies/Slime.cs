@@ -27,7 +27,6 @@ namespace Nummi
             // Idle
             animations.Add(new List<Rectangle>());
             animations[0].Add(new Rectangle(0, 0, 32, 32));
-            animations[0].Add(new Rectangle(32, 0, 32, 32));
 
             // Walking
             animations.Add(new List<Rectangle>());
@@ -54,6 +53,8 @@ namespace Nummi
         {
             if (_velocity == Vector2.Zero) SetAnimation(0);
             else SetAnimation(1);
+
+            if(_gameRoot._lastSeenTimer <= 1f) SetAnimation(0);
 
             base.Update(gameTime);
         }

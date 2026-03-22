@@ -28,6 +28,8 @@ namespace Nummi
         public bool _coinSide = true; // true for heads and false for tails
         public float _health = 100f;
         float _aggrorange = 400f;
+        public bool canSeePlayer = false;
+        public float _lastSeenTimer = 4f;
 
         public SpriteFont font;
 
@@ -154,12 +156,24 @@ namespace Nummi
                     if (distance <= _aggrorange)
                     {
 
-                        bool canSeePlayer = CanSeePlayer(enemyCentre, playerCentre);
+                        canSeePlayer = CanSeePlayer(enemyCentre, playerCentre);
 
                         if (canSeePlayer == true)
                         {
                             eachSprite.Update(gameTime);
+                            _lastSeenTimer = 4f;
                         }
+
+                        foreach(SpriteEnemy eachEnemy in _spriteList.OfType<SpriteEnemy>())
+                        {
+                            if(canSeePlayer == false && _lastSeenTimer > 0f)
+                            {
+                                Debug.WriteLine("" + eachEnemy._lastSeenPos + "," + eachSprite._position + "," + _lastSeenTimer);
+                                eachSprite.Update(gameTime);
+                                _lastSeenTimer -= GBL.DeltaTime;
+                            }
+                        }
+                        
                     }
                     continue;
                 }
@@ -251,6 +265,7 @@ namespace Nummi
         public void StartHeadsLevel(int level)
         {
             _gameState = GameState.HeadsLevel;
+            _coinSide = true;
             _currentLevel = level;
             // clears old sprites
             _spriteList.Clear();
@@ -266,6 +281,7 @@ namespace Nummi
         public void StartTailsLevel(int level)
         {
             _gameState = GameState.TailsLevel;
+            _coinSide = false;
             _currentLevel = level;
             // clears old sprites
             _spriteList.Clear();
@@ -476,7 +492,7 @@ namespace Nummi
             return ClampVec2(vector, 0, max);
         }
 
-        private bool CanSeePlayer(Vector2 enemyCentre, Vector2 playerCentre)
+        public bool CanSeePlayer(Vector2 enemyCentre, Vector2 playerCentre)
         {
             Vector2 arrow = playerCentre - enemyCentre;
 

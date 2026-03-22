@@ -15,6 +15,7 @@ namespace Nummi
     {
         protected float _moveSpeed = 50;
         public int _health;
+        public Vector2 _lastSeenPos;
 
         private Vector2 Direction;
 
@@ -43,7 +44,12 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            Direction = _gameRoot._player._position - _position;
+            if (_gameRoot.canSeePlayer)
+            {
+                _lastSeenPos = _gameRoot._player._position;
+            }
+
+            Direction = _lastSeenPos - _position;
 
             _velocity = Direction * _moveSpeed * GBL.DeltaTime;
 
