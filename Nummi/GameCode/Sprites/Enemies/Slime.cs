@@ -14,7 +14,7 @@ namespace Nummi
     {
 
         public Slime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), position, true, 20)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), position, true, 20, 200, 10, false)
         {
         }
 

@@ -16,6 +16,9 @@ namespace Nummi
         protected float _moveSpeed = 50;
         public int _health;
         public Vector2 _lastSeenPos;
+        public int _knockbackStrength;
+        public int _damageStrength;
+        public bool _isBoss;
 
         private Vector2 Direction;
 
@@ -32,7 +35,7 @@ namespace Nummi
             }
         }
 
-        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health)
+        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health, int knockbackStrength, int damageStrength, bool isBoss)
             : base(gameRoot, texture, position, canMove)
         {
             CollisionLayer = CollisionLayer.Enemy;
@@ -40,6 +43,9 @@ namespace Nummi
             InitBounds(position, true, new Vector2(1f, 1f));
             _layerDepth = 0.1f;
             _health = health;
+            _knockbackStrength = knockbackStrength;
+            _damageStrength = damageStrength;
+            _isBoss = isBoss;
         }
 
         public override void Update(GameTime gameTime)

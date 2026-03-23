@@ -29,6 +29,8 @@ namespace Nummi
         protected float _knockbackTimer = 0f;
         protected float _knockbackDuration = 0.2f;
 
+        protected float _parryTimer = 0;
+        protected float _parryWindow = 0.75f;
         public bool _isBlocking = false;
         public bool _isMoving = false;
         private bool _facingLeft = true;
@@ -119,9 +121,11 @@ namespace Nummi
 
             // Dead
             animations.Add(new List<Rectangle>());
+            animations[7].Add(new Rectangle(0, 128, 32, 32));
 
             // Blocking
             animations.Add(new List<Rectangle>());
+            animations[8].Add(new Rectangle(32, 128, 32, 32));
 
             // Maybe have attacking animations here too? depending on how we want to handle attacking, whether it's a separate sprite or not
             animations.Add(new List<Rectangle>());
@@ -138,20 +142,19 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
+            if (GBL.KeyHold(Keys.F))
+            {
+                SetAnimation(7);
+                _isBlocking = true;
+                _velocity = Vector2.Zero;
+            }
+            else if (_animIndex == 7 && !GBL.KeyHold(Keys.F))
+            {
+                SetAnimation(0);
+                _isBlocking = false;
+                _parryTimer = 0;
+            }
 
-
-            // For Blocking
-            //if (GBL.KeyHold(Keys.F))
-            //{
-            //    SetAnimation(4);
-            //    _isBlocking = true;
-            //    _velocity.X = 0f;
-            //}
-            //else if (_animIndex == 4 && !GBL.KeyHold(Keys.F))
-            //{
-            //    SetAnimation(0);
-            //    _isBlocking = false;
-            //
 
             if (_isKnockedback)
             {
@@ -170,6 +173,11 @@ namespace Nummi
                 {
                     _isInvincible = false;
                 }
+            }
+
+            if(_isBlocking)
+            {
+                _parryTimer += GBL.DeltaTime;
             }
 
 
@@ -240,6 +248,49 @@ namespace Nummi
 
 
             base.Update(gameTime);
+        }
+
+        protected override void OnCollideEvent(Sprite otherSprite)
+        {
+            base.OnCollideEvent(otherSprite);
+
+            if(otherSprite is SpriteEnemy enemy)
+            {
+                if (!_isInvincible && !_isBlocking)
+                {
+                    _gameRoot._health -= enemy._damageStrength;
+                    _isInvincible = true;
+                    _damageTimer = _damageCooldown;
+
+                    // Apply knockback
+                    _isKnockedback = true;
+                    _knockbackTimer = _knockbackDuration;
+
+                    _lockedFlipEffect = _flipEffect;
+
+                    Vector2 knockbackDirection = Vector2.Normalize(_position - enemy._position);
+                    _velocity += knockbackDirection * enemy._knockbackStrength;
+                }
+                if(!_isInvincible && _isBlocking)
+                {
+                  if(_parryTimer <= _parryWindow)
+                  {
+                    // Successful parry
+                    if(enemy._isBoss)
+                    {
+                        enemy.TakeDamage(enemy._health / 10); // Example damage value for a successful parry against a boss
+                    }
+                    else
+                    {
+                            enemy.TakeDamage(enemy._health / 2); // Example damage value for a successful parry
+                    }   
+                    _parryTimer = 0; // Reset parry timer after a successful parry
+                    enemy._velocity = -enemy._velocity; // Knock the enemy back in the opposite direction
+                     // Apply knockback to the enemy 
+                    _isBlocking = false; // Exit blocking state after a successful parry
+                  }
+                }
+            }
         }
         #endregion ***** Member methods: Update *****
     }

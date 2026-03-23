@@ -168,7 +168,6 @@ namespace Nummi
                         {
                             if(canSeePlayer == false && _lastSeenTimer > 0f)
                             {
-                                Debug.WriteLine("" + eachEnemy._lastSeenPos + "," + eachSprite._position + "," + _lastSeenTimer);
                                 eachSprite.Update(gameTime);
                                 _lastSeenTimer -= GBL.DeltaTime;
                             }
