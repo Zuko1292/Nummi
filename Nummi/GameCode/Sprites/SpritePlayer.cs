@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nummi;
+using Nummi.GameCode.Sprites;
 
 namespace Nummi
 {
@@ -155,6 +156,11 @@ namespace Nummi
                 _parryTimer = 0;
             }
 
+            if(GBL.LeftClick)
+            {
+                Attacking();
+            }
+
 
             if (_isKnockedback)
             {
@@ -291,6 +297,14 @@ namespace Nummi
                   }
                 }
             }
+        }
+
+        public void Attacking()
+        {
+            if (_gameRoot._player == null) return;
+
+            Attack atk = new Attack(_gameRoot, _position, false, _currentWeapon);
+            _gameRoot._newSpriteList.Add(atk);
         }
         #endregion ***** Member methods: Update *****
     }

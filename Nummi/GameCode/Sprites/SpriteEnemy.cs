@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Nummi;
+using Nummi.GameCode.Sprites;
 
 namespace Nummi
 {
@@ -19,6 +20,16 @@ namespace Nummi
         public int _knockbackStrength;
         public int _damageStrength;
         public bool _isBoss;
+
+        protected float _damageCooldown = 0.5f;
+        protected float _damageTimer = 0f;
+        public bool _isInvincible = false;
+
+        public bool _isKnockedback = false;
+        protected float _knockbackTimer = 0f;
+        protected float _knockbackDuration = 0.2f;
+
+        public SpriteEffects _lockedFlipEffect;
 
         private Vector2 Direction;
 
@@ -59,6 +70,25 @@ namespace Nummi
 
             _velocity = Direction * _moveSpeed * GBL.DeltaTime;
 
+            if (_isKnockedback)
+            {
+                _knockbackTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (_knockbackTimer <= 0f)
+                {
+                    _isKnockedback = false;
+                }
+            }
+
+            if (_isInvincible)
+            {
+                _damageTimer -= GBL.DeltaTime;
+                if (_damageTimer <= 0f)
+                {
+                    _isInvincible = false;
+                }
+            }
+
             base.Update(gameTime);
         }
 
@@ -68,6 +98,29 @@ namespace Nummi
             if (_health <= 0)
             {
                 Dead = true;
+            }
+        }
+
+        protected override void OnCollideEvent(Sprite otherSprite)
+        {
+            base.OnCollideEvent(otherSprite);
+            if (otherSprite is Attack weapon)
+            {
+                if (!_isInvincible)
+                {
+                    TakeDamage((int)weapon._weaponDamage);
+
+                    _isInvincible = true;
+                    _damageTimer = _damageCooldown;
+
+                    _isKnockedback = true;
+                    _knockbackTimer = _knockbackDuration;
+
+                    _lockedFlipEffect = _flipEffect;
+
+                    Vector2 knockbackDirection = Vector2.Normalize(_position - weapon._position);
+                    _velocity += knockbackDirection * 200;
+                }
             }
         }
     }
