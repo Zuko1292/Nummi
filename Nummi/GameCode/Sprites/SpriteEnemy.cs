@@ -8,7 +8,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Nummi;
-using Nummi.GameCode.Sprites;
 
 namespace Nummi
 {

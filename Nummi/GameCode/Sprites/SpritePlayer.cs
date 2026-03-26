@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nummi;
-using Nummi.GameCode.Sprites;
 
 namespace Nummi
 {
@@ -156,9 +155,21 @@ namespace Nummi
                 _parryTimer = 0;
             }
 
-            if(GBL.LeftClick)
+            if(GBL.LeftClick && (_animIndex == 1 || _animIndex == 3))
             {
-                Attacking();
+                Up_Attacking();
+            }
+            if (GBL.LeftClick && (_animIndex == 0 || _animIndex == 4))
+            {
+                Down_Attacking();
+            }
+            if (GBL.LeftClick && (_animIndex == 2 || _animIndex == 5))
+            {
+                Right_Attacking();
+            }
+            if (GBL.LeftClick && (_animIndex == 6 || _animIndex == 5))
+            {
+                Left_Attacking();
             }
 
 
@@ -299,11 +310,32 @@ namespace Nummi
             }
         }
 
-        public void Attacking()
+        public void Up_Attacking()
         {
             if (_gameRoot._player == null) return;
 
-            Attack atk = new Attack(_gameRoot, _position, false, _currentWeapon);
+            Up_Attack atk = new Up_Attack(_gameRoot, _position - new Vector2(0, 24), _currentWeapon);
+            _gameRoot._newSpriteList.Add(atk);
+        }
+        public void Down_Attacking()
+        {
+            if (_gameRoot._player == null) return;
+
+            Down_Attack atk = new Down_Attack(_gameRoot, _position + new Vector2(0, 24), _currentWeapon);
+            _gameRoot._newSpriteList.Add(atk);
+        }
+        public void Right_Attacking()
+        {
+            if (_gameRoot._player == null) return;
+
+            Right_Attack atk = new Right_Attack(_gameRoot, _position + new Vector2(24, 0), _currentWeapon);
+            _gameRoot._newSpriteList.Add(atk);
+        }
+        public void Left_Attacking()
+        {
+            if (_gameRoot._player == null) return;
+
+            Left_Attack atk = new Left_Attack(_gameRoot, _position - new Vector2(24, 0), _currentWeapon);
             _gameRoot._newSpriteList.Add(atk);
         }
         #endregion ***** Member methods: Update *****
