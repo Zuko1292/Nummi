@@ -71,12 +71,11 @@ namespace Nummi
             }
 
             Direction = _lastSeenPos - _position;
-
-            _velocity = Direction * _moveSpeed * GBL.DeltaTime;
+            if(!_isKnockedback) _velocity = Direction * _moveSpeed * GBL.DeltaTime;
 
             if (_isKnockedback)
             {
-                _knockbackTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _knockbackTimer -= GBL.DeltaTime;
 
                 if (_knockbackTimer <= 0f)
                 {
@@ -119,11 +118,8 @@ namespace Nummi
                     _lockedFlipEffect = _flipEffect;
 
                     Vector2 knockbackDirection = Vector2.Normalize(_position - weapon._position);
-
-                    if (knockbackDirection.X > 0) _velocity.X += (knockbackDirection.X + _moveSpeed) * 200;
-                    else _velocity.X += (knockbackDirection.X + _moveSpeed) * 200;
-                    if (knockbackDirection.Y > 0) _velocity.Y += (knockbackDirection.Y - _moveSpeed) * 200;
-                    else _velocity.Y += (knockbackDirection.Y + _moveSpeed) * 200;
+                    _velocity += knockbackDirection * 200;
+                    
                 }
             }
         }

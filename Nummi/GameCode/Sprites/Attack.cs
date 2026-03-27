@@ -29,8 +29,8 @@ namespace Nummi
 
             if(_lifetime <= 0)
             {
-                Dead = true;
                 _gameRoot._player._attacking = false;
+                Dead = true;
             }
 
             _velocity = _gameRoot._player._velocity;
@@ -39,7 +39,6 @@ namespace Nummi
     }
     public class Up_Attack : Attack
     {
-        private float _lifetime;
 
         public Up_Attack(Game1 gameRoot, Vector2 position, int currentWeapon) :
             base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Up Slash-Sheet"), position, true, currentWeapon)
@@ -113,11 +112,11 @@ namespace Nummi
             // Sword attack animation
             animations.Add(new List<Rectangle>());
             animations[0].Add(new Rectangle(0, 0, 16, 48));
-            animations[0].Add(new Rectangle(0, 16, 16, 48));
-            animations[0].Add(new Rectangle(0, 32, 16, 48));
-            animations[0].Add(new Rectangle(0, 48, 16, 48));
-            animations[0].Add(new Rectangle(0, 64, 16, 48));
-            animations[0].Add(new Rectangle(0, 92, 16, 48));
+            animations[0].Add(new Rectangle(16, 0, 16, 48));
+            animations[0].Add(new Rectangle(32, 0, 16, 48));
+            animations[0].Add(new Rectangle(48, 0, 16, 48));
+            animations[0].Add(new Rectangle(64, 0, 16, 48));
+            animations[0].Add(new Rectangle(80, 0, 16, 48));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
@@ -142,11 +141,11 @@ namespace Nummi
             // Sword attack animation
             animations.Add(new List<Rectangle>());
             animations[0].Add(new Rectangle(0, 0, 16, 48));
-            animations[0].Add(new Rectangle(0, 16, 16, 48));
-            animations[0].Add(new Rectangle(0, 32, 16, 48));
-            animations[0].Add(new Rectangle(0, 48, 16, 48));
-            animations[0].Add(new Rectangle(0, 64, 16, 48));
-            animations[0].Add(new Rectangle(0, 92, 16, 48));
+            animations[0].Add(new Rectangle(16, 0, 16, 48));
+            animations[0].Add(new Rectangle(32, 0, 16, 48));
+            animations[0].Add(new Rectangle(48, 0, 16, 48));
+            animations[0].Add(new Rectangle(64, 0, 16, 48));
+            animations[0].Add(new Rectangle(80, 0, 16, 48));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);

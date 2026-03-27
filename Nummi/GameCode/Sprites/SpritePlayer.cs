@@ -33,7 +33,11 @@ namespace Nummi
         protected float _parryWindow = 0.75f;
         public bool _isBlocking = false;
         public bool _isMoving = false;
-        private bool _facingLeft = true;
+        private bool _facingLeft = false;
+
+        public Vector2 _mouseDirection;
+
+        private bool _yORx;
 
         public bool _attacking = false;
 
@@ -157,32 +161,20 @@ namespace Nummi
                 _parryTimer = 0;
             }
 
-            if(GBL.LeftClick && (_animIndex == 1 || _animIndex == 3) && GBL.mousePos.Y < _position.Y && !_attacking)
-            {
-                Up_Attacking();
-                _attacking = true;
-            }
-            if (GBL.LeftClick && (_animIndex == 0 || _animIndex == 4) && GBL.mousePos.Y > _position.Y && !_attacking)
-            {
-                Down_Attacking();
-                _attacking = true;
-            }
-            if (GBL.LeftClick && (_animIndex == 2 || _animIndex == 5) && GBL.mousePos.X < _position.X && !_attacking)
-            {
-                Right_Attacking();
-                _attacking = true;
-            }
-            if (GBL.LeftClick && (_animIndex == 6 || _animIndex == 5) && GBL.mousePos.X > _position.X && !_attacking)
-            {
-                Left_Attacking();
-                _attacking = true;
+            if (_animIndex == 5 || _animIndex == 2 || _animIndex == 6) _yORx = false;
+            if (_animIndex == 0 || _animIndex == 1 || _animIndex == 3 || _animIndex == 4) _yORx = true;
 
+            if(GBL.LeftClick && !_attacking)
+            {
+                if (GBL._camera.ScreenToWorld(GBL.mousePos).X > _position.X && !_yORx) Right_Attacking();
+                if (GBL._camera.ScreenToWorld(GBL.mousePos).X < _position.X && !_yORx) Left_Attacking();
+                if (GBL._camera.ScreenToWorld(GBL.mousePos).Y > _position.Y && _yORx) Down_Attacking();
+                if (GBL._camera.ScreenToWorld(GBL.mousePos).Y < _position.Y && _yORx) Up_Attacking();
             }
-
 
             if (_isKnockedback)
             {
-                _knockbackTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _knockbackTimer -= GBL.DeltaTime;
 
                 if (_knockbackTimer <= 0f)
                 {
@@ -321,6 +313,8 @@ namespace Nummi
         {
             if (_gameRoot._player == null) return;
 
+            _attacking = true;
+
             Up_Attack atk = new Up_Attack(_gameRoot, _position - new Vector2(0, 24), _currentWeapon);
             _gameRoot._newSpriteList.Add(atk);
         }
@@ -328,6 +322,7 @@ namespace Nummi
         {
             if (_gameRoot._player == null) return;
 
+            _attacking = true;
             Down_Attack atk = new Down_Attack(_gameRoot, _position + new Vector2(0, 24), _currentWeapon);
             _gameRoot._newSpriteList.Add(atk);
         }
@@ -335,6 +330,7 @@ namespace Nummi
         {
             if (_gameRoot._player == null) return;
 
+            _attacking = true;
             Right_Attack atk = new Right_Attack(_gameRoot, _position + new Vector2(24, 0), _currentWeapon);
             _gameRoot._newSpriteList.Add(atk);
         }
@@ -342,6 +338,7 @@ namespace Nummi
         {
             if (_gameRoot._player == null) return;
 
+            _attacking = true;
             Left_Attack atk = new Left_Attack(_gameRoot, _position - new Vector2(24, 0), _currentWeapon);
             _gameRoot._newSpriteList.Add(atk);
         }

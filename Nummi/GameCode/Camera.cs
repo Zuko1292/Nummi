@@ -34,5 +34,10 @@ namespace Code_For_Nummi
                 new Vector3(-_position, 0f));
         }
 
+        public Point ScreenToWorld(Point screen)
+        {
+            return screen + _position.ToPoint();
+        }
+
     }
 }

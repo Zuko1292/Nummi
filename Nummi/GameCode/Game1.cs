@@ -38,7 +38,6 @@ namespace Nummi
         public SpritePlayer _player;
         TextButton playButton;
         public Background _levelBackground;
-        private FollowCamera _camera;
         public SpriteNPC _npc;
         public DialogBox _box;
 
@@ -62,7 +61,7 @@ namespace Nummi
             GBL.GDM.PreferredBackBufferHeight =  480;
             GBL.GDM.ApplyChanges();
 
-            _camera = new FollowCamera(GBL.GDM.GraphicsDevice.Viewport);
+            GBL._camera = new FollowCamera(GBL.GDM.GraphicsDevice.Viewport);
         }
 
         protected override void Initialize()
@@ -97,7 +96,7 @@ namespace Nummi
 
         protected override void Update(GameTime gameTime)
         {
-            GBL.Update(gameTime);
+            GBL.Update(gameTime, this);
 
             switch (_gameState)
             {
@@ -199,9 +198,6 @@ namespace Nummi
                 PlayerDied();
             }
 
-            _camera.Follow(playerCentre);
-            _camera.Update();
-
             if (GBL.KeyPress(Keys.Tab))
             {
                 StartTailsLevel(0);
@@ -273,8 +269,6 @@ namespace Nummi
             LevelData.SpawnLevel(_currentLevel, this);
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
                     _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
-            _camera.Follow(playerCentre);
-            _camera.Update();
         }
         // Start Tails level
         public void StartTailsLevel(int level)
@@ -332,7 +326,7 @@ namespace Nummi
             GBL.GD.Clear(Color.DarkGreen);
 
             // starts draw states and add layer depth
-            GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, transformMatrix: _camera._transform);
+            GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, transformMatrix: GBL._camera._transform);
 
             // controls what to draw on each state
             switch (_gameState)
@@ -413,9 +407,6 @@ namespace Nummi
 
             _spriteList.Clear();
             _newSpriteList.Clear();
-
-            _camera.Follow(playerCentre);
-            _camera.Update();
         }
 
         public void PlayerDied()

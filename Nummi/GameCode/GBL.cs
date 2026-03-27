@@ -1,4 +1,5 @@
 ﻿using System;
+using Code_For_Nummi;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -22,6 +23,8 @@ namespace Nummi
         public static MouseState mscurr;
         public static MouseState msold;
 
+        public static FollowCamera _camera;
+
         public static bool LeftClick => mscurr.LeftButton == ButtonState.Pressed && msold.LeftButton == ButtonState.Released;
         public static bool RightClick => mscurr.RightButton == ButtonState.Pressed && msold.RightButton == ButtonState.Released;
         public static bool MiddleClick => mscurr.MiddleButton == ButtonState.Pressed && msold.MiddleButton == ButtonState.Released;
@@ -32,8 +35,16 @@ namespace Nummi
 
         public static readonly Random RNG = new Random();
 
-        public static void Update(GameTime gameTime)
+        public static void Update(GameTime gameTime, Game1 gameRoot)
         {
+            if (gameRoot._player != null)
+            {
+                Vector2 playerCentre = new Vector2(gameRoot._player._collisionBounds.X + gameRoot._player._collisionBounds.Width / 2f,
+                    gameRoot._player._collisionBounds.Y + gameRoot._player._collisionBounds.Height / 2f);
+                _camera.Follow(playerCentre);
+                _camera.Update();
+            }
+
             DeltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             msold = mscurr;
