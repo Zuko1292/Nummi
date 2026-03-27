@@ -12,33 +12,34 @@ namespace Nummi
     public class Attack : SpriteAnimating
     {
         public float _weaponDamage;
-
+        private float _lifetime = 0.5f;
 
         public Attack(Game1 gameRoot, Texture2D weaponTxr, Vector2 position, bool canMove, int currentWeapon) : 
             base(gameRoot,weaponTxr, position, canMove, true)
         {
+            CollisionLayer = CollisionLayer.Player;
+            CollisionMask = CollisionLayer.Enemy & ~CollisionLayer.Player;
         }
 
         public override void Update(GameTime gameTime)
         {
             _weaponDamage = 10;
 
-            _velocity = _gameRoot._player._velocity;
-            base.Update(gameTime);
-        }
+            _lifetime -= GBL.DeltaTime;
 
-        protected override void OnCollideEvent(Sprite otherSprite)
-        {
-            base.OnCollideEvent(otherSprite);
-
-            if(otherSprite is SpriteEnemy enemy)
+            if(_lifetime <= 0)
             {
                 Dead = true;
+                _gameRoot._player._attacking = false;
             }
+
+            _velocity = _gameRoot._player._velocity;
+            base.Update(gameTime);
         }
     }
     public class Up_Attack : Attack
     {
+        private float _lifetime;
 
         public Up_Attack(Game1 gameRoot, Vector2 position, int currentWeapon) :
             base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Up Slash-Sheet"), position, true, currentWeapon)
@@ -47,7 +48,7 @@ namespace Nummi
 
         protected override List<List<Rectangle>> BuildAnimations()
         {
-            _frameDuration = 1f / 8f;
+            _frameDuration = 1f / 12f;
 
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 
@@ -76,7 +77,7 @@ namespace Nummi
 
         protected override List<List<Rectangle>> BuildAnimations()
         {
-            _frameDuration = 1f / 8f;
+            _frameDuration = 1f / 12f;
 
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 
@@ -105,7 +106,7 @@ namespace Nummi
 
         protected override List<List<Rectangle>> BuildAnimations()
         {
-            _frameDuration = 1f / 8f;
+            _frameDuration = 1f / 12f;
 
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 
@@ -134,7 +135,7 @@ namespace Nummi
 
         protected override List<List<Rectangle>> BuildAnimations()
         {
-            _frameDuration = 1f / 8f;
+            _frameDuration = 1f / 12f;
 
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 

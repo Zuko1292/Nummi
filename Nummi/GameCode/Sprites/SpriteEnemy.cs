@@ -65,6 +65,11 @@ namespace Nummi
                 _lastSeenPos = _gameRoot._player._position;
             }
 
+            if (_health <= 0)
+            {
+                Dead = true;
+            }
+
             Direction = _lastSeenPos - _position;
 
             _velocity = Direction * _moveSpeed * GBL.DeltaTime;
@@ -94,10 +99,6 @@ namespace Nummi
         public void TakeDamage(int amount)
         {
             _health -= amount;
-            if (_health <= 0)
-            {
-                Dead = true;
-            }
         }
 
         protected override void OnCollideEvent(Sprite otherSprite)
@@ -118,7 +119,11 @@ namespace Nummi
                     _lockedFlipEffect = _flipEffect;
 
                     Vector2 knockbackDirection = Vector2.Normalize(_position - weapon._position);
-                    _velocity += knockbackDirection * 200;
+
+                    if (knockbackDirection.X > 0) _velocity.X += (knockbackDirection.X + _moveSpeed) * 200;
+                    else _velocity.X += (knockbackDirection.X + _moveSpeed) * 200;
+                    if (knockbackDirection.Y > 0) _velocity.Y += (knockbackDirection.Y - _moveSpeed) * 200;
+                    else _velocity.Y += (knockbackDirection.Y + _moveSpeed) * 200;
                 }
             }
         }

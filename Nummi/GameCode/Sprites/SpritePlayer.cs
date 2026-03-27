@@ -35,6 +35,8 @@ namespace Nummi
         public bool _isMoving = false;
         private bool _facingLeft = true;
 
+        public bool _attacking = false;
+
         public SpriteEffects _lockedFlipEffect;
 
         #endregion ***** Member variables *****
@@ -155,21 +157,26 @@ namespace Nummi
                 _parryTimer = 0;
             }
 
-            if(GBL.LeftClick && (_animIndex == 1 || _animIndex == 3))
+            if(GBL.LeftClick && (_animIndex == 1 || _animIndex == 3) && GBL.mousePos.Y < _position.Y && !_attacking)
             {
                 Up_Attacking();
+                _attacking = true;
             }
-            if (GBL.LeftClick && (_animIndex == 0 || _animIndex == 4))
+            if (GBL.LeftClick && (_animIndex == 0 || _animIndex == 4) && GBL.mousePos.Y > _position.Y && !_attacking)
             {
                 Down_Attacking();
+                _attacking = true;
             }
-            if (GBL.LeftClick && (_animIndex == 2 || _animIndex == 5))
+            if (GBL.LeftClick && (_animIndex == 2 || _animIndex == 5) && GBL.mousePos.X < _position.X && !_attacking)
             {
                 Right_Attacking();
+                _attacking = true;
             }
-            if (GBL.LeftClick && (_animIndex == 6 || _animIndex == 5))
+            if (GBL.LeftClick && (_animIndex == 6 || _animIndex == 5) && GBL.mousePos.X > _position.X && !_attacking)
             {
                 Left_Attacking();
+                _attacking = true;
+
             }
 
 
