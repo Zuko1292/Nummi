@@ -41,11 +41,12 @@ namespace Nummi
         public SpriteNPC _npc;
         public DialogBox _box;
 
-        public Tilemap _tilemap;
+        public Tilemap _tilemapLayer1;
+        public TilemapGroup _tilemap;
 
         public readonly string[] levelFiles =
         {
-            "Maps/OpenWorld.xml"
+            "Maps/HeadsTown.xml"
         };
 
         public List<Sprite> _spriteList = new List<Sprite>();
@@ -77,10 +78,10 @@ namespace Nummi
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
 
             _roomBounds = new Rectangle(
-                (int)_tilemap.TileWidth,
-                (int)_tilemap.TileHeight,
-                _screenBounds.Width - (int)_tilemap.TileWidth * 2,
-                _screenBounds.Width - (int)_tilemap.TileWidth * 2
+                (int)_tilemapLayer1.TileWidth,
+                (int)_tilemapLayer1.TileHeight,
+                _screenBounds.Width - (int)_tilemapLayer1.TileWidth * 2,
+                _screenBounds.Width - (int)_tilemapLayer1.TileWidth * 2
                 );
         }
 
@@ -88,8 +89,8 @@ namespace Nummi
         {
             GBL.spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _tilemap = Tilemap.FromFile("Maps/OpenWorld.xml");
-            _tilemap.Scale = new Vector2(4.0f, 4.0f);
+            _tilemap = Tilemap.FromFile("Maps/HeadsTown.xml");
+            _tilemapLayer1.Scale = new Vector2(4.0f, 4.0f);
 
             // TODO: use this.Content to load your game content here
         }

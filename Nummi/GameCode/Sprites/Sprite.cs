@@ -175,7 +175,7 @@ namespace Nummi
             if (_dead) return;
 
             UpdateMovement(gameTime);
-            ResolveTilemapCollision(_gameRoot._tilemap);
+            ResolveTilemapCollision(_gameRoot._tilemapLayer1);
             UpdateBounds(gameTime);
             UpdateCollision(gameTime);
         }

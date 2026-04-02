@@ -60,7 +60,7 @@ namespace Nummi
             return GetTile(index);
         }
         // Draws this tilemap using the GBL.SB and creates a destination rectangle.
-        public void Draw()
+        public void Draw(float depth)
         {
             for (int i = 0; i < Count; i++)
             {
@@ -81,20 +81,42 @@ namespace Nummi
                     );
 
                 Vector2 position = new Vector2(x * TileWidth, y * TileHeight);
-                GBL.spriteBatch.Draw(tile.Texture, destinationRectangle, tile.SourceRectangle, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.7f);
+                GBL.spriteBatch.Draw(tile.Texture, destinationRectangle, tile.SourceRectangle, Color.White, 0f, Vector2.Zero, SpriteEffects.None, depth);
             }
         }
 
         // Sets the TileID of the Tiles that should be Solid.
         public bool IsSolidTileID(int tileID)
         {
-            return tileID == 3 || tileID == 4 || tileID == 5;
+            return tileID == 4 ||
+                tileID == 7 ||
+                tileID == 8 ||
+                tileID == 9 ||
+                tileID == 10 ||
+                tileID == 11 ||
+                tileID == 12 ||
+                tileID == 13 ||
+                tileID == 15 ||
+                tileID == 16 ||
+                tileID == 17 ||
+                tileID == 18 ||
+                tileID == 19 ||
+                tileID == 21 ||
+                tileID == 23 ||
+                tileID == 24 ||
+                tileID == 25 ||
+                tileID == 26 ||
+                tileID == 27 ||
+                tileID == 28 ||
+                tileID == 29 ||
+                tileID == 30 ||
+                tileID == 31;
         }
 
         // Sets the TileID of the Tiles that should be the Exit.
         public bool IsExitTileID(int tileID)
         {
-            return tileID == 0;
+            return tileID == 14 || tileID == 22;
         }
 
         // Gets the ID of the Tiles in the world.
@@ -135,69 +157,60 @@ namespace Nummi
         }
 
         //Creates a new tilemap based on a tilemap xml configuration file.
-        public static Tilemap FromFile(string filename)
+        public static TilemapGroup FromFile(string filename)
         {
             string filePath = Path.Combine(GBL.Content.RootDirectory, filename);
 
             using (Stream stream = TitleContainer.OpenStream(filePath))
+            using (XmlReader reader = XmlReader.Create(stream))
             {
-                using (XmlReader reader = XmlReader.Create(stream))
+                XDocument doc = XDocument.Load(reader);
+                XElement root = doc.Root;
+
+                XElement tilesetElement = root.Element("Tileset");
+
+                int tileWidth = int.Parse(tilesetElement.Attribute("tileWidth").Value);
+                int tileHeight = int.Parse(tilesetElement.Attribute("tileHeight").Value);
+                string contentPath = tilesetElement.Value;
+
+                Texture2D texture = GBL.Content.Load<Texture2D>(contentPath);
+                TileSet tileset = new TileSet(texture, tileWidth, tileHeight);
+
+                TilemapGroup group = new TilemapGroup();
+
+                var layerElements = root.Element("Layers").Elements("Layer");
+
+                foreach (var layerElement in layerElements)
                 {
-                    XDocument doc = XDocument.Load(reader);
-                    XElement root = doc.Root;
+                    XElement tilesElement = layerElement.Element("Tiles");
 
-                    XElement tilesetElement = root.Element("Tileset");
+                    string[] rows = tilesElement.Value.Trim()
+                        .Split('\n', StringSplitOptions.RemoveEmptyEntries);
 
-                    int tileWidth = int.Parse(tilesetElement.Attribute("tileWidth").Value);
-                    int tileHeight = int.Parse(tilesetElement.Attribute("tileHeight").Value);
-                    string contentPath = tilesetElement.Value;
+                    int columnCount = rows[0]
+                        .Split(" ", StringSplitOptions.RemoveEmptyEntries).Length;
 
-                    // Load the texture 2d at the content path.
-                    Texture2D texture = GBL.Content.Load<Texture2D>(contentPath);
-
-                    // Create the texture region from the texture 
-                    //TextureRegion textureRegion = new TextureRegion(texture, x, y, width, height);
-
-                    // Create the tileset using the texture region.
-                    TileSet tileset = new TileSet(texture, tileWidth, tileHeight);
-
-                    // The element has lines of strings, each representing a tilemap row.
-                    // Each line is a space-sperated string with elements as columns,
-                    // where the column value is the tile id from the tileset.
-                    XElement tilesElement = root.Element("Tiles");
-
-                    // Split the value of the tiles data into rows by splitting on
-                    // the new line character.
-                    string[] rows = tilesElement.Value.Trim().Split('\n', StringSplitOptions.RemoveEmptyEntries);
-
-                    // Split the Value of the first row to determin the total number of columns.
-                    int columnCount = rows[0].Split(" ", StringSplitOptions.RemoveEmptyEntries).Length;
-
-                    // Create the tilemap.
                     Tilemap tilemap = new Tilemap(tileset, columnCount, rows.Length);
 
-                    // Process each row.
                     for (int row = 0; row < rows.Length; row++)
                     {
-                        // Split the row into individual columns.
-                        string[] columns = rows[row].Trim().Split(" ", StringSplitOptions.RemoveEmptyEntries);
+                        string[] columns = rows[row]
+                            .Trim()
+                            .Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
-                        // Process each column of the current row.
                         for (int column = 0; column < columnCount; column++)
                         {
-                            {
-                                // Get the tileset index for this location.
-                                int tilesetIndex = int.Parse(columns[column]);
-
-                                // Add that region to the tilemap at the row and column location.
-                                tilemap.SetTile(column, row, tilesetIndex);
-                            }
+                            int tileIndex = int.Parse(columns[column]);
+                            tilemap.SetTile(column, row, tileIndex);
                         }
                     }
-                    return tilemap;
-                }
-            }
 
+                    group.AddLayer(tilemap);
+                }
+
+                return group;
+            }
         }
+
     }
 }
