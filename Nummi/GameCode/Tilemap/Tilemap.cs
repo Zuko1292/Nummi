@@ -59,12 +59,16 @@ namespace Nummi
             int index = row * Columns + column;
             return GetTile(index);
         }
-        // Draws this tilemap using the GBL.SB and creates a destination rectangle.
+        // Draws this tilemap using the GBL.SpriteBatch and creates a destination rectangle.
         public void Draw(float depth)
         {
             for (int i = 0; i < Count; i++)
             {
                 int tilesetIndex = _tiles[i];
+
+                if (tilesetIndex < 0)
+                    continue;
+
                 TextureRegion tile = _tileSet.GetTile(tilesetIndex);
 
                 int x = i % Columns;

@@ -13,6 +13,9 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Maps/HeadsTown.xml
+/copy:Maps/HeadsTown.xml
+
 #begin Maps/OpenWorld.xml
 /copy:Maps/OpenWorld.xml
 

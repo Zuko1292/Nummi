@@ -12,6 +12,7 @@ namespace Nummi
     public class TilemapGroup
     {
         private List<Tilemap> _layers = new List<Tilemap>();
+        public List<Tilemap> Layers => _layers;
 
         public void AddLayer(Tilemap map)
         {
@@ -34,6 +35,16 @@ namespace Nummi
             foreach (var layer in _layers)
             {
                 if (layer.IsSolidAtWorld(x, y))
+                    return true;
+            }
+            return false;
+        }
+
+        public bool IsExitAtWorld(int x, int y)
+        {
+            foreach (var layer in _layers)
+            {
+                if (layer.IsExitAtWorld(x, y))
                     return true;
             }
             return false;

@@ -175,7 +175,7 @@ namespace Nummi
             if (_dead) return;
 
             UpdateMovement(gameTime);
-            ResolveTilemapCollision(_gameRoot._tilemapLayer1);
+            ResolveTilemapCollision(_gameRoot._tilemap);
             UpdateBounds(gameTime);
             UpdateCollision(gameTime);
         }
@@ -241,8 +241,10 @@ namespace Nummi
                 }
             }
         }
-        public void ResolveTilemapCollision(Tilemap map)
+        public void ResolveTilemapCollision(TilemapGroup group)
         {
+            var map = group.Layers[0];
+
             if (!_canCollide) return;
 
             Rectangle bounds = _collisionBounds;
@@ -259,12 +261,10 @@ namespace Nummi
                     int worldX = (int)(x * map.TileWidth);
                     int worldY = (int)(y * map.TileHeight);
 
-                    int tileID = map.GetTileIDAtWorld(worldX, worldY);
-
-                    if (!map.IsSolidTileID(tileID))
+                    if (!group.IsSolidAtWorld(worldX, worldY))
                         continue;
 
-                    if (map.IsExitTileID(tileID))
+                    if (group.IsExitAtWorld(worldX, worldY))
                     {
                         _gameRoot.NextLevel();
                         return;

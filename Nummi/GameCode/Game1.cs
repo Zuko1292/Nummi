@@ -41,7 +41,6 @@ namespace Nummi
         public SpriteNPC _npc;
         public DialogBox _box;
 
-        public Tilemap _tilemapLayer1;
         public TilemapGroup _tilemap;
 
         public readonly string[] levelFiles =
@@ -77,11 +76,13 @@ namespace Nummi
 
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
 
+            var map = _tilemap.Layers[0];
+
             _roomBounds = new Rectangle(
-                (int)_tilemapLayer1.TileWidth,
-                (int)_tilemapLayer1.TileHeight,
-                _screenBounds.Width - (int)_tilemapLayer1.TileWidth * 2,
-                _screenBounds.Width - (int)_tilemapLayer1.TileWidth * 2
+                (int)map.TileWidth,
+                (int)map.TileHeight,
+                _screenBounds.Width - (int)map.TileWidth * 2,
+                _screenBounds.Width - (int)map.TileWidth * 2
                 );
         }
 
@@ -90,7 +91,6 @@ namespace Nummi
             GBL.spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _tilemap = Tilemap.FromFile("Maps/HeadsTown.xml");
-            _tilemapLayer1.Scale = new Vector2(4.0f, 4.0f);
 
             // TODO: use this.Content to load your game content here
         }
@@ -134,6 +134,8 @@ namespace Nummi
 
         public void UpdateHeadsLevel(GameTime gameTime)
         {
+            Debug.WriteLine(_player._position);
+
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
                     _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
 
