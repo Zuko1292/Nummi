@@ -19,7 +19,7 @@ namespace Nummi
         public Vector2 _playerPos;
         public float _posture = 50f;
 
-        public int _currentWeapon = 0; // 0 = none, 1 = sword, 2 = bow, 3 = GreatSword. More later
+        public int _currentWeapon = 0; // 0 = Sword, 1 = Great Sword, 2 = Mace, 3 = Great Hammer, 4 = Bow
 
         protected float _damageCooldown = 0.5f;
         protected float _damageTimer = 0f;
@@ -342,6 +342,11 @@ namespace Nummi
             Left_Attack atk = new Left_Attack(_gameRoot, _position - new Vector2(24, 0), _currentWeapon);
             _gameRoot._newSpriteList.Add(atk);
         }
+
+        public void PickupWeapon(int weaponType)
+        {
+            _currentWeapon = weaponType;
+        } 
         #endregion ***** Member methods: Update *****
     }
 }

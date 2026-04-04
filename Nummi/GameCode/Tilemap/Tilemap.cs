@@ -93,7 +93,6 @@ namespace Nummi
         public bool IsSolidTileID(int tileID)
         {
             return tileID == 4 ||
-                tileID == 7 ||
                 tileID == 8 ||
                 tileID == 9 ||
                 tileID == 10 ||
@@ -121,6 +120,11 @@ namespace Nummi
         public bool IsExitTileID(int tileID)
         {
             return tileID == 14 || tileID == 22;
+        }
+
+        public bool IsChestTileID(int tileID)
+        {
+            return tileID == 7;
         }
 
         // Gets the ID of the Tiles in the world.
@@ -158,6 +162,11 @@ namespace Nummi
         public bool IsSolidAtWorld(int worldX, int worldY)
         {
             return IsSolidTileID(GetTileIDAtWorld(worldX, worldY));
+        }
+
+        public bool IsChestAtWorld(int worldX, int worldY)
+        {
+            return IsChestTileID(GetTileIDAtWorld(worldX, worldY));
         }
 
         //Creates a new tilemap based on a tilemap xml configuration file.

@@ -13,8 +13,8 @@ namespace Nummi
     public class Slime : SpriteEnemy
     {
 
-        public Slime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), position, true, 20, 200, 10, false)
+        public Slime(Game1 gameRoot, Texture2D texture,Vector2 position)
+            : base(gameRoot, texture, position, true, 20, 200, 10, false)
         {
         }
 
