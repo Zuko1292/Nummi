@@ -13,6 +13,9 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Maps/Dungeon1-Section1.xml
+/copy:Maps/Dungeon1-Section1.xml
+
 #begin Maps/HeadsTown.xml
 /copy:Maps/HeadsTown.xml
 
@@ -21,6 +24,9 @@
 
 #begin Maps/OpenWorld2.xml
 /copy:Maps/OpenWorld2.xml
+
+#begin Maps/TailsTown1.xml
+/copy:Maps/TailsTown1.xml
 
 #begin MyFont.spritefont
 /importer:FontDescriptionImporter

@@ -40,12 +40,15 @@ namespace Nummi
         public Background _levelBackground;
         public SpriteNPC _npc;
         public DialogBox _box;
+        public Camera2D _tailsCamera;
 
         public TilemapGroup _tilemap;
 
         public readonly string[] levelFiles =
         {
-            "Maps/HeadsTown.xml"
+            "Maps/HeadsTown.xml",
+            "Maps/TailsTown1.xml",
+            "Maps/Dungeon1-Section1.xml"
         };
 
         public List<Sprite> _spriteList = new List<Sprite>();
@@ -62,6 +65,8 @@ namespace Nummi
             GBL.GDM.ApplyChanges();
 
             GBL._camera = new FollowCamera(GBL.GDM.GraphicsDevice.Viewport);
+
+            _tailsCamera = new Camera2D(GraphicsDevice.Viewport, 74, 64, 32);
         }
 
         protected override void Initialize()
@@ -90,14 +95,16 @@ namespace Nummi
         {
             GBL.spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _tilemap = Tilemap.FromFile("Maps/HeadsTown.xml");
+            _tilemap = Tilemap.FromFile(levelFiles[0]);
 
-            // TODO: use this.Content to load your game content here
+            _tilemap = Tilemap.FromFile(levelFiles[1]);
         }
 
         protected override void Update(GameTime gameTime)
         {
             GBL.Update(gameTime, this);
+
+            Debug.WriteLine(_currentLevel);
 
             switch (_gameState)
             {
@@ -134,7 +141,6 @@ namespace Nummi
 
         public void UpdateHeadsLevel(GameTime gameTime)
         {
-            Debug.WriteLine(_player._position);
 
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
                     _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
@@ -194,11 +200,17 @@ namespace Nummi
                 _prepForNextLevel = -1;
             }
 
-            if (_currentLevel == 0) _coinLvl = true;
+            if (_currentLevel == 0
+                || _currentLevel == 1) _coinLvl = true;
 
             if (!_spriteList.OfType<SpritePlayer>().Any())
             {
                 PlayerDied();
+            }
+
+            if (_tilemap.IsExitAtWorld((int)_player._position.X, (int)_player._position.Y) && _coinLvl)
+            {
+                NextLevel();
             }
 
             if (GBL.KeyPress(Keys.Tab))
@@ -214,6 +226,8 @@ namespace Nummi
                 StartTailsLevel(_prepForNextLevel);
                 _prepForNextLevel = -1;
             }
+
+            _tailsCamera.Update(gameTime);
 
             if (GBL.KeyPress(Keys.LeftShift))
             {
@@ -276,9 +290,11 @@ namespace Nummi
         // Start Tails level
         public void StartTailsLevel(int level)
         {
+
             _gameState = GameState.TailsLevel;
             _coinSide = false;
             _currentLevel = level;
+
             // clears old sprites
             _spriteList.Clear();
             _newSpriteList.Clear();
@@ -328,20 +344,41 @@ namespace Nummi
         {
             GBL.GD.Clear(Color.DarkGreen);
 
-            // starts draw states and add layer depth
             GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, transformMatrix: GBL._camera._transform);
+            
+
+            switch(_gameState)
+            {
+                case GameState.HeadsLevel: DrawHeadsLevel();
+                    foreach (Sprite eachSprite in _spriteList) eachSprite.Draw(GBL.spriteBatch);
+                    break;
+            }
+            GBL.spriteBatch.End();
+
+            GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, transformMatrix: _tailsCamera.Transform);
+
+            switch (_gameState)
+            {
+                case GameState.TailsLevel:
+                    DrawTailsLevel();
+                    foreach (Sprite eachSprite in _spriteList) eachSprite.Draw(GBL.spriteBatch);
+                    break;
+            }
+            GBL.spriteBatch.End();
+
+            GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
             // controls what to draw on each state
             switch (_gameState)
             {
                 case GameState.Title: DrawTitle(); break;
                 case GameState.MainMenu: DrawMainMenu(); break;
-                case GameState.HeadsLevel: DrawHeadsLevel(); break;
-                case GameState.TailsLevel: DrawTailsLevel(); break;
+                
             }
 
             // draws each sprite from spritelist
-            foreach (Sprite eachSprite in _spriteList) eachSprite.Draw(GBL.spriteBatch);
+
+            
 
             switch (_gameState)
             {
@@ -379,7 +416,7 @@ namespace Nummi
         }
         public void DrawTailsLevel()
         {
-
+            _tilemap.Draw();
         }
         public void DrawSettings()
         {

@@ -27,7 +27,7 @@ namespace Nummi
                     {
                         case 0:
 
-                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[gameRoot._currentLevel]);
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[0]);
 
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(45, 45), true);
                             gameRoot._spriteList.Add(gameRoot._player);
@@ -40,6 +40,8 @@ namespace Nummi
                             gameRoot._spriteList.Add(new Slime(gameRoot, TilePos(12, 5)));
                             break;
                         case 1:
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[2]);
+
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(3, 6), true);
                             gameRoot._spriteList.Add(gameRoot._player);
 
@@ -57,6 +59,8 @@ namespace Nummi
                     switch (level)
                     {
                         case 0:
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
+
                             gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Backgrounds\\MainMenuBackgroundPlaceholder"));
                             gameRoot._spriteList.Add(gameRoot._levelBackground);
                             break;
