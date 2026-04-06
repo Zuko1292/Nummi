@@ -60,9 +60,9 @@ namespace Nummi
         {
             if (otherSprite.GetType() == typeof(SpritePlayer))
             {
-                _dead = true;
                 SpritePlayer player = (SpritePlayer)otherSprite;
                 player.PickupWeapon(_weaponType);
+                _dead = true;
             }
         }
     }

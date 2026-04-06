@@ -15,6 +15,8 @@ public class Camera2D
     private int _worldWidth;
     private int _worldHeight;
 
+    private float _minZoom;
+
     private int _previousScroll;
 
     public Camera2D(Viewport viewport, int mapTilesX, int mapTilesY, int tileSize)
@@ -37,6 +39,7 @@ public class Camera2D
         float zoomY = (float)_viewport.Height / _worldHeight;
 
         Zoom = MathHelper.Min(zoomX, zoomY);
+        _minZoom = Zoom;
     }
 
     private void CenterCamera()
@@ -47,6 +50,9 @@ public class Camera2D
     public void Update(GameTime gameTime)
     {
         HandleZoom();
+
+        ClampToWorld();
+
         UpdateTransform();;
     }
 
@@ -60,10 +66,22 @@ public class Camera2D
         {
             float zoomSpeed = 0.001f;
 
-            Zoom += scrollDelta * zoomSpeed;
+            Vector2 mouseScreen = new Vector2(mouse.X, mouse.Y);
+
+            Vector2 worldBefore = Vector2.Transform(mouseScreen, Matrix.Invert(Transform));
+
+            Zoom += (1 + scrollDelta * zoomSpeed);
 
             // Clamp zoom so it doesn't go crazy
-            Zoom = MathHelper.Clamp(Zoom, 0.234375f, 1f);
+            Zoom = MathHelper.Clamp(Zoom, _minZoom, 1f);
+
+            UpdateTransform();
+
+            Vector2 worldAfter = Vector2.Transform(mouseScreen, Matrix.Invert(Transform));
+
+            Position += worldBefore - worldAfter;
+
+            ClampToWorld();
         }
 
         _previousScroll = mouse.ScrollWheelValue;
@@ -83,5 +101,38 @@ public class Camera2D
         CalculateZoomToFit();
         CenterCamera();
         UpdateTransform();
+    }
+
+    private void ClampToWorld()
+    {
+        float viewWidth = _viewport.Width / Zoom;
+        float viewHeight = _viewport.Height / Zoom;
+
+        float halfWidth = viewWidth / 2f;
+        float halfHeight = viewHeight / 2f;
+
+        float minX = halfWidth;
+        float maxX = _worldWidth - halfWidth;
+
+        float minY = halfHeight;
+        float maxY = _worldHeight - halfHeight;
+
+        if(_worldWidth < viewWidth)
+        {
+            Position = new Vector2(_worldWidth / 2f, Position.Y);
+        }
+        else
+        {
+            Position = new Vector2(MathHelper.Clamp(Position.X, minX, maxX), Position.Y);
+        }
+
+        if(_worldHeight < viewHeight)
+        {
+            Position = new Vector2(Position.X, _worldHeight / 2f);
+        }
+        else
+        {
+            Position = new Vector2(Position.X, MathHelper.Clamp(Position.Y, minY, maxY));
+        }
     }
 }

@@ -29,7 +29,7 @@ namespace Nummi
         public float _health = 100f;
         float _aggrorange = 400f;
         public bool canSeePlayer = false;
-        public float _lastSeenTimer = 4f;
+        public float _lastSeenTimer = 2f;
 
         public SpriteFont font;
 
@@ -103,8 +103,6 @@ namespace Nummi
         protected override void Update(GameTime gameTime)
         {
             GBL.Update(gameTime, this);
-
-            Debug.WriteLine(_currentLevel);
 
             switch (_gameState)
             {

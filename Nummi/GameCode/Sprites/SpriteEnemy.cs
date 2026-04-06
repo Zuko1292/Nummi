@@ -105,7 +105,7 @@ namespace Nummi
             base.OnCollideEvent(otherSprite);
             if (otherSprite is Attack weapon)
             {
-                if (!_isInvincible)
+                if (!_isInvincible && _gameRoot._player._currentWeapon != 4)
                 {
                     TakeDamage((int)weapon._weaponDamage);
 

@@ -60,10 +60,33 @@ namespace Nummi
             animations[0].Add(new Rectangle(192, 0, 48, 16));
             animations[0].Add(new Rectangle(240, 0, 48, 16));
 
+            // Great Sword attack animation
+            animations.Add(new List<Rectangle>());
+            animations[1].Add(new Rectangle(0, 16, 64, 16));
+
+            // Mace attack animation
+            animations.Add(new List<Rectangle>());
+            animations[2].Add(new Rectangle(0, 32, 48, 16));
+
+            // Great Hammer attack animation
+            animations.Add(new List<Rectangle>());
+            animations[3].Add(new Rectangle(0, 48, 64, 16));
+
+            // Bow attack animation
+            animations.Add(new List<Rectangle>());
+            animations[4].Add(new Rectangle(0, 64, 48, 16));
+
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
 
             return animations;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            SetAnimation(_gameRoot._player._currentWeapon);
         }
     }
     public class Down_Attack : Attack
@@ -89,10 +112,33 @@ namespace Nummi
             animations[0].Add(new Rectangle(192, 0, 48, 16));
             animations[0].Add(new Rectangle(240, 0, 48, 16));
 
+            // Great Sword attack animation
+            animations.Add(new List<Rectangle>());
+            animations[1].Add(new Rectangle(0, 16, 64, 16));
+
+            // Mace attack animation
+            animations.Add(new List<Rectangle>());
+            animations[2].Add(new Rectangle(0, 32, 48, 16));
+
+            // Great Hammer attack animation
+            animations.Add(new List<Rectangle>());
+            animations[3].Add(new Rectangle(0, 48, 64, 16));
+
+            // Bow attack animation
+            animations.Add(new List<Rectangle>());
+            animations[4].Add(new Rectangle(0, 64, 48, 16));
+
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
 
             return animations;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            SetAnimation(_gameRoot._player._currentWeapon);
         }
     }
     public class Right_Attack : Attack
@@ -118,10 +164,33 @@ namespace Nummi
             animations[0].Add(new Rectangle(64, 0, 16, 48));
             animations[0].Add(new Rectangle(80, 0, 16, 48));
 
+            // Great Sword attack animation
+            animations.Add(new List<Rectangle>());
+            animations[1].Add(new Rectangle(0, 16, 64, 16));
+
+            // Mace attack animation
+            animations.Add(new List<Rectangle>());
+            animations[2].Add(new Rectangle(0, 32, 48, 16));
+
+            // Great Hammer attack animation
+            animations.Add(new List<Rectangle>());
+            animations[3].Add(new Rectangle(0, 48, 64, 16));
+
+            // Bow attack animation
+            animations.Add(new List<Rectangle>());
+            animations[4].Add(new Rectangle(0, 64, 48, 16));
+
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
 
             return animations;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            SetAnimation(_gameRoot._player._currentWeapon);
         }
     }
     public class Left_Attack : Attack
@@ -147,10 +216,49 @@ namespace Nummi
             animations[0].Add(new Rectangle(64, 0, 16, 48));
             animations[0].Add(new Rectangle(80, 0, 16, 48));
 
+            // Great Sword attack animation
+            animations.Add(new List<Rectangle>());
+            animations[1].Add(new Rectangle(0, 16, 64, 16));
+
+            // Mace attack animation
+            animations.Add(new List<Rectangle>());
+            animations[2].Add(new Rectangle(0, 32, 48, 16));
+
+            // Great Hammer attack animation
+            animations.Add(new List<Rectangle>());
+            animations[3].Add(new Rectangle(0, 48, 64, 16));
+
+            // Bow attack animation
+            animations.Add(new List<Rectangle>());
+            animations[4].Add(new Rectangle(0, 64, 48, 16));
+
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
 
             return animations;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            SetAnimation(_gameRoot._player._currentWeapon);
+        }
+    }
+
+    public class Arrow : Attack
+    {
+
+        public Arrow(Game1 gameRoot, Vector2 position, int currentWeapon)
+            : base(gameRoot, GBL.Content.Load<Texture2D>(""), position, true, currentWeapon)
+        {
+        }
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            Vector2 Direction = Vector2.Normalize(_gameRoot._player._position + new Vector2(GBL._camera.ScreenToWorld(GBL.mousePos).X, GBL._camera.ScreenToWorld(GBL.mousePos).Y));
+            _velocity = Direction * 200f * GBL.DeltaTime;
         }
     }
 }
