@@ -167,7 +167,7 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Backgrounds/MainMenuBackgroundPlaceholder.webp
 
-#begin Textures/Houses/village_house1-2.png.png
+#begin Textures/Houses/House1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -177,9 +177,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/Houses/village_house1-2.png.png
+/build:Textures/Houses/House1.png
 
-#begin Textures/Houses/village_house2-1.png.png
+#begin Textures/Houses/House2.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -189,9 +189,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/Houses/village_house2-1.png.png
+/build:Textures/Houses/House2.png
 
-#begin Textures/Houses/village_house3-1.png.png
+#begin Textures/Houses/House3.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -201,7 +201,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/Houses/village_house3-1.png.png
+/build:Textures/Houses/House3.png
 
 #begin Textures/TileSets/Overworld Tilesheet.png
 /importer:TextureImporter

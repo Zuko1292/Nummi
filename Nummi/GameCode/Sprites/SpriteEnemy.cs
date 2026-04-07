@@ -117,15 +117,18 @@ namespace Nummi
 
                     _isInvincible = true;
                     _damageTimer = _damageCooldown;
-
-                    _isKnockedback = true;
-                    _knockbackTimer = _knockbackDuration;
+                    if(!_isBoss)
+                    {
+                        _isKnockedback = true;
+                        _knockbackTimer = _knockbackDuration;
+                    }
 
                     _lockedFlipEffect = _flipEffect;
-
-                    Vector2 knockbackDirection = Vector2.Normalize(_position - weapon._position);
-                    _velocity += knockbackDirection * 200;
-                    
+                    if (!_isBoss)
+                    {
+                        Vector2 knockbackDirection = Vector2.Normalize(_position - weapon._position);
+                        _velocity += knockbackDirection * 200;
+                    }
                 }
             }
         }

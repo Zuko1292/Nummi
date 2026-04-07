@@ -148,6 +148,8 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
+            Debug.WriteLine(_position);
+
             if (GBL.KeyHold(Keys.F))
             {
                 SetAnimation(7);

@@ -16,6 +16,7 @@ namespace Nummi
         Player = 1 << 0,
         Enemy = 1 << 1,
         Collectable = 1 << 2,
+        Solid = 1 << 3,
         All = ~0,
     }
 
