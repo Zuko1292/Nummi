@@ -15,6 +15,7 @@ namespace Nummi
         None = 0,
         Player = 1 << 0,
         Enemy = 1 << 1,
+        Collectable = 1 << 2,
         All = ~0,
     }
 
@@ -30,6 +31,8 @@ namespace Nummi
         protected bool _dead;
         public float _layerDepth = 0.5f;
         public float _rotation = 0f;
+
+        public float _lastSeenTimer = 2f;
 
         protected Game1 _gameRoot;
         protected Texture2D _texture;
@@ -267,6 +270,12 @@ namespace Nummi
                     if (group.IsExitAtWorld(worldX, worldY))
                     {
                         _gameRoot.NextLevel();
+                        return;
+                    }
+                    if(group.IsChestAtWorld(worldX, worldY))
+                    {
+                        _gameRoot._player.ChestOpened(x, y);
+                        map.SetTile(x, y, 0);
                         return;
                     }
 

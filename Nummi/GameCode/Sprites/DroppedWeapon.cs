@@ -11,6 +11,7 @@ namespace Nummi
     public class DroppedWeapon : SpriteCollectable
     {
         int _weaponType;
+        float _pickupCD = 1.5f;
 
         public DroppedWeapon(Game1 gameRoot, Texture2D texture, Vector2 position, int WeaponType)
             : base(gameRoot, texture, position)
@@ -60,6 +61,7 @@ namespace Nummi
         {
             if (otherSprite.GetType() == typeof(SpritePlayer))
             {
+                if(_pickupCD > 0) return;
                 SpritePlayer player = (SpritePlayer)otherSprite;
                 player.PickupWeapon(_weaponType);
                 _dead = true;

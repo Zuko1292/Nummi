@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -38,8 +37,8 @@ public class Camera2D
         float zoomX = (float)_viewport.Width / _worldWidth;
         float zoomY = (float)_viewport.Height / _worldHeight;
 
-        Zoom = MathHelper.Min(zoomX, zoomY);
-        _minZoom = Zoom;
+        _minZoom = MathHelper.Min(zoomX, zoomY);
+        Zoom = _minZoom;
     }
 
     private void CenterCamera()
@@ -53,33 +52,30 @@ public class Camera2D
 
         ClampToWorld();
 
-        UpdateTransform();;
+        UpdateTransform();
     }
 
     private void HandleZoom()
     {
         MouseState mouse = Mouse.GetState();
-
         int scrollDelta = mouse.ScrollWheelValue - _previousScroll;
 
         if (scrollDelta != 0)
         {
-            float zoomSpeed = 0.001f;
-
             Vector2 mouseScreen = new Vector2(mouse.X, mouse.Y);
 
             Vector2 worldBefore = Vector2.Transform(mouseScreen, Matrix.Invert(Transform));
 
-            Zoom += (1 + scrollDelta * zoomSpeed);
+            float zoomFactor = 1 + scrollDelta * 0.001f;
+            Zoom *= zoomFactor;
 
-            // Clamp zoom so it doesn't go crazy
-            Zoom = MathHelper.Clamp(Zoom, _minZoom, 1f);
+            Zoom = MathHelper.Clamp(Zoom, _minZoom, 3f);
 
             UpdateTransform();
 
             Vector2 worldAfter = Vector2.Transform(mouseScreen, Matrix.Invert(Transform));
 
-            Position += worldBefore - worldAfter;
+            Position += (worldBefore - worldAfter);
 
             ClampToWorld();
         }
@@ -117,7 +113,7 @@ public class Camera2D
         float minY = halfHeight;
         float maxY = _worldHeight - halfHeight;
 
-        if(_worldWidth < viewWidth)
+        if (_worldWidth < viewWidth)
         {
             Position = new Vector2(_worldWidth / 2f, Position.Y);
         }
@@ -126,7 +122,7 @@ public class Camera2D
             Position = new Vector2(MathHelper.Clamp(Position.X, minX, maxX), Position.Y);
         }
 
-        if(_worldHeight < viewHeight)
+        if (_worldHeight < viewHeight)
         {
             Position = new Vector2(Position.X, _worldHeight / 2f);
         }

@@ -54,7 +54,7 @@ namespace Nummi
             if (_velocity == Vector2.Zero) SetAnimation(0);
             else SetAnimation(1);
 
-            if(_gameRoot._lastSeenTimer <= 1f) SetAnimation(0);
+            if(_lastSeenTimer <= 1f) SetAnimation(0);
 
             base.Update(gameTime);
         }

@@ -29,7 +29,6 @@ namespace Nummi
         public float _health = 100f;
         float _aggrorange = 400f;
         public bool canSeePlayer = false;
-        public float _lastSeenTimer = 2f;
 
         public SpriteFont font;
 
@@ -154,31 +153,29 @@ namespace Nummi
                     Vector2 enemyCentre = new Vector2(eachSprite._collisionBounds.X + eachSprite._collisionBounds.Width / 2,
                     eachSprite._collisionBounds.Y + eachSprite._collisionBounds.Height / 2);
 
-                    //Adds an aggro range to enemies so you dont get shot from across the map while in the open.
+                    //Adds an aggro range to enemies
                     //This checks the distance from the player to the enemy
-                    //and if they are in range and not behind a solid block they can move and shoot
+                    //and if they are in range and not behind a solid block they can move
                     float distance = Vector2.Distance(playerCentre, enemyCentre);
 
                     if (distance <= _aggrorange)
                     {
+                        // One of these two can see player variables is used in enemy for animation so it doesnt just stop updating and is stuck on a weird frame
 
                         canSeePlayer = CanSeePlayer(enemyCentre, playerCentre);
 
-                        if (canSeePlayer == true)
+                        bool _playerSeen = CanSeePlayer(enemyCentre, playerCentre);
+
+                        if (_playerSeen)
                         {
                             eachSprite.Update(gameTime);
-                            _lastSeenTimer = 4f;
+                            eachSprite._lastSeenTimer = 2f;
                         }
-
-                        foreach(SpriteEnemy eachEnemy in _spriteList.OfType<SpriteEnemy>())
+                        else if (eachSprite._lastSeenTimer > 0f)
                         {
-                            if(canSeePlayer == false && _lastSeenTimer > 0f)
-                            {
-                                eachSprite.Update(gameTime);
-                                _lastSeenTimer -= GBL.DeltaTime;
-                            }
+                            eachSprite.Update(gameTime);
+                            eachSprite._lastSeenTimer -= GBL.DeltaTime;
                         }
-                        
                     }
                     continue;
                 }
@@ -533,7 +530,7 @@ namespace Nummi
 
             Vector2 direction = arrow / distance;
 
-            float stepSize = 16f;
+            float stepSize = 4f;
 
             for (float travelled = 0f; travelled <= distance; travelled += stepSize)
             {

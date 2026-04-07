@@ -71,7 +71,13 @@ namespace Nummi
             }
 
             Direction = _lastSeenPos - _position;
-            if(!_isKnockedback) _velocity = Direction * _moveSpeed * GBL.DeltaTime;
+
+            if (Direction != Vector2.Zero)
+            {
+                Direction.Normalize();
+            }
+
+            if (!_isKnockedback)  _velocity = Direction * _moveSpeed;
 
             if (_isKnockedback)
             {

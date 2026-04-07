@@ -347,6 +347,12 @@ namespace Nummi
         {
             _currentWeapon = weaponType;
         } 
+
+        public void ChestOpened(int x, int y)
+        {
+            DroppedWeapon droppedWeapon = new DroppedWeapon(_gameRoot, GBL.Content.Load<Texture2D>("The Sprite when ready goes here"), new Vector2(x, y), new Random().Next(0, 5));
+            _gameRoot._newSpriteList.Add(droppedWeapon);
+        }
         #endregion ***** Member methods: Update *****
     }
 }

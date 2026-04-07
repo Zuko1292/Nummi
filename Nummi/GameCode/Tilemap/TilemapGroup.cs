@@ -49,5 +49,15 @@ namespace Nummi
             }
             return false;
         }
+
+        public bool IsChestAtWorld(int x, int y)
+        {
+            foreach (var layer in _layers)
+            {
+                if (layer.IsChestAtWorld(x, y))
+                    return true;
+            }
+            return false;
+        }
     }
 }
