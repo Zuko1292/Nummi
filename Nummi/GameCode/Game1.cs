@@ -208,6 +208,17 @@ namespace Nummi
                 NextLevel();
             }
 
+            Point chestTile;
+
+            if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out chestTile))
+            {
+                _player.ChestOpened(_player._position);
+
+                var map = _tilemap.Layers[1];
+
+                map.SetTile(chestTile.X, chestTile.Y, 0);
+            }
+
             if (GBL.KeyPress(Keys.Tab))
             {
                 StartTailsLevel(0);

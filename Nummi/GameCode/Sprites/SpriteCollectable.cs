@@ -11,19 +11,11 @@ namespace Nummi
     public class SpriteCollectable : SpriteAnimating
     {
         public SpriteCollectable(Game1 gameRoot, Texture2D texture, Vector2 position)
-                : base(gameRoot, texture, position, false, false) 
+                : base(gameRoot, texture, position, false, true) 
         {
                 CollisionLayer = CollisionLayer.Collectable;
                 CollisionMask = CollisionLayer.Player;
                 _layerDepth = 0.31f;
-        }
-
-        protected override void OnCollideEvent(Sprite otherSprite)
-        {
-            if (otherSprite.GetType() == typeof(SpritePlayer))
-            {
-                _dead = true;
-            }
         }
     }
 }

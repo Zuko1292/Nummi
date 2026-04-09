@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
@@ -57,6 +58,17 @@ namespace Nummi
                 if (layer.IsChestAtWorld(x, y))
                     return true;
             }
+            return false;
+        }
+
+        public bool TryGetChestTileAtWorld(int x, int y, out Point tile)
+        {
+            foreach (var layer in _layers)
+            {
+                if (layer.TryGetChestTileAtWorld(x, y, out tile))
+                    return true;
+            }
+            tile = Point.Zero;
             return false;
         }
     }

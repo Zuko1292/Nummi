@@ -122,10 +122,12 @@ namespace Nummi
             return tileID == 14 || tileID == 22;
         }
 
+
         public bool IsChestTileID(int tileID)
         {
             return tileID == 7;
         }
+
 
         // Gets the ID of the Tiles in the world.
         public int GetTileIDAtWorld(int worldX, int worldY)
@@ -166,7 +168,42 @@ namespace Nummi
 
         public bool IsChestAtWorld(int worldX, int worldY)
         {
-            return IsChestTileID(GetTileIDAtWorld(worldX, worldY));
+            int tileX = (int)(worldX / TileWidth);
+            int tileY = (int)(worldY / TileHeight);
+
+            if (tileX < 0 || tileY < 0 || tileX >= Columns || tileY >= Rows)
+            {
+                return false;
+            }
+
+            int index = tileY * Columns + tileX;
+            int tileID = _tiles[index];
+
+            return IsChestTileID(tileID);
+        }
+
+        public bool TryGetChestTileAtWorld(int worldX, int worldY, out Point tilePos)
+        {
+            int tileX = (int)(worldX / TileWidth);
+            int tileY = (int)(worldY / TileHeight);
+
+            if (tileX < 0 || tileY < 0 || tileX >= Columns || tileY >= Rows)
+            {
+                tilePos = Point.Zero;
+                return false;
+            }
+
+            int index = tileY * Columns + tileX;
+            int tileID = _tiles[index];
+
+            if (IsChestTileID(tileID))
+            {
+                tilePos = new Point(tileX, tileY);
+                return true;
+            }
+
+            tilePos = Point.Zero;
+            return false;
         }
 
         //Creates a new tilemap based on a tilemap xml configuration file.

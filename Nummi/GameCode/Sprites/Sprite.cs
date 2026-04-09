@@ -275,8 +275,6 @@ namespace Nummi
                     }
                     if(group.IsChestAtWorld(worldX, worldY))
                     {
-                        _gameRoot._player.ChestOpened(x, y);
-                        map.SetTile(x, y, 0);
                         return;
                     }
 

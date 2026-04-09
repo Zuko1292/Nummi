@@ -11,10 +11,10 @@ namespace Nummi
     public class DroppedWeapon : SpriteCollectable
     {
         int _weaponType;
-        float _pickupCD = 1.5f;
+        public float _pickupCD = 1.5f;
 
-        public DroppedWeapon(Game1 gameRoot, Texture2D texture, Vector2 position, int WeaponType)
-            : base(gameRoot, texture, position)
+        public DroppedWeapon(Game1 gameRoot, Vector2 position, int WeaponType)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Weapons-SpriteSheet"), position)
         {
             _weaponType = WeaponType;
         }
@@ -27,23 +27,23 @@ namespace Nummi
 
             // Sword
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 0, 32, 32));
+            animations[0].Add(new Rectangle(0, 0, 16, 16));
 
             // Great Sword
             animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(32, 0, 32, 32));
+            animations[1].Add(new Rectangle(0, 16, 24, 24));
 
             // Mace
             animations.Add(new List<Rectangle>());
-            animations[2].Add(new Rectangle(64, 0, 32, 32));
+            animations[2].Add(new Rectangle(16, 0, 16, 16));
 
             // Great Hammer 
             animations.Add(new List<Rectangle>());
-            animations[3].Add(new Rectangle(96, 0, 32, 32));
+            animations[3].Add(new Rectangle(24, 16, 24, 24));
 
             // Bow
             animations.Add(new List<Rectangle>());
-            animations[4].Add(new Rectangle(128, 0, 32, 32));
+            animations[4].Add(new Rectangle(32, 0, 16, 16));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
@@ -55,17 +55,8 @@ namespace Nummi
         {
             base.Update(gameTime);
             SetAnimation(_weaponType);
-        }
 
-        protected override void OnCollideEvent(Sprite otherSprite)
-        {
-            if (otherSprite.GetType() == typeof(SpritePlayer))
-            {
-                if(_pickupCD > 0) return;
-                SpritePlayer player = (SpritePlayer)otherSprite;
-                player.PickupWeapon(_weaponType);
-                _dead = true;
-            }
+            _pickupCD -= GBL.DeltaTime;
         }
     }
 }

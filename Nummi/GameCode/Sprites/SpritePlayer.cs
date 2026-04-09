@@ -29,8 +29,17 @@ namespace Nummi
         protected float _knockbackTimer = 0f;
         protected float _knockbackDuration = 0.2f;
 
-        protected float _parryTimer = 0;
-        protected float _parryWindow = 0.75f;
+        public bool _isDashing = false;
+        protected float _dashTimer = 0f;
+        protected float _dashDuration = 0.3f;
+
+        private float _dashCooldown = 1f;
+        private float _dashCooldownTimer = 0f;
+
+        private Vector2 _dashDirection;
+
+        private float _dashSpeed = 400f;
+
         public bool _isBlocking = false;
         public bool _isMoving = false;
         private bool _facingLeft = false;
@@ -131,10 +140,19 @@ namespace Nummi
 
             // Blocking
             animations.Add(new List<Rectangle>());
-            animations[8].Add(new Rectangle(32, 128, 32, 32));
+            animations[8].Add(new Rectangle(96, 0, 32, 32));
 
-            // Maybe have attacking animations here too? depending on how we want to handle attacking, whether it's a separate sprite or not
+            // Dash Up
             animations.Add(new List<Rectangle>());
+            animations[9].Add(new Rectangle(256, 64, 32, 32));
+
+            // Dash Down
+            animations.Add(new List<Rectangle>());
+            animations[10].Add(new Rectangle(256, 0, 32, 32));
+
+            // Dash Side
+            animations.Add(new List<Rectangle>());
+            animations[11].Add(new Rectangle(256, 32, 32, 32));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
@@ -148,20 +166,67 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            Debug.WriteLine(_position);
 
             if (GBL.KeyHold(Keys.F))
             {
-                SetAnimation(7);
+                SetAnimation(8);
                 _isBlocking = true;
                 _velocity = Vector2.Zero;
             }
-            else if (_animIndex == 7 && !GBL.KeyHold(Keys.F))
+            else if (_animIndex == 8 && !GBL.KeyHold(Keys.F))
             {
                 SetAnimation(0);
                 _isBlocking = false;
-                _parryTimer = 0;
             }
+
+            if (_isDashing)
+            {
+                _dashTimer -= GBL.DeltaTime;
+
+                _velocity = _dashDirection * _dashSpeed;
+
+                if (_dashTimer <= 0f)
+                {
+                    _isDashing = false;
+                }
+            }
+
+            if (GBL.KeyPress(Keys.Q) && !_isDashing && _dashCooldownTimer <= 0f)
+            {
+                _isDashing = true;
+                _dashTimer = _dashDuration;
+
+                Vector2 dashDirection = Vector2.Zero;
+
+                if (_velocity.X > 0) dashDirection.X = 1f;
+                else if (_velocity.X < 0) dashDirection.X = -1f;
+
+                if (_velocity.Y > 0) dashDirection.Y = 1f;
+                else if (_velocity.Y < 0) dashDirection.Y = -1f;
+
+                if (dashDirection == Vector2.Zero)
+                {
+                    dashDirection.X = _facingLeft ? -1f : 1f;
+                }
+
+                if (dashDirection != Vector2.Zero)
+                    _dashDirection = Vector2.Normalize(dashDirection);
+
+                if (Math.Abs(_dashDirection.X) >= Math.Abs(_dashDirection.Y))
+                {
+                    SetAnimation(11); 
+                    _flipEffect = _dashDirection.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+                }
+                else
+                {
+                    if (_dashDirection.Y < 0)
+                        SetAnimation(9); 
+                    else
+                        SetAnimation(10); 
+                }
+            }
+
+            if(!_isDashing) _dashCooldownTimer -= GBL.DeltaTime;
 
             if (_animIndex == 5 || _animIndex == 2 || _animIndex == 6) _yORx = false;
             if (_animIndex == 0 || _animIndex == 1 || _animIndex == 3 || _animIndex == 4) _yORx = true;
@@ -193,11 +258,6 @@ namespace Nummi
                 }
             }
 
-            if(_isBlocking)
-            {
-                _parryTimer += GBL.DeltaTime;
-            }
-
 
             if (Dead) return;
 
@@ -211,7 +271,7 @@ namespace Nummi
             float inputX = 0f;
             float inputY = 0f;
             // Movement
-            if (!_isKnockedback && !_isBlocking)
+            if (!_isKnockedback && !_isBlocking && !_isDashing)
             {
                 if (GBL.KeyHold(Keys.A) || GBL.KeyHold(Keys.Left))
                 {
@@ -262,7 +322,7 @@ namespace Nummi
             }
 
             // Clamp horizontal speed
-            _velocity.X = MathHelper.Clamp(_velocity.X, -_moveSpeed, _moveSpeed);
+            if(!_isDashing) _velocity.X = MathHelper.Clamp(_velocity.X, -_moveSpeed, _moveSpeed);
 
 
             base.Update(gameTime);
@@ -289,24 +349,27 @@ namespace Nummi
                     Vector2 knockbackDirection = Vector2.Normalize(_position - enemy._position);
                     _velocity += knockbackDirection * enemy._knockbackStrength;
                 }
-                if(!_isInvincible && _isBlocking)
+                else if(!_isInvincible && _isBlocking)
                 {
-                  if(_parryTimer <= _parryWindow)
-                  {
-                    // Successful parry
-                    if(enemy._isBoss)
-                    {
-                        enemy.TakeDamage(enemy._health / 10); // Example damage value for a successful parry against a boss
-                    }
-                    else
-                    {
-                            enemy.TakeDamage(enemy._health / 2); // Example damage value for a successful parry
-                    }   
-                    _parryTimer = 0; // Reset parry timer after a successful parry
-                    enemy._velocity = -enemy._velocity; // Knock the enemy back in the opposite direction
-                     // Apply knockback to the enemy 
-                    _isBlocking = false; // Exit blocking state after a successful parry
-                  }
+                    _isKnockedback = true;
+                    _knockbackTimer = _knockbackDuration;
+
+                    Vector2 knockbackDirection = Vector2.Normalize(_position - enemy._position);
+                    _velocity += knockbackDirection * enemy._knockbackStrength;
+
+                    _lockedFlipEffect = _flipEffect;
+
+                }
+            }
+
+            if(otherSprite is DroppedWeapon droppedWeapon)
+            {
+                PickupWeapon(_currentWeapon);
+
+                if (droppedWeapon._pickupCD < 0)
+                {
+                    PickupWeapon(_currentWeapon);
+                    droppedWeapon.Dead = true;
                 }
             }
         }
@@ -350,9 +413,9 @@ namespace Nummi
             _currentWeapon = weaponType;
         } 
 
-        public void ChestOpened(int x, int y)
+        public void ChestOpened(Vector2 pos)
         {
-            DroppedWeapon droppedWeapon = new DroppedWeapon(_gameRoot, GBL.Content.Load<Texture2D>("The Sprite when ready goes here"), new Vector2(x, y), new Random().Next(0, 5));
+            DroppedWeapon droppedWeapon = new DroppedWeapon(_gameRoot, _position, new Random().Next(0, 5));
             _gameRoot._newSpriteList.Add(droppedWeapon);
         }
         #endregion ***** Member methods: Update *****
