@@ -8,7 +8,7 @@ namespace Nummi
     public static class LevelData
     {
 
-        public static int LastLevelIndex = 1;
+        public static int LastLevelIndex = 2;
 
         public static void SpawnLevel(int level, Game1 gameRoot)
         {
@@ -77,6 +77,27 @@ namespace Nummi
                             //gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(59, 39)));
                             //gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Purple Slime Anim-Sheet"), TilePos(59, 41)));
 
+
+                            break;
+                        case 2:
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[3]);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 8), true);
+                            gameRoot._spriteList.Add(gameRoot._player);
+
+                            //// Room 2 Enemies
+                            //gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(26, 5)));
+                            //gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(26, 11)));
+                            //
+                            //// Room 3 Enemies
+                            //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(46, 14)));
+                            //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(52, 7)));
+                            //
+                            //// Room 4 Enemies
+                            //gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(46, 20)));
+                            //gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(51, 28)));
+                            //
+                            //// Trap Room Enemies
+                            //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(56, 42)));
 
                             break;
                     }

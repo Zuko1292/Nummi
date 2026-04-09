@@ -62,11 +62,16 @@ namespace Nummi
 
             // Great Sword attack animation
             animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(0, 16, 64, 16));
+            animations[1].Add(new Rectangle(0, 16, 96, 32));
+            animations[1].Add(new Rectangle(96, 16, 96, 32));
+            animations[1].Add(new Rectangle(192, 16, 96, 32));
+            animations[1].Add(new Rectangle(288, 16, 96, 32));
+            animations[1].Add(new Rectangle(384, 16, 96, 32));
+            animations[1].Add(new Rectangle(480, 16, 96, 32));
 
             // Mace attack animation
             animations.Add(new List<Rectangle>());
-            animations[2].Add(new Rectangle(0, 32, 48, 16));
+            animations[2].Add(new Rectangle(0, 16, 48, 16));
 
             // Great Hammer attack animation
             animations.Add(new List<Rectangle>());
@@ -85,6 +90,9 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            Debug.WriteLine(_animIndex);
+
+            
 
             SetAnimation(_gameRoot._player._currentWeapon);
         }
@@ -114,7 +122,12 @@ namespace Nummi
 
             // Great Sword attack animation
             animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(0, 16, 64, 16));
+            animations[1].Add(new Rectangle(0, 16, 96, 32));
+            animations[1].Add(new Rectangle(96, 16, 96, 32));
+            animations[1].Add(new Rectangle(192, 16, 96, 32));
+            animations[1].Add(new Rectangle(288, 16, 96, 32));
+            animations[1].Add(new Rectangle(384, 16, 96, 32));
+            animations[1].Add(new Rectangle(480, 16, 96, 32));
 
             // Mace attack animation
             animations.Add(new List<Rectangle>());
@@ -166,7 +179,12 @@ namespace Nummi
 
             // Great Sword attack animation
             animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(0, 16, 64, 16));
+            animations[1].Add(new Rectangle(0, 48, 32, 96));
+            animations[1].Add(new Rectangle(32, 48, 32, 96));
+            animations[1].Add(new Rectangle(64, 48, 32, 96));
+            animations[1].Add(new Rectangle(96, 48, 32, 96));
+            animations[1].Add(new Rectangle(128, 48, 32, 96));
+            animations[1].Add(new Rectangle(160, 48, 32, 96));
 
             // Mace attack animation
             animations.Add(new List<Rectangle>());
@@ -218,7 +236,12 @@ namespace Nummi
 
             // Great Sword attack animation
             animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(0, 16, 64, 16));
+            animations[1].Add(new Rectangle(0, 48, 32, 96));
+            animations[1].Add(new Rectangle(32, 48, 32, 96));
+            animations[1].Add(new Rectangle(64, 48, 32, 96));
+            animations[1].Add(new Rectangle(96, 48, 32, 96));
+            animations[1].Add(new Rectangle(128, 48, 32, 96));
+            animations[1].Add(new Rectangle(160, 48, 32, 96));
 
             // Mace attack animation
             animations.Add(new List<Rectangle>());

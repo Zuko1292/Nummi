@@ -10,8 +10,8 @@ namespace Nummi
 {
     public class TallPurpleSlime : SpriteEnemy
     {
-        public TallPurpleSlime(Game1 gameRoot, Texture2D texture, Vector2 position)
-            : base(gameRoot, texture, position, true, 1000, 220, 10, false)
+        public TallPurpleSlime(Game1 gameRoot, Vector2 position)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Purple Slime Anim-Sheet-Tall"), position, true, 1000, 220, 10, false, 50)
         {
         }
 
@@ -22,7 +22,7 @@ namespace Nummi
 
             // Idle
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 0, 32, 64));
+            animations[0].Add(new Rectangle(0, 0, 64, 32));
             // Walking
             animations.Add(new List<Rectangle>());
             animations[1].Add(new Rectangle(0, 0, 32, 64));

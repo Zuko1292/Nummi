@@ -11,7 +11,7 @@ namespace Nummi
     public class PossessedOak : SpriteEnemy
     {
         public PossessedOak(Game1 gameRoot, Texture2D texture, Vector2 position)
-            : base(gameRoot, texture, position, true, 200, 220, 10, false)
+            : base(gameRoot, texture, position, true, 200, 220, 10, true, 0)
         { 
         }
     }

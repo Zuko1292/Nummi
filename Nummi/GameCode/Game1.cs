@@ -47,7 +47,8 @@ namespace Nummi
         {
             "Maps/HeadsTown.xml",
             "Maps/TailsTown1.xml",
-            "Maps/Dungeon1-Section1.xml"
+            "Maps/Dungeon1-Section1.xml",
+            "Maps/Dungeon1-Section2.xml"
         };
 
         public List<Sprite> _spriteList = new List<Sprite>();
@@ -189,6 +190,7 @@ namespace Nummi
             _spriteList.AddRange(_newSpriteList);
             _newSpriteList.Clear();
             _spriteList.RemoveAll(deadSprite => deadSprite.Dead);
+
             if (_prepForNextLevel >= 0)
             {
                 StartHeadsLevel(_prepForNextLevel);
@@ -196,7 +198,8 @@ namespace Nummi
             }
 
             if (_currentLevel == 0
-                || _currentLevel == 1) _coinLvl = true;
+                || _currentLevel == 1
+                || _currentLevel == 2) _coinLvl = true;
 
             if (!_spriteList.OfType<SpritePlayer>().Any())
             {

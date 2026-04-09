@@ -167,6 +167,10 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
 
+            if(GBL.KeyPress(Keys.D1)) _currentWeapon = 0;
+            if(GBL.KeyPress(Keys.D2)) _currentWeapon = 1;
+            if(GBL.KeyPress(Keys.D3)) _currentWeapon = 2;
+
             if (GBL.KeyHold(Keys.F))
             {
                 SetAnimation(8);
@@ -224,6 +228,8 @@ namespace Nummi
                     else
                         SetAnimation(10); 
                 }
+
+                _dashCooldownTimer = _dashCooldown;
             }
 
             if(!_isDashing) _dashCooldownTimer -= GBL.DeltaTime;
@@ -364,11 +370,10 @@ namespace Nummi
 
             if(otherSprite is DroppedWeapon droppedWeapon)
             {
-                PickupWeapon(_currentWeapon);
 
                 if (droppedWeapon._pickupCD < 0)
                 {
-                    PickupWeapon(_currentWeapon);
+                    PickupWeapon(droppedWeapon._animIndex);
                     droppedWeapon.Dead = true;
                 }
             }

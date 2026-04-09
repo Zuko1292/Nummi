@@ -13,7 +13,7 @@ namespace Nummi
 {
     public class SpriteEnemy : SpriteCharacter
     {
-        protected float _moveSpeed = 50;
+        protected float _moveSpeed;
         public int _health;
         public Vector2 _lastSeenPos;
         public int _knockbackStrength;
@@ -45,7 +45,7 @@ namespace Nummi
             }
         }
 
-        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health, int knockbackStrength, int damageStrength, bool isBoss)
+        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health, int knockbackStrength, int damageStrength, bool isBoss, float moveSpeed)
             : base(gameRoot, texture, position, canMove)
         {
             CollisionLayer = CollisionLayer.Enemy;
@@ -56,6 +56,7 @@ namespace Nummi
             _knockbackStrength = knockbackStrength;
             _damageStrength = damageStrength;
             _isBoss = isBoss;
+            _moveSpeed = moveSpeed;
         }
 
         public override void Update(GameTime gameTime)
@@ -131,6 +132,33 @@ namespace Nummi
                     }
                 }
             }
+        }
+    }
+
+    public class SpriteEnemyProjectile : SpriteAnimating
+    {
+        public int _damageStrength;
+
+        public override bool Dead
+        {
+            set
+            {
+                _dead = value;
+            }
+
+            get
+            {
+                return _dead;
+            }
+        }
+        public SpriteEnemyProjectile(Game1 gameRoot, Texture2D texture, Vector2 position, float moveSpeed, int damageStrength)
+            : base(gameRoot, texture, position, true, true)
+        {
+            CollisionLayer = CollisionLayer.Enemy;
+            CollisionMask = CollisionLayer.Player;
+            InitBounds(position, true, new Vector2(1f, 1f));
+            _layerDepth = 0.1f;
+            _damageStrength = damageStrength;
         }
     }
 }

@@ -16,14 +16,11 @@
 #begin Maps/Dungeon1-Section1.xml
 /copy:Maps/Dungeon1-Section1.xml
 
+#begin Maps/Dungeon1-Section2.xml
+/copy:Maps/Dungeon1-Section2.xml
+
 #begin Maps/HeadsTown.xml
 /copy:Maps/HeadsTown.xml
-
-#begin Maps/OpenWorld.xml
-/copy:Maps/OpenWorld.xml
-
-#begin Maps/OpenWorld2.xml
-/copy:Maps/OpenWorld2.xml
 
 #begin Maps/TailsTown1.xml
 /copy:Maps/TailsTown1.xml
@@ -34,18 +31,6 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:MyFont.spritefont
-
-#begin Textures/Animations/Attacking_Anim_Sword.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Animations/Attacking_Anim_Sword.png
 
 #begin Textures/Animations/Down Slash-Sheet.png
 /importer:TextureImporter
