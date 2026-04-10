@@ -85,8 +85,18 @@ namespace Nummi
                 }
             }
 
-            _txrSourceBounds = _animations[_animIndex][_frameIndex];
+            ApplyFrame(_animations[_animIndex][_frameIndex]);
 
+        }
+
+        protected void ApplyFrame(Rectangle frame)
+        {
+            _txrSourceBounds = frame;
+
+            _origin = new Vector2(frame.Width / 2f, frame.Height / 2f);
+
+            _collisionBounds.Width = (int)(frame.Width * _collisionScale.X);
+            _collisionBounds.Height = (int)(frame.Height * _collisionScale.Y);
         }
         // For setting what animation you want
         protected void SetAnimation(int animIndex)

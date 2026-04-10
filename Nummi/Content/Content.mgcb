@@ -56,6 +56,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Left Slash-Sheet.png
 
+#begin Textures/Animations/Orange Slime Anim-Sheet-Big.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Orange Slime Anim-Sheet-Big.png
+
 #begin Textures/Animations/Orange Slime Anim-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -68,6 +80,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Orange Slime Anim-Sheet.png
 
+#begin Textures/Animations/Orange-Slime-Projectile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Orange-Slime-Projectile.png
+
 #begin Textures/Animations/Player_SpriteSheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -79,6 +103,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Player_SpriteSheet.png
+
+#begin Textures/Animations/Purple Slime Anim-Sheet-Tall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Purple Slime Anim-Sheet-Tall.png
 
 #begin Textures/Animations/Purple Slime Anim-Sheet.png
 /importer:TextureImporter

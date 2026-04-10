@@ -222,11 +222,17 @@ namespace Nummi
 
         protected void UpdateBounds(GameTime gameTime)
         {
-            _visibleBounds.Location = (_position - _origin).ToPoint();
+            _visibleBounds = new Rectangle(
+                (_position - _origin).ToPoint(),
+                (_txrSourceBounds.Size.ToVector2() * _drawScale).ToPoint()
+            );
 
             if (!_canCollide) return;
 
-            _collisionBounds.Location = (_position - (_origin * _collisionScale)).ToPoint();
+            _collisionBounds = new Rectangle(
+                (_position - (_origin * _collisionScale)).ToPoint(),
+                (_txrSourceBounds.Size.ToVector2() * _drawScale * _collisionScale).ToPoint()
+            );
         }
         // for updating collision
         protected void UpdateCollision(GameTime gameTime)
@@ -289,6 +295,8 @@ namespace Nummi
 
                     if (!intersection.IsEmpty)
                     {
+                        OnTileCollideEvent(x, y);
+
                         Vector2 depenetration = Vector2.Zero;
 
                         if (intersection.Height < intersection.Width)
@@ -301,6 +309,7 @@ namespace Nummi
                         }
                         else
                         {
+
                             depenetration.X = (_position.X < tileRect.Center.X)
                                 ? -intersection.Width
                                 : intersection.Width;
@@ -380,6 +389,8 @@ namespace Nummi
 
         // for when collision happens
         protected virtual void OnCollideEvent(Sprite otherSprite) { }
+
+        protected virtual void OnTileCollideEvent(int tileX, int tileY) { }
 
         #endregion
 

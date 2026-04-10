@@ -32,7 +32,7 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(45, 45), true);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(40, 45)));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(30, 45)));
 
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House2"), TilePos(14, 20)));
 

@@ -90,9 +90,6 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            Debug.WriteLine(_animIndex);
-
-            
 
             SetAnimation(_gameRoot._player._currentWeapon);
         }

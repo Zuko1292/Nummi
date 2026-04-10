@@ -167,10 +167,6 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
 
-            if(GBL.KeyPress(Keys.D1)) _currentWeapon = 0;
-            if(GBL.KeyPress(Keys.D2)) _currentWeapon = 1;
-            if(GBL.KeyPress(Keys.D3)) _currentWeapon = 2;
-
             if (GBL.KeyHold(Keys.F))
             {
                 SetAnimation(8);
@@ -376,6 +372,14 @@ namespace Nummi
                     PickupWeapon(droppedWeapon._animIndex);
                     droppedWeapon.Dead = true;
                 }
+            }
+        }
+
+        protected override void OnTileCollideEvent(int tileX, int tileY)
+        {
+            if (_isDashing)
+            {
+                _isDashing = false;
             }
         }
 
