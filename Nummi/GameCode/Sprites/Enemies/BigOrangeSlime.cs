@@ -125,6 +125,11 @@ namespace Nummi
         {
             base.OnCollideEvent(otherSprite);
 
+            if(otherSprite is SpritePlayer player)
+            {
+                _gameRoot._health -= _damageStrength;
+            }
+
             Dead = true;
         }
 
