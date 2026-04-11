@@ -215,7 +215,6 @@ namespace Nummi
                 if (Math.Abs(_dashDirection.X) >= Math.Abs(_dashDirection.Y))
                 {
                     SetAnimation(11); 
-                    _flipEffect = _dashDirection.X < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
                 }
                 else
                 {

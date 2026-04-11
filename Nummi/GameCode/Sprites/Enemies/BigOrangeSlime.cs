@@ -14,7 +14,7 @@ namespace Nummi
         float _shootTimer, _shootInterval;
 
         public BigOrangeSlime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Orange Slime Anim-Sheet-Big"), position, true, 60, 250, 20, false, 25)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Orange Slime Anim-Sheet-Big"), position, true, 100, 250, 20, false, 25)
         {
 
         }
@@ -52,7 +52,7 @@ namespace Nummi
             if (_velocity == Vector2.Zero) SetAnimation(0);
             else SetAnimation(1);
 
-            if (_lastSeenTimer <= 1f) SetAnimation(0);
+            if (_lastSeenTimer <= 0.2f) SetAnimation(0);
 
             if(!_canShoot) 
             {

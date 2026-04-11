@@ -20,6 +20,10 @@ namespace Nummi
         public int _damageStrength;
         public bool _isBoss;
 
+        public bool _isPatrolling = true;
+        protected float _walkingArea = 50f;
+        public bool _canPatrol = false;  
+
         protected float _damageCooldown = 0.5f;
         protected float _damageTimer = 0f;
         public bool _isInvincible = false;
@@ -71,14 +75,16 @@ namespace Nummi
                 Dead = true;
             }
 
-            Direction = _lastSeenPos - _position;
+            if (!_isPatrolling)
+            { 
+                Direction = _lastSeenPos - _position;
 
-            if (Direction != Vector2.Zero)
-            {
-                Direction.Normalize();
+                if (Direction != Vector2.Zero)
+                {
+                    Direction.Normalize();
+                }
+                if (!_isKnockedback)  _velocity = Direction * _moveSpeed;
             }
-
-            if (!_isKnockedback)  _velocity = Direction * _moveSpeed;
 
             if (_isKnockedback)
             {
@@ -112,24 +118,20 @@ namespace Nummi
             base.OnCollideEvent(otherSprite);
             if (otherSprite is Attack weapon)
             {
-                if (!_isInvincible && _gameRoot._player._currentWeapon != 4)
+                if (!_isInvincible && _gameRoot._player._currentWeapon != 4 && !_isBoss)
                 {
                     TakeDamage((int)weapon._weaponDamage);
 
                     _isInvincible = true;
                     _damageTimer = _damageCooldown;
-                    if(!_isBoss)
-                    {
-                        _isKnockedback = true;
-                        _knockbackTimer = _knockbackDuration;
-                    }
+
+                    _isKnockedback = true;
+                    _knockbackTimer = _knockbackDuration;
 
                     _lockedFlipEffect = _flipEffect;
-                    if (!_isBoss)
-                    {
-                        Vector2 knockbackDirection = Vector2.Normalize(_position - weapon._position);
-                        _velocity += knockbackDirection * 200;
-                    }
+
+                    Vector2 knockbackDirection = Vector2.Normalize(_position - weapon._position);
+                    _velocity += knockbackDirection * 200;                   
                 }
             }
         }

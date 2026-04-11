@@ -149,15 +149,17 @@ namespace Nummi
             }
             foreach (Sprite eachSprite in _spriteList)
             {
-                if (eachSprite is SpriteEnemy)
+                if (eachSprite is SpriteEnemy enemy)
                 {
-                    Vector2 enemyCentre = new Vector2(eachSprite._collisionBounds.X + eachSprite._collisionBounds.Width / 2,
-                    eachSprite._collisionBounds.Y + eachSprite._collisionBounds.Height / 2);
+                    Vector2 enemyCentre = new Vector2(enemy._collisionBounds.X + enemy._collisionBounds.Width / 2,
+                    enemy._collisionBounds.Y + enemy._collisionBounds.Height / 2);
 
                     //Adds an aggro range to enemies
                     //This checks the distance from the player to the enemy
                     //and if they are in range and not behind a solid block they can move
                     float distance = Vector2.Distance(playerCentre, enemyCentre);
+
+                    if(enemy._canPatrol) enemy.Update(gameTime);
 
                     if (distance <= _aggrorange)
                     {
@@ -169,13 +171,15 @@ namespace Nummi
 
                         if (_playerSeen)
                         {
-                            eachSprite.Update(gameTime);
-                            eachSprite._lastSeenTimer = 2f;
+                            if(!enemy._canPatrol) enemy.Update(gameTime);
+                            enemy._isPatrolling = false;
+                            enemy._lastSeenTimer = 2f;
                         }
-                        else if (eachSprite._lastSeenTimer > 0f)
+                        else if (enemy._lastSeenTimer > 0f)
                         {
-                            eachSprite.Update(gameTime);
-                            eachSprite._lastSeenTimer -= GBL.DeltaTime;
+                            if (!enemy._canPatrol) enemy.Update(gameTime);
+                            enemy._isPatrolling = false;
+                            enemy._lastSeenTimer -= GBL.DeltaTime;
                         }
                     }
                     continue;
