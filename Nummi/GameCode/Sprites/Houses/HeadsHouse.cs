@@ -20,26 +20,26 @@ namespace Nummi
 
         }
 
-        public override void Update(GameTime gameTime)
+        protected override void UpdateBounds(GameTime gameTime)
         {
-            base.Update(gameTime);
-        }
+            _visibleBounds = new Rectangle(
+                (_position - _origin).ToPoint(),
+                (_txrSourceBounds.Size.ToVector2() * _drawScale).ToPoint()
+            );
 
-        protected override void OnCollideEvent(Sprite other)
-        {
-            if (other is SpritePlayer player)
-            {
-                Rectangle intersection = Rectangle.Intersect(player._collisionBounds, _collisionBounds);
+            if (!_canCollide) return;
 
-                if (!intersection.IsEmpty)
-                {
-                    if (player._position.Y > _collisionBounds.Top)
-                    {
-                        player._position.Y += intersection.Height;
-                        player._velocity.Y = 0;
-                    }
-                }
-            }
+            int width = (int)(_txrSourceBounds.Width * _drawScale.X);
+            int fullHeight = (int)(_txrSourceBounds.Height * _drawScale.Y);
+
+            int collisionHeight = (int)(fullHeight * 0.75f);
+
+            _collisionBounds = new Rectangle(
+                (int)(_position.X - width / 2f),
+                (int)(_position.Y - fullHeight / 2f), 
+                width,
+                collisionHeight
+            );
         }
     }
 }

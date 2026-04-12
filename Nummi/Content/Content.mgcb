@@ -200,6 +200,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Backgrounds/MainMenuBackgroundPlaceholder.webp
 
+#begin Textures/Houses/House1_v2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Houses/House1_v2.png
+
 #begin Textures/Houses/House1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -212,6 +224,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Houses/House1.png
 
+#begin Textures/Houses/House2_v2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Houses/House2_v2.png
+
 #begin Textures/Houses/House2.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -223,6 +247,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Houses/House2.png
+
+#begin Textures/Houses/House3_v2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Houses/House3_v2.png
 
 #begin Textures/Houses/House3.png
 /importer:TextureImporter
