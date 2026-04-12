@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,6 +12,14 @@ namespace Nummi
 {
     public class TallPurpleSlime : SpriteEnemy
     {
+        private Vector2 _dashDirection;
+
+        public bool _isDashing = false;
+        protected float _dashTimer = 0f;
+        protected float _dashDuration = 0.4f;
+
+        private float _dashSpeed = 400f;
+
         public TallPurpleSlime(Game1 gameRoot, Vector2 position)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Purple Slime Anim-Sheet-Tall"), position, true, 1000, 220, 10, false, 50)
         {
@@ -57,6 +66,18 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
 
+            if (_isDashing)
+            {
+                _dashTimer -= GBL.DeltaTime;
+
+                _velocity += _dashDirection * _dashSpeed;
+
+                if (_dashTimer <= 0f)
+                {
+                    _isDashing = false;
+                }
+            }
+
             if (_lastSeenTimer <= 1f)
             {
                 SetAnimation(2);
@@ -67,7 +88,6 @@ namespace Nummi
                 _velocity.X = _walkingArea * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds) * 0.5f;
                 _velocity.Y = 0f;
                 SetAnimation(2);
-                Debug.WriteLine(_frameDuration);
             }
 
             if (_animIndex == 2) _frameDuration = 1f / 8f;
@@ -76,6 +96,18 @@ namespace Nummi
             if (!_isPatrolling)
             {
                 SetAnimation(1);
+                if (!_hasDashed)
+                {
+                    _isDashing = true;
+                    _dashTimer = _dashDuration;
+
+                    Vector2 dashDirection = _gameRoot._player._position - _position;
+
+                    if (dashDirection != Vector2.Zero)
+                        _dashDirection = Vector2.Normalize(dashDirection);
+
+                    _hasDashed = true;
+                }
             }
 
             base.Update(gameTime);

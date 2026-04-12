@@ -220,7 +220,7 @@ namespace Nummi
             }
         }
 
-        protected void UpdateBounds(GameTime gameTime)
+        protected virtual void UpdateBounds(GameTime gameTime)
         {
             _visibleBounds = new Rectangle(
                 (_position - _origin).ToPoint(),

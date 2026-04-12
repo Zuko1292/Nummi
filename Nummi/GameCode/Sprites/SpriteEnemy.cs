@@ -23,6 +23,7 @@ namespace Nummi
         public bool _isPatrolling = true;
         protected float _walkingArea = 50f;
         public bool _canPatrol = false;  
+        protected bool _hasDashed = false;
 
         protected float _damageCooldown = 0.5f;
         protected float _damageTimer = 0f;
@@ -83,7 +84,7 @@ namespace Nummi
                 {
                     Direction.Normalize();
                 }
-                if (!_isKnockedback)  _velocity = Direction * _moveSpeed;
+                if (!_isKnockedback && _hasDashed)  _velocity = Direction * _moveSpeed;
             }
 
             if (_isKnockedback)
