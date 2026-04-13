@@ -24,6 +24,7 @@ namespace Nummi
         protected float _walkingArea = 50f;
         public bool _canPatrol = false;  
         protected bool _hasDashed = false;
+        public bool _isChargingDash = false;
 
         protected float _damageCooldown = 0.5f;
         protected float _damageTimer = 0f;
@@ -62,10 +63,12 @@ namespace Nummi
             _damageStrength = damageStrength;
             _isBoss = isBoss;
             _moveSpeed = moveSpeed;
+            _canFlip = true;
         }
 
         public override void Update(GameTime gameTime)
         {
+
             if (_gameRoot.canSeePlayer)
             {
                 _lastSeenPos = _gameRoot._player._position;
@@ -84,7 +87,7 @@ namespace Nummi
                 {
                     Direction.Normalize();
                 }
-                if (!_isKnockedback && _hasDashed)  _velocity = Direction * _moveSpeed;
+                if (!_isKnockedback && _hasDashed && !_isChargingDash)  _velocity = Direction * _moveSpeed;
             }
 
             if (_isKnockedback)

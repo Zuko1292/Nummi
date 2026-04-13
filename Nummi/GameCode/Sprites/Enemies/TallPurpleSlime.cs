@@ -16,9 +16,10 @@ namespace Nummi
 
         public bool _isDashing = false;
         protected float _dashTimer = 0f;
-        protected float _dashDuration = 0.4f;
+        protected float _dashDuration = 0.1f;
+        private Vector2 _dashTarget;
 
-        private float _dashSpeed = 400f;
+        private float _dashSpeed = 200f;
 
         public TallPurpleSlime(Game1 gameRoot, Vector2 position)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Purple Slime Anim-Sheet-Tall"), position, true, 1000, 220, 10, false, 50)
@@ -70,11 +71,23 @@ namespace Nummi
             {
                 _dashTimer -= GBL.DeltaTime;
 
-                _velocity += _dashDirection * _dashSpeed;
+                Vector2 toTarget = _dashTarget - _position;
+
+                if (toTarget.Length() < 40f)
+                {
+                    _isDashing = false;
+                    _hasDashed = true;
+                    _velocity = Vector2.Zero;
+                }
+                else
+                {
+                    _velocity = _dashDirection * _dashSpeed;
+                }
 
                 if (_dashTimer <= 0f)
                 {
                     _isDashing = false;
+                    _hasDashed = true;
                 }
             }
 
@@ -101,12 +114,12 @@ namespace Nummi
                     _isDashing = true;
                     _dashTimer = _dashDuration;
 
-                    Vector2 dashDirection = _gameRoot._player._position - _position;
+                    _dashTarget = _gameRoot._player._position;
+
+                    Vector2 dashDirection = _dashTarget - _position;
 
                     if (dashDirection != Vector2.Zero)
                         _dashDirection = Vector2.Normalize(dashDirection);
-
-                    _hasDashed = true;
                 }
             }
 
