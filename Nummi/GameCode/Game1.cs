@@ -30,6 +30,15 @@ namespace Nummi
         float _aggrorange = 400f;
         public bool canSeePlayer = false;
 
+        // Tails Variables
+
+        GridSystem grid;
+        GridRenderer gridRenderer;
+        BuildingSystem buildingSystem;
+
+        Texture2D houseTexture;
+        Texture2D factoryTexture;
+
         public SpriteFont font;
 
         public float _scaleText = 1.0f;
@@ -71,15 +80,16 @@ namespace Nummi
 
         protected override void Initialize()
         {
+
             GBL.Content = Content;
 
             font = Content.Load<SpriteFont>("MyFont");
 
             playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
 
-            base.Initialize();
-
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
+            
+            base.Initialize();
 
             var map = _tilemap.Layers[0];
 
@@ -89,6 +99,8 @@ namespace Nummi
                 _screenBounds.Width - (int)map.TileWidth * 2,
                 _screenBounds.Width - (int)map.TileWidth * 2
                 );
+
+            grid = new GridSystem(64, 64, 32);
         }
 
         protected override void LoadContent()
@@ -98,6 +110,18 @@ namespace Nummi
             _tilemap = Tilemap.FromFile(levelFiles[0]);
 
             _tilemap = Tilemap.FromFile(levelFiles[1]);
+
+            gridRenderer = new GridRenderer(GraphicsDevice, grid);
+            buildingSystem = new BuildingSystem(grid);
+
+            houseTexture = Content.Load<Texture2D>("Textures\\Houses\\House1");
+            factoryTexture = Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks");
+
+            buildingSystem.hotkeys[Keys.D1] =
+                new BuildingType("House", houseTexture, new Point(1, 1));
+
+            buildingSystem.hotkeys[Keys.D2] =
+                new BuildingType("Factory", factoryTexture, new Point(2, 2));
         }
 
         protected override void Update(GameTime gameTime)
@@ -246,6 +270,15 @@ namespace Nummi
             {
                 StartHeadsLevel(0);
             }
+
+            var mouse = Mouse.GetState();
+
+            Vector2 mouseWorld = _tailsCamera.ScreenToWorld(mouse.Position.ToVector2());
+
+            buildingSystem.Update(mouseWorld);
+
+            // Show grid only in build mode
+            gridRenderer.Visible = buildingSystem.IsBuildMode;
         }
 
         public void UpdateSettings(GameTime gameTime)
@@ -430,6 +463,11 @@ namespace Nummi
         public void DrawTailsLevel()
         {
             _tilemap.Draw();
+
+            Vector2 mouseWorld = _tailsCamera.ScreenToWorld(Mouse.GetState().Position.ToVector2());
+
+            gridRenderer.Draw();
+            buildingSystem.Draw(mouseWorld);
         }
         public void DrawSettings()
         {

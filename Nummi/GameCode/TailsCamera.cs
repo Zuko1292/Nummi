@@ -131,4 +131,9 @@ public class Camera2D
             Position = new Vector2(Position.X, MathHelper.Clamp(Position.Y, minY, maxY));
         }
     }
+
+    public Vector2 ScreenToWorld(Vector2 screenPosition)
+    {
+        return Vector2.Transform(screenPosition, Matrix.Invert(Transform));
+    }
 }
