@@ -23,8 +23,10 @@ namespace Nummi
         public bool _isPatrolling = true;
         protected float _walkingArea = 50f;
         public bool _canPatrol = false;  
-        protected bool _hasDashed = false;
+        protected bool _hasDashed = true;
         public bool _isChargingDash = false;
+
+        protected virtual bool IsDashing() => false;
 
         protected float _damageCooldown = 0.5f;
         protected float _damageTimer = 0f;
@@ -87,7 +89,10 @@ namespace Nummi
                 {
                     Direction.Normalize();
                 }
-                if (!_isKnockedback && _hasDashed && !_isChargingDash)  _velocity = Direction * _moveSpeed;
+                if (!_isKnockedback && !IsDashing())
+                {
+                    _velocity = Direction * _moveSpeed;
+                }
             }
 
             if (_isKnockedback)

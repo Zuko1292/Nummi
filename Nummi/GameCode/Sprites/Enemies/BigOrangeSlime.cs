@@ -22,10 +22,12 @@ namespace Nummi
 
         public bool _isDashing = false;
         protected float _dashTimer = 0f;
-        protected float _dashDuration = 0.1f;
+        protected float _dashDuration = 1f;
         private Vector2 _dashTarget;
 
-        private float _dashSpeed = 200f;
+        private float _dashSpeed = 400f;
+
+        protected override bool IsDashing() => _isDashing;
 
         public BigOrangeSlime(Game1 gameRoot, Vector2 position)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Orange Slime Anim-Sheet-Big"), position, true, 100, 250, 20, false, 25)
@@ -70,18 +72,20 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            if (_velocity == Vector2.Zero && !_isChargingDash) SetAnimation(0);
-            else if (_velocity != Vector2.Zero)SetAnimation(1);
+
+            if (_isChargingDash) SetAnimation(2);
+            else if (_isDashing) SetAnimation(1);
+            else if (_velocity == Vector2.Zero) SetAnimation(0);
+            else SetAnimation(1);
 
             if (_isDashing)
             {
-                _isChargingDash = false;
 
                 _dashTimer -= GBL.DeltaTime;
 
                 Vector2 toTarget = _dashTarget - _position;
 
-                if (toTarget.Length() < 40f)
+                if (toTarget.Length() < 20f)
                 {
                     _isDashing = false;
                     _hasDashed = true;
@@ -104,7 +108,7 @@ namespace Nummi
                 if(_dashCooldownTimer >= _dashCooldown)
                 {
                     _isChargingDash = true;
-                    _dashCooldownTimer = 8f;
+                    _dashCooldownTimer = 0f;
                 }
             }
 
@@ -131,10 +135,11 @@ namespace Nummi
                 _chargeDashTimer += GBL.DeltaTime;
 
                 _velocity = Vector2.Zero;
-
-                SetAnimation(2);
                 if(_chargeDashTimer >= _chargeDashDuration)
                 {
+
+                    _chargeDashTimer = 0f;
+
                     _isDashing = true;
                     _dashTimer = _dashDuration;
 

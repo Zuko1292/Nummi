@@ -21,11 +21,14 @@ namespace Nummi
 
         private float _dashSpeed = 200f;
 
+        protected override bool IsDashing() => _isDashing;
+
         public TallPurpleSlime(Game1 gameRoot, Vector2 position)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Purple Slime Anim-Sheet-Tall"), position, true, 1000, 220, 10, false, 50)
         {
             _walkingArea = 100f;
             _canPatrol = true;
+            _hasDashed = false;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
