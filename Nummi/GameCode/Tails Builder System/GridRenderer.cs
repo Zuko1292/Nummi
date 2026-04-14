@@ -35,7 +35,12 @@ namespace Nummi
             {
                 GBL.spriteBatch.Draw(
                     pixel,
-                    new Rectangle(x * grid.TileSize, 0, 1, grid.Height * grid.TileSize),
+                    new Rectangle(
+                        (int)(grid.Origin.X + x * grid.TileSize),
+                        (int)grid.Origin.Y,
+                        1,
+                        grid.Height * grid.TileSize
+                    ),
                     null,
                     color,
                     0f,
@@ -49,7 +54,12 @@ namespace Nummi
             {
                 GBL.spriteBatch.Draw(
                     pixel,
-                    new Rectangle(0, y * grid.TileSize, grid.Width * grid.TileSize, 1),
+                    new Rectangle(
+                        (int)grid.Origin.X,
+                        (int)(grid.Origin.Y + y * grid.TileSize),
+                        grid.Width * grid.TileSize,
+                        1
+                    ),
                     null,
                     color,
                     0f,
@@ -57,6 +67,29 @@ namespace Nummi
                     SpriteEffects.None,
                     0.88f
                 );
+            }
+        }
+    }
+
+    public class Grid : Sprite
+    {
+        public Grid(Game1 gameRoot, Vector2 position)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\UI\\Grid"), position, false, false)
+        {
+
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            if (GBL.KeyPress(Keys.G))
+            {
+                _isHidden = true;
+            }
+            else if (GBL.KeyPress(Keys.H))
+            {
+                _isHidden = false;
             }
         }
     }

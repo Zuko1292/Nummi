@@ -117,6 +117,8 @@ namespace Nummi
                         case 0:
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
 
+                            gameRoot._spriteList.Add(new Grid(gameRoot, new Vector2(1024 + (5 * 32), 1024)));
+
                             gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Backgrounds\\MainMenuBackgroundPlaceholder"));
                             gameRoot._spriteList.Add(gameRoot._levelBackground);
                             break;

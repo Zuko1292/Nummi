@@ -19,7 +19,7 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            _position = _gameRoot._player._position;
+            if(_gameRoot._player != null) _position = _gameRoot._player._position;
 
             base.Update(gameTime);
         }

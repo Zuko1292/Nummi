@@ -16,6 +16,8 @@ namespace Nummi
         public int Width { get; }
         public int Height { get; }
 
+        public Vector2 Origin { get; set; } = Vector2.Zero;
+
         private bool[,] occupied;
 
         public GridSystem(int width, int height, int tileSize)
@@ -29,16 +31,16 @@ namespace Nummi
         public Point WorldToGrid(Vector2 worldPos)
         {
             return new Point(
-                (int)(worldPos.X / TileSize),
-                (int)(worldPos.Y / TileSize)
+                (int)((worldPos.X - Origin.X) / TileSize),
+                (int)((worldPos.Y - Origin.Y) / TileSize)
             );
         }
 
         public Vector2 GridToWorld(Point gridPos)
         {
             return new Vector2(
-                gridPos.X * TileSize,
-                gridPos.Y * TileSize
+                Origin.X + gridPos.X * TileSize,
+                Origin.Y + gridPos.Y * TileSize
             );
         }
 

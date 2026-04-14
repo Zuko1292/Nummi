@@ -88,7 +88,11 @@ namespace Nummi
             playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
 
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
-            
+
+            grid = new GridSystem(64, 64, 32);
+
+            grid.Origin = new Vector2(1, 1);   
+
             base.Initialize();
 
             var map = _tilemap.Layers[0];
@@ -99,8 +103,6 @@ namespace Nummi
                 _screenBounds.Width - (int)map.TileWidth * 2,
                 _screenBounds.Width - (int)map.TileWidth * 2
                 );
-
-            grid = new GridSystem(64, 64, 32);
         }
 
         protected override void LoadContent()
@@ -269,6 +271,15 @@ namespace Nummi
             if (GBL.KeyPress(Keys.LeftShift))
             {
                 StartHeadsLevel(0);
+            }
+
+            foreach (Sprite eachSprite in _spriteList)
+            {
+                eachSprite.Update(gameTime);
+                if (_prepForNextLevel >= 0)
+                {
+                    break;
+                }
             }
 
             var mouse = Mouse.GetState();
@@ -466,7 +477,6 @@ namespace Nummi
 
             Vector2 mouseWorld = _tailsCamera.ScreenToWorld(Mouse.GetState().Position.ToVector2());
 
-            gridRenderer.Draw();
             buildingSystem.Draw(mouseWorld);
         }
         public void DrawSettings()
