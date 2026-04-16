@@ -232,7 +232,7 @@ namespace Nummi
             if (_animIndex == 5 || _animIndex == 2 || _animIndex == 6) _yORx = false;
             if (_animIndex == 0 || _animIndex == 1 || _animIndex == 3 || _animIndex == 4) _yORx = true;
 
-            if(GBL.LeftClick && !_attacking)
+            if(GBL.LeftClick && !_attacking && !_isBlocking)
             {
                 if (GBL._camera.ScreenToWorld(GBL.mousePos).X > _position.X && !_yORx) Right_Attacking();
                 if (GBL._camera.ScreenToWorld(GBL.mousePos).X < _position.X && !_yORx) Left_Attacking();

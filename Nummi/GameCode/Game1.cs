@@ -30,6 +30,8 @@ namespace Nummi
         float _aggrorange = 400f;
         public bool canSeePlayer = false;
 
+        public bool _bossDead = true;
+
         // Tails Variables
 
         GridSystem grid;
@@ -128,6 +130,7 @@ namespace Nummi
 
         protected override void Update(GameTime gameTime)
         {
+
             GBL.Update(gameTime, this);
 
             switch (_gameState)
@@ -255,6 +258,11 @@ namespace Nummi
             if (GBL.KeyPress(Keys.Tab))
             {
                 StartTailsLevel(0);
+            }
+
+            if(GBL.KeyPress(Keys.G))
+            {
+                _bossDead = true;
             }
         }
 

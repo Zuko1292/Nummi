@@ -32,6 +32,9 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(45, 45), true);
                             gameRoot._spriteList.Add(gameRoot._player);
 
+                            gameRoot._bossDead = false;
+                            gameRoot._spriteList.Add(new PossessedTree(gameRoot, TilePos(30, 45)));
+
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House2_v2"), TilePos(14, 18)));
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House1_v2"), TilePos(20, 18)));
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House3_v2"), TilePos(26, 18)));
@@ -81,6 +84,8 @@ namespace Nummi
 
                             break;
                         case 2:
+                            gameRoot._bossDead = false;
+
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[3]);
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 8), true);
                             gameRoot._spriteList.Add(gameRoot._player);

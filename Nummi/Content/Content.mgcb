@@ -32,6 +32,18 @@
 /processorParam:TextureFormat=Compressed
 /build:MyFont.spritefont
 
+#begin Textures/Animations/Branch.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Branch.png
+
 #begin Textures/Animations/Down Slash-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -151,6 +163,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Slime Anim-Sheet.png
+
+#begin Textures/Animations/TreeBoss_PH.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/TreeBoss_PH.png
 
 #begin Textures/Animations/Up Slash-Sheet.png
 /importer:TextureImporter
