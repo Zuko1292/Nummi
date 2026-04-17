@@ -78,7 +78,12 @@ namespace Nummi
 
             if (_frameIndex >= _animations[_animIndex].Count)
             {
-                if (_nextAnim[_animIndex] == _animIndex) _frameIndex = 0;
+                OnAnimationFinished(); 
+
+                if (_nextAnim[_animIndex] == _animIndex)
+                {
+                    _frameIndex = 0;
+                }
                 else
                 {
                     SetAnimation(_nextAnim[_animIndex]);
@@ -108,6 +113,8 @@ namespace Nummi
             _frameIndex = 0;
             _frameTimer = 0f;
         }
+
+        protected virtual void OnAnimationFinished() { }
 
         #endregion ***** Member methods: Animation *****
     }

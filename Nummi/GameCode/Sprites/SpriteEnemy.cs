@@ -149,6 +149,7 @@ namespace Nummi
     public class SpriteEnemyProjectile : SpriteAnimating
     {
         public int _damageStrength;
+        protected float _moveSpeed;
 
         public override bool Dead
         {
@@ -170,6 +171,24 @@ namespace Nummi
             InitBounds(position, true, new Vector2(1f, 1f));
             _layerDepth = 0.1f;
             _damageStrength = damageStrength;
+            _moveSpeed = moveSpeed;
+        }
+
+        protected override void OnCollideEvent(Sprite otherSprite)
+        {
+            base.OnCollideEvent(otherSprite);
+
+            if (otherSprite is SpritePlayer player)
+            {
+                _gameRoot._health -= _damageStrength;
+            }
+
+            Dead = true;
+        }
+
+        protected override void OnTileCollideEvent(int tileX, int tileY)
+        {
+            Dead = true;
         }
     }
 }

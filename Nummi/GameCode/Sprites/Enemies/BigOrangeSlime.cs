@@ -159,9 +159,7 @@ namespace Nummi
 
         public void ShootProjectile()
         {
-
-            Vector2 projectilePosition = _position; 
-            BigOrangeSlimeProjectile projectile = new BigOrangeSlimeProjectile(_gameRoot, projectilePosition, _gameRoot._player._position);
+            BigOrangeSlimeProjectile projectile = new BigOrangeSlimeProjectile(_gameRoot, _position, _gameRoot._player._position);
             _gameRoot._newSpriteList.Add(projectile);
         }
     }
@@ -172,11 +170,7 @@ namespace Nummi
         public BigOrangeSlimeProjectile(Game1 gameRoot, Vector2 position, Vector2 target)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Orange-Slime-Projectile"), position, 200f, 10)
         {
-            CollisionLayer = CollisionLayer.Enemy;
-            CollisionMask = CollisionLayer.Player;
-            InitBounds(position, true, new Vector2(1f, 1f));
-            _layerDepth = 0.1f;
-            _velocity = Vector2.Normalize(target - _position) * 200f;
+            _velocity = Vector2.Normalize(target - _position) * _moveSpeed;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -198,28 +192,6 @@ namespace Nummi
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
             return animations;
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
-        }
-
-        protected override void OnCollideEvent(Sprite otherSprite)
-        {
-            base.OnCollideEvent(otherSprite);
-
-            if(otherSprite is SpritePlayer player)
-            {
-                _gameRoot._health -= _damageStrength;
-            }
-
-            Dead = true;
-        }
-
-        protected override void OnTileCollideEvent(int tileX, int tileY)
-        {
-            Dead = true;
         }
     }
 }
