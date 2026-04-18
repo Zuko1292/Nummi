@@ -30,7 +30,7 @@ namespace Nummi
         }
 
         public PossessedTree(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\TreeBoss_PH"), position, false, 10000, 220, 10, true, 0)// The tree is a stationary enemy That cant be killed
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\TreeBoss_PH"), position, false, 10000, 220, 10, true, 0, 400f)// The tree is a stationary enemy That cant be killed
         {
 
         }
@@ -90,7 +90,7 @@ namespace Nummi
     public class PossessingSlime : SpriteEnemy
     {
         public PossessingSlime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Enemies\\PossessingSlime"), position, true, 500, 220, 20, true, 100)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Enemies\\PossessingSlime"), position, true, 500, 220, 20, true, 100, 400f)
         {
         }
         public override void Update(GameTime gameTime)
@@ -117,7 +117,7 @@ namespace Nummi
         private float _idleDuration = 3f;
 
         public Branch(Game1 gameRoot, Vector2 position, Vector2 attackDirection)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Branch"), position, true, 100, 220, 10, true, 0)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Branch"), position, true, 100, 220, 10, true, 0, 400f)
         {
             if (attackDirection != Vector2.Zero)
                 _attackDirection = Vector2.Normalize(attackDirection);

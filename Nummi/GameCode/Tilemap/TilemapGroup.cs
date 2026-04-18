@@ -60,12 +60,32 @@ namespace Nummi
             }
             return false;
         }
+        public bool IsTrapDoorAtWorld(int x, int y)
+        {
+            foreach (var layer in _layers)
+            {
+                if (layer.IsTrapDoorAtWorld(x, y))
+                    return true;
+            }
+            return false;
+        }
 
         public bool TryGetChestTileAtWorld(int x, int y, out Point tile)
         {
             foreach (var layer in _layers)
             {
                 if (layer.TryGetChestTileAtWorld(x, y, out tile))
+                    return true;
+            }
+            tile = Point.Zero;
+            return false;
+        }
+
+        public bool TryGetTrapDoorTileAtWorld(int x, int y, out Point tile)
+        {
+            foreach (var layer in _layers)
+            {
+                if (layer.TryGetTrapDoorTileAtWorld(x, y, out tile))
                     return true;
             }
             tile = Point.Zero;

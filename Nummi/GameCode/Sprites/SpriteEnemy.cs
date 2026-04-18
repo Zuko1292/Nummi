@@ -19,6 +19,7 @@ namespace Nummi
         public int _knockbackStrength;
         public int _damageStrength;
         public bool _isBoss;
+        public float _aggrorange;
 
         public bool _isPatrolling = true;
         protected float _walkingArea = 50f;
@@ -53,7 +54,7 @@ namespace Nummi
             }
         }
 
-        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health, int knockbackStrength, int damageStrength, bool isBoss, float moveSpeed)
+        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health, int knockbackStrength, int damageStrength, bool isBoss, float moveSpeed, float aggroRange)
             : base(gameRoot, texture, position, canMove)
         {
             CollisionLayer = CollisionLayer.Enemy;
@@ -65,6 +66,7 @@ namespace Nummi
             _damageStrength = damageStrength;
             _isBoss = isBoss;
             _moveSpeed = moveSpeed;
+            _aggrorange = aggroRange;
             _canFlip = true;
         }
 

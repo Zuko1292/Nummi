@@ -19,6 +19,8 @@ namespace Nummi
         public Vector2 _playerPos;
         public float _posture = 50f;
 
+        public bool _isInTrapRoom = false;
+
         public int _currentWeapon = 0; // 0 = Sword, 1 = Great Sword, 2 = Mace, 3 = Great Hammer, 4 = Bow
 
         protected float _damageCooldown = 0.5f;

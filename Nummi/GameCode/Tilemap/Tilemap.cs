@@ -128,6 +128,11 @@ namespace Nummi
             return tileID == 7;
         }
 
+        public bool IsTrapDoorTileID(int tileID)
+        {
+            return tileID == 3;
+        }
+
 
         // Gets the ID of the Tiles in the world.
         public int GetTileIDAtWorld(int worldX, int worldY)
@@ -182,6 +187,22 @@ namespace Nummi
             return IsChestTileID(tileID);
         }
 
+        public bool IsTrapDoorAtWorld(int worldX, int worldY)
+        {
+            int tileX = (int)(worldX / TileWidth);
+            int tileY = (int)(worldY / TileHeight);
+
+            if (tileX < 0 || tileY < 0 || tileX >= Columns || tileY >= Rows)
+            {
+                return false;
+            }
+
+            int index = tileY * Columns + tileX;
+            int tileID = _tiles[index];
+
+            return IsTrapDoorTileID(tileID);
+        }
+
         public bool TryGetChestTileAtWorld(int worldX, int worldY, out Point tilePos)
         {
             int tileX = (int)(worldX / TileWidth);
@@ -202,6 +223,26 @@ namespace Nummi
                 return true;
             }
 
+            tilePos = Point.Zero;
+            return false;
+        }
+
+        public bool TryGetTrapDoorTileAtWorld(int worldX, int worldY, out Point tilePos)
+        {
+            int tileX = (int)(worldX / TileWidth);
+            int tileY = (int)(worldY / TileHeight);
+            if (tileX < 0 || tileY < 0 || tileX >= Columns || tileY >= Rows)
+            {
+                tilePos = Point.Zero;
+                return false;
+            }
+            int index = tileY * Columns + tileX;
+            int tileID = _tiles[index];
+            if (IsTrapDoorTileID(tileID))
+            {
+                tilePos = new Point(tileX, tileY);
+                return true;
+            }
             tilePos = Point.Zero;
             return false;
         }

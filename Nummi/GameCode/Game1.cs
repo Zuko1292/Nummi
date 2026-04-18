@@ -27,8 +27,14 @@ namespace Nummi
         protected bool _coinLvl = false;
         public bool _coinSide = true; // true for heads and false for tails
         public float _health = 100f;
-        float _aggrorange = 400f;
         public bool canSeePlayer = false;
+
+        public float _trapRoomDoorTimer = 0f;
+        public float _trapDoorTimer = 1f;
+        public bool _justGoneOverTrapDoor = false;
+        public bool _alreadyGoneIntoTrapDoor = false;
+        public Point _trapDoorTile;
+        public Tilemap map => _tilemap.Layers[0];
 
         public bool _bossDead = true;
 
@@ -130,6 +136,7 @@ namespace Nummi
 
         protected override void Update(GameTime gameTime)
         {
+            Debug.WriteLine($"justgoneovertrapdoor: {_justGoneOverTrapDoor}, alreadygoneintotrapdoor: {_alreadyGoneIntoTrapDoor}, traproomdoortimer: {_trapRoomDoorTimer}");
 
             GBL.Update(gameTime, this);
 
@@ -190,7 +197,7 @@ namespace Nummi
 
                     if(enemy._canPatrol) enemy.Update(gameTime);
 
-                    if (distance <= _aggrorange)
+                    if (distance <= enemy._aggrorange)
                     {
                         // One of these two can see player variables is used in enemy for animation so it doesnt just stop updating and is stuck on a weird frame
 
@@ -244,15 +251,37 @@ namespace Nummi
                 NextLevel();
             }
 
-            Point chestTile;
+            if(_tilemap.TryGetTrapDoorTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point trapDoorTile))
+            {
+                _justGoneOverTrapDoor = true;
+                _trapDoorTile = trapDoorTile;
+            }
+            if(_justGoneOverTrapDoor)
+            {
+                _trapRoomDoorTimer += GBL.DeltaTime;
+                if(_trapRoomDoorTimer >= _trapDoorTimer)
+                {
+                    _justGoneOverTrapDoor = false;
+                    _trapRoomDoorTimer = 0f;
 
-            if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out chestTile))
+                    if(!_alreadyGoneIntoTrapDoor)
+                    {
+                        map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 17);
+                        _alreadyGoneIntoTrapDoor = true;
+                    }
+                    
+                }
+            }
+
+            if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile))
             {
                 _player.ChestOpened(_player._position);
 
-                var map = _tilemap.Layers[1];
+                var map1 = _tilemap.Layers[1];
 
-                map.SetTile(chestTile.X, chestTile.Y, 0);
+                map1.SetTile(chestTile.X, chestTile.Y, 0);
+
+                if(_alreadyGoneIntoTrapDoor) map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 3);
             }
 
             if (GBL.KeyPress(Keys.Tab))
@@ -333,10 +362,13 @@ namespace Nummi
             // clears all sprites
             _spriteList.Clear();
         }
-        public void PrepNextLevel(int level)
+        public void PrepNextLevel()
         {
             // if more levels are added this will be used to reset values between levels
-            _prepForNextLevel = level;
+
+            _alreadyGoneIntoTrapDoor = false;
+            _justGoneOverTrapDoor = false;
+            _trapRoomDoorTimer = 0f;
         }
         // Starts Heads level
         public void StartHeadsLevel(int level)
@@ -534,6 +566,7 @@ namespace Nummi
 
         public void NextLevel()
         {
+            PrepNextLevel();
             if (_currentLevel >= LevelData.LastLevelIndex)
             {
                 StartTitle();

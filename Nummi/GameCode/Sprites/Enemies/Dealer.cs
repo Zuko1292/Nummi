@@ -26,7 +26,7 @@ namespace Nummi
         bool _throwing = false;
 
         public Dealer(Game1 gameRoot, Vector2 position, TempState tempState)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Dealer_PH"), position, false, 200, 220, 10, false, 0)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Dealer_PH"), position, false, 200, 220, 10, false, 0, 400f)
         {
             _tempState = tempState;
 
@@ -36,6 +36,7 @@ namespace Nummi
                 _lifeDuration = 2f;
                 _throwCooldown = 3f;
                 _chipMoveSpeed = 50f;
+                _aggrorange = 100f;
             }
             else
             {
@@ -69,7 +70,8 @@ namespace Nummi
             animations[3].Add(new Rectangle(0, 144, 32, 48));
 
 
-            _nextAnim = new List<int>() { 0 };
+            _nextAnim = new List<int>();
+            for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
             return animations;
         }
 
@@ -88,6 +90,24 @@ namespace Nummi
             if(_animIndex == 1 || _animIndex == 3)
             {
                 _throwing = true;
+            }
+
+            switch(_tempState)
+            {
+                case TempState.Frozen:
+                    if (_gameRoot._player._position.X < _position.X - _aggrorange || _gameRoot._player._position.X > _position.X + _aggrorange)
+                    {
+                        SetAnimation(0);
+                        _throwing = false;
+                    }
+                    break;
+                case TempState.Thawed:
+                    if (_gameRoot._player._position.X < _position.X - _aggrorange || _gameRoot._player._position.X > _position.X + _aggrorange)
+                    {
+                        SetAnimation(2);
+                        _throwing = false;
+                    }
+                    break;
             }
         }
 
