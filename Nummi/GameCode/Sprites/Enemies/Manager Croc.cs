@@ -17,7 +17,7 @@ namespace Nummi
         }
 
         public Manager_Croc(Game1 gameRoot, Texture2D texture, Vector2 position)
-            : base(gameRoot, texture, position, true, 100, 200, 30, true, 50f, 400f)
+            : base(gameRoot, texture, position, true, 100, 200, 30, true, 50f, 400f, 300f)
         {
         }
     }

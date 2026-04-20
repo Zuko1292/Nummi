@@ -23,7 +23,7 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            _weaponDamage = 10;
+            _weaponDamage = _gameRoot._player.Stats.WeaponDmg;
 
             _lifetime -= GBL.DeltaTime;
 

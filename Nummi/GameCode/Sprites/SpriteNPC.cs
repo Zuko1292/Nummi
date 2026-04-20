@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,13 +11,14 @@ namespace Nummi
     {
         protected bool _isTalking = false;
         protected float _talkingDuration = 2f;
-        protected float _talkingCooldown = 2f;
+        protected float _talkingCooldown = 0f;
         protected float _speechTimer = 0f;
         protected float _walkingArea = 50f;
         protected bool _canInteract = false;
         protected float _spawnPlace;
+        protected float _walkingTime;
 
-        public SpriteNPC(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, float speechTimer)
+        public SpriteNPC(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, float speechTimer, float walkingArea, float walkingTime)
             : base(gameRoot, texture, position, canMove)
         {
             _canFlip = true;
@@ -26,6 +26,8 @@ namespace Nummi
             _spawnPlace = position.X;
             _texture = texture;
             _talkingDuration = speechTimer;
+            _walkingArea = walkingArea;
+            _walkingTime = walkingTime;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -68,24 +70,24 @@ namespace Nummi
             }
             else
             {
-                _isTalking = false; // Re-enable player movement after talking
+                _isTalking = false;
                 _talkingCooldown -= GBL.DeltaTime;
             }
 
-            if(_canMove && !_isTalking)
+            if (_canMove && !_isTalking)
             {
-                // Simple back-and-forth movement within the walking area
-                _velocity.X = _walkingArea * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds) * 0.5f; // Oscillate between -walkingArea and +walkingArea
-
-                if(_position.X < _spawnPlace - _walkingArea) _position.X = _spawnPlace - _walkingArea;
-                if(_position.X > _spawnPlace + _walkingArea) _position.X = _spawnPlace + _walkingArea;
+                _velocity.X = _walkingArea * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds / _walkingTime) * 0.5f;
+                if (_position.X < _spawnPlace - _walkingArea) _position.X = _spawnPlace - _walkingArea;
+                if (_position.X > _spawnPlace + _walkingArea) _position.X = _spawnPlace + _walkingArea;
                 SetAnimation(1);
             }
 
-            if (_collisionBounds.Intersects(_gameRoot._player._collisionBounds) && !_canInteract && _talkingCooldown <= 0f)
+            if (_collisionBounds.Intersects(_gameRoot._player._collisionBounds) && _talkingCooldown <= 0f)
             {
                 _canInteract = true;
-                if (GBL.KeyPress(Keys.E))
+
+                // Only open dialog if one isn't already open
+                if (GBL.KeyPress(Keys.E) && (_gameRoot._box == null || _gameRoot._box.Dead))
                 {
                     DialogueTrigger();
                 }
@@ -100,10 +102,13 @@ namespace Nummi
 
         public void DialogueTrigger()
         {
-            _speechTimer = _talkingDuration; // Reset speech timer to 3 seconds
-            _talkingCooldown = 2f; // Set cooldown to prevent immediate re-triggering
-            _gameRoot._player._canMove = false; // Disable player movement while talking
-            _gameRoot._box = new DialogBox(_gameRoot, _position + new Vector2(0, -40), "Hello there!\nWelcome to the world of Nummi!", "Feel free to explore and talk to other characters!");
+            _speechTimer = _talkingDuration;
+            _talkingCooldown = 2f;
+            _gameRoot._player._canMove = false;
+            _gameRoot._box = new DialogBox(
+                _gameRoot,
+                "Hello there!\nWelcome to the world of Nummi!",
+                "Feel free to explore and talk to other characters!");
             _gameRoot._newSpriteList.Add(_gameRoot._box);
         }
     }

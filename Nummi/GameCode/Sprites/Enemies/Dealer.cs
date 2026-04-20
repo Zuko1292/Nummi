@@ -26,7 +26,7 @@ namespace Nummi
         bool _throwing = false;
 
         public Dealer(Game1 gameRoot, Vector2 position, TempState tempState)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Dealer_PH"), position, false, 200, 220, 10, false, 0, 400f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Dealer_PH"), position, false, 200, 220, 10, false, 0, 400f, 70f)
         {
             _tempState = tempState;
 

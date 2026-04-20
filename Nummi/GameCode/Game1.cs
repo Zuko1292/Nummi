@@ -26,8 +26,10 @@ namespace Nummi
         protected float _stateTimer;
         protected bool _coinLvl = false;
         public bool _coinSide = true; // true for heads and false for tails
-        public float _health = 100f;
+        public float _health;
         public bool canSeePlayer = false;
+        private float _spawnProtectionTimer = 0f;
+        private const float SpawnProtectionDuration = 0.1f;
 
         public float _trapRoomDoorTimer = 0f;
         public float _trapDoorTimer = 1f;
@@ -57,6 +59,7 @@ namespace Nummi
         public SpriteNPC _npc;
         public DialogBox _box;
         public Camera2D _tailsCamera;
+        public HUD _hud;
 
         public TilemapGroup _tilemap;
 
@@ -132,12 +135,12 @@ namespace Nummi
 
             buildingSystem.hotkeys[Keys.D2] =
                 new BuildingType("Factory", factoryTexture, new Point(2, 2));
+
+            _hud = new HUD(this, font);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            Debug.WriteLine($"justgoneovertrapdoor: {_justGoneOverTrapDoor}, alreadygoneintotrapdoor: {_alreadyGoneIntoTrapDoor}, traproomdoortimer: {_trapRoomDoorTimer}");
-
             GBL.Update(gameTime, this);
 
             switch (_gameState)
@@ -175,6 +178,7 @@ namespace Nummi
 
         public void UpdateHeadsLevel(GameTime gameTime)
         {
+            Debug.WriteLine(_health);
 
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
                     _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
@@ -241,7 +245,10 @@ namespace Nummi
                 || _currentLevel == 1
                 || _currentLevel == 2) _coinLvl = true;
 
-            if (!_spriteList.OfType<SpritePlayer>().Any())
+            if (_spawnProtectionTimer > 0f)
+                _spawnProtectionTimer -= GBL.DeltaTime;
+
+            if (_spawnProtectionTimer <= 0f && !_spriteList.OfType<SpritePlayer>().Any())
             {
                 PlayerDied();
             }
@@ -379,10 +386,13 @@ namespace Nummi
             // clears old sprites
             _spriteList.Clear();
             _newSpriteList.Clear();
+            _spawnProtectionTimer = SpawnProtectionDuration;
             // spawns the sprites that appear at start of game
             LevelData.SpawnLevel(_currentLevel, this);
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
                     _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
+
+            _health = _player.Stats.MaxHP;
         }
         // Start Tails level
         public void StartTailsLevel(int level)
@@ -481,6 +491,11 @@ namespace Nummi
             {
                 case GameState.Paused: DrawPaused(); break;
                 case GameState.DeathScreen: DrawDeathScreen(); break;
+                case GameState.HeadsLevel:
+                    _hud.Draw(_player);
+                    foreach (Sprite s in _spriteList)
+                        if (s is DialogBox db) db.Draw(GBL.spriteBatch);
+                    break;
                 case GameState.Guide: DrawGuide(); break;
                 case GameState.Settings: DrawSettings(); break;
             }
@@ -540,7 +555,6 @@ namespace Nummi
         {
             _player = null;
 
-            _health = 100;
             StartHeadsLevel(0);
 
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,

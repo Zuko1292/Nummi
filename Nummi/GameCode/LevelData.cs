@@ -21,6 +21,9 @@ namespace Nummi
                     gameRoot._spriteList.Clear();
                     gameRoot._newSpriteList.Clear();
 
+                    CharacterStats savedStats = gameRoot._player?.Stats ?? new CharacterStats(str: 1, vit: 1);
+                    LevelSystem savedLevelSystem = gameRoot._player?.LevelSystem ?? new LevelSystem();
+
                     gameRoot._player = null;
 
                     switch (level)
@@ -32,10 +35,15 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(45, 45), true);
                             gameRoot._spriteList.Add(gameRoot._player);
 
+                            gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(30, 45)));
+
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House2_v2"), TilePos(14, 18)));
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House1_v2"), TilePos(20, 18)));
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House3_v2"), TilePos(26, 18)));
 
+                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(26, 21), true, 3f, 85f, 0.98f));
+                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(14, 20), true, 3f, 75f, 1.02f));
+                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(20, 23), true, 3f, 50f, 1.05f));
 
                             gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Backgrounds\\HeadsLevelBackgroundPlaceholder"));
                             gameRoot._spriteList.Add(gameRoot._levelBackground);
@@ -45,7 +53,7 @@ namespace Nummi
                         case 1:
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[2]);
 
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 8), true);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 8), true, savedStats, savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
                             //// Room 2 Enemies
@@ -84,7 +92,7 @@ namespace Nummi
                             gameRoot._bossDead = false;
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[3]);
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 8), true);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 8), true, savedStats, savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
                             //// Room 2 Enemies

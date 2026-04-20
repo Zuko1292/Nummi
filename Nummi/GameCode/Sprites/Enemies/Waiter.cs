@@ -20,7 +20,7 @@ namespace Nummi
         TempState _tempState;
 
         public Waiter(Game1 gameRoot, Vector2 position, TempState tempState)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Sprites/Enemies/Waiter"), position, true, 150, 220, 20, false, 100, 400f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Sprites/Enemies/Waiter"), position, true, 150, 220, 20, false, 100, 400f, 80f)
         {
             _tempState = tempState;
 

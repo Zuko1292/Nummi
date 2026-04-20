@@ -54,10 +54,14 @@ namespace Nummi
 
         public SpriteEffects _lockedFlipEffect;
 
+        public CharacterStats Stats { get; private set; }
+        public LevelSystem LevelSystem { get; private set; }
+
         #endregion ***** Member variables *****
 
         #region ***** Constructors *****
 
+        // This Constructor is used when starting a new game, so the player starts with default stats and level progression
         public SpritePlayer(Game1 gameRoot, Vector2 position, bool canMove)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), position, canMove, true)
         {
@@ -71,6 +75,31 @@ namespace Nummi
 
             CollisionLayer = CollisionLayer.Player;
             CollisionMask = CollisionLayer.All;
+
+            Stats = new CharacterStats(str: 5, vit: 5);
+            LevelSystem = new LevelSystem();
+
+            LevelSystem.OnLevelUp += HandleLevelUp;
+        }
+
+        // This Constructor is used when going to a new level, so the player keeps their stats and level progression
+        public SpritePlayer(Game1 gameRoot, Vector2 position, bool canMove, CharacterStats existingStats, LevelSystem existingLevel)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), position, canMove, true)
+        {
+            _restitution = 0.0f;
+            _friction = 0.25f;
+            _drag = 0.0f;
+
+            _layerDepth = 0.3f;
+
+            _canFlip = true;
+
+            CollisionLayer = CollisionLayer.Player;
+            CollisionMask = CollisionLayer.All;
+
+            Stats = existingStats;
+            LevelSystem = existingLevel;
+            LevelSystem.OnLevelUp += HandleLevelUp;
         }
 
         #endregion ***** Constructors *****
@@ -428,6 +457,219 @@ namespace Nummi
             DroppedWeapon droppedWeapon = new DroppedWeapon(_gameRoot, _position, new Random().Next(0, 5));
             _gameRoot._newSpriteList.Add(droppedWeapon);
         }
+
+        private void HandleLevelUp()
+        {
+            Stats.Strength.Modify(+2);
+            Stats.Vitality.Modify(+2);
+        }
+        public void OnEnemyKilled(float xpValue)
+        {
+            LevelSystem.AddXP(xpValue);
+        }
         #endregion ***** Member methods: Update *****
+    }
+
+    public class Stat
+    {
+        public string Name { get; private set; }
+        public float BaseValue { get; private set; }
+        public float CurrentValue { get; private set; }
+        public float MaxValue { get; private set; }
+
+        public Stat(string name, float baseValue, float maxValue)
+        {
+            Name = name;
+            BaseValue = baseValue;
+            CurrentValue = baseValue;
+            MaxValue = maxValue;
+        }
+
+        public void Modify(float amount)
+        {
+            CurrentValue = Math.Clamp(CurrentValue + amount, 0, MaxValue);
+        }
+
+        public void Reset() => CurrentValue = BaseValue;
+    }
+
+    public class CharacterStats
+    {
+
+        public Stat Strength { get; private set; }
+        public Stat Vitality { get; private set; }
+
+        public CharacterStats(int str, int vit)
+        {
+            Strength = new Stat("Strength", str, 99);
+            Vitality = new Stat("Vitality", vit, 99);
+        }
+
+        public int MaxHP => (int)(Vitality.CurrentValue * 10);
+        public int WeaponDmg => (int)(Strength.CurrentValue * 2.5f);
+    }
+
+    public class LevelSystem
+    {
+        public int Level { get; private set; }
+        public float CurrentXP { get; private set; }
+        public float XPToNextLevel { get; private set; }
+
+        private const float BaseXP = 100f;       
+        private const float ScaleRate = 1.02f;   
+
+        public event Action OnLevelUp;           
+
+        public LevelSystem()
+        {
+            Level = 1;
+            CurrentXP = 0;
+            XPToNextLevel = BaseXP;
+        }
+
+        public void AddXP(float amount)
+        {
+            CurrentXP += amount;
+
+            while (CurrentXP >= XPToNextLevel)
+            {
+                CurrentXP -= XPToNextLevel;       
+                LevelUp();
+            }
+        }
+
+        private void LevelUp()
+        {
+            Level++;
+            XPToNextLevel *= ScaleRate;           
+            OnLevelUp?.Invoke();                  
+        }
+
+        public float XPForLevel(int targetLevel)
+        {
+            float xp = BaseXP;
+            for (int i = 1; i < targetLevel; i++)
+                xp *= ScaleRate;
+            return xp;
+        }
+    }
+
+    public class HUD
+    {
+        private Texture2D _pixel;
+        private SpriteFont _font;
+
+        Game1 _gameRoot;
+
+        public HUD(Game1 gameRoot, SpriteFont font)
+        {
+            _gameRoot = gameRoot;
+            _font = font;
+            _pixel = new Texture2D(GBL.GD, 1, 1);
+            _pixel.SetData(new[] { Color.White });
+        }
+
+        public void Draw(SpritePlayer player)
+        {
+            DrawHealthBar(player);
+            DrawXPBar(player.LevelSystem);
+        }
+
+        private void DrawHealthBar(SpritePlayer player)
+        {
+            int barWidth = 225;  // 75% of 300
+            int barHeight = 9;   // 75% of 12
+            int x = 20, y = 30; // Above the XP bar
+
+            float fill = _gameRoot._health / player.Stats.MaxHP;
+            fill = Math.Clamp(fill, 0f, 1f);
+
+            float uiLayer = 0.1f;
+
+            // Background
+            GBL.spriteBatch.Draw(
+                _pixel,
+                new Rectangle(x, y, barWidth, barHeight),
+                null,
+                Color.DarkRed,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                uiLayer
+            );
+
+            // Fill - changes colour based on health
+            Color fillColor = fill > 0.5f ? Color.LimeGreen : fill > 0.25f ? Color.Orange : Color.Red;
+            GBL.spriteBatch.Draw(
+                _pixel,
+                new Rectangle(x, y, (int)(barWidth * fill), barHeight),
+                null,
+                fillColor,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                uiLayer - 0.001f
+            );
+
+            // Text
+            GBL.spriteBatch.DrawString(
+                _font,
+                $"HP {(int)_gameRoot._health}/{player.Stats.MaxHP}",
+                new Vector2(x, y - 14),
+                Color.White,
+                0f,
+                Vector2.Zero,
+                0.75f,   // 75% text scale
+                SpriteEffects.None,
+                uiLayer - 0.002f
+            );
+        }
+
+        private void DrawXPBar(LevelSystem lvl)
+        {
+            int barWidth = 225;  // 75% of 300
+            int barHeight = 9;   // 75% of 12
+            int x = 20, y = 55; // Below health bar
+
+            float fill = lvl.CurrentXP / lvl.XPToNextLevel;
+            float uiLayer = 0.1f;
+
+            // Background
+            GBL.spriteBatch.Draw(
+                _pixel,
+                new Rectangle(x, y, barWidth, barHeight),
+                null,
+                Color.DarkGray,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                uiLayer
+            );
+
+            // Fill
+            GBL.spriteBatch.Draw(
+                _pixel,
+                new Rectangle(x, y, (int)(barWidth * fill), barHeight),
+                null,
+                Color.Gold,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                uiLayer - 0.001f
+            );
+
+            // Text
+            GBL.spriteBatch.DrawString(
+                _font,
+                $"LVL {lvl.Level}  {lvl.CurrentXP:0}/{lvl.XPToNextLevel:0} XP",
+                new Vector2(x, y - 14),
+                Color.White,
+                0f,
+                Vector2.Zero,
+                0.75f,   // 75% text scale
+                SpriteEffects.None,
+                uiLayer - 0.002f
+            );
+        }
     }
 }

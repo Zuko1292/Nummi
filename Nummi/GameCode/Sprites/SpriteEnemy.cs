@@ -37,6 +37,8 @@ namespace Nummi
         protected float _knockbackTimer = 0f;
         protected float _knockbackDuration = 0.2f;
 
+        public float _xpValue = 10f;
+
         public SpriteEffects _lockedFlipEffect;
 
         private Vector2 Direction;
@@ -46,6 +48,7 @@ namespace Nummi
             set
             {
                 _dead = value;
+                _gameRoot._player.OnEnemyKilled(_xpValue);
             }
 
             get
@@ -54,7 +57,7 @@ namespace Nummi
             }
         }
 
-        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health, int knockbackStrength, int damageStrength, bool isBoss, float moveSpeed, float aggroRange)
+        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health, int knockbackStrength, int damageStrength, bool isBoss, float moveSpeed, float aggroRange, float xpValue)
             : base(gameRoot, texture, position, canMove)
         {
             CollisionLayer = CollisionLayer.Enemy;
@@ -68,6 +71,7 @@ namespace Nummi
             _moveSpeed = moveSpeed;
             _aggrorange = aggroRange;
             _canFlip = true;
+            _xpValue = xpValue;
         }
 
         public override void Update(GameTime gameTime)

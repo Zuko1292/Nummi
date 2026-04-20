@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,31 +10,67 @@ namespace Nummi
     public class DialogBox : Sprite
     {
         protected Vector2 _txtPos;
-        string _firstText, _secondText;
-        bool _textChanged = false;
+        private string _firstText, _secondText;
+        private bool _textChanged = false;
+        private bool _justOpened = true;
 
-        public DialogBox(Game1 gameRoot, Vector2 position, string first, string second)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\UI\\Dialog Box"), position, false, false)
+        private int _boxWidth = 600;
+        private int _boxHeight = 120;
+
+        public DialogBox(Game1 gameRoot, string first, string second)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\UI\\Dialog Box"),
+                   Vector2.Zero, false, false)
         {
-            _position = position;
             _firstText = first;
             _secondText = second;
+            PositionToScreen();
+        }
+
+        private void PositionToScreen()
+        {
+            int screenWidth = GBL.GD.Viewport.Width;
+            int screenHeight = GBL.GD.Viewport.Height;
+
+            _position = new Vector2(
+                screenWidth / 2f,
+                screenHeight * 0.18f
+            );
+        }
+
+        private Rectangle GetBoxRect()
+        {
+            return new Rectangle(
+                (int)(_position.X - _boxWidth / 2f),
+                (int)(_position.Y - _boxHeight / 2f),
+                _boxWidth,
+                _boxHeight
+            );
         }
 
         public override void Update(GameTime gameTime)
         {
-            _txtPos = (_position - new Vector2(_texture.Width / 2, _texture.Height / 2));
+            PositionToScreen();
 
-            _visibleBounds = new Rectangle((int)_position.X, (int)_position.Y, _texture.Width, _texture.Height);
+            _visibleBounds = GetBoxRect();
 
-            if(!_textChanged && GBL.KeyPress(Keys.E))
+            if (_justOpened)
             {
-                _textChanged = true;
+                _justOpened = false;
+                base.Update(gameTime);
+                return;
             }
-            else if(_textChanged && GBL.KeyPress(Keys.E))
+
+            if (GBL.KeyPress(Keys.E))
             {
-                _dead = true;
-                _gameRoot._player._canMove = true;
+                if (!_textChanged)
+                {
+                    _textChanged = true;
+                }
+                else
+                {
+                    _dead = true;
+                    _gameRoot._player._canMove = true;
+                }
             }
 
             base.Update(gameTime);
@@ -43,19 +78,33 @@ namespace Nummi
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            base.Draw(spriteBatch);
+            if (_dead || _isHidden) return;
 
-            string _textToDisplay = _textChanged ? _secondText : _firstText;
+            Rectangle boxRect = GetBoxRect();
 
-            string[] lines = _textToDisplay.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            GBL.spriteBatch.Draw(
+                _texture,
+                boxRect,
+                null,
+                Color.White,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0.09f
+            );
 
-            if(!_dead && !_isHidden)
+            Vector2 textStart = new Vector2(
+                boxRect.X + 20f,
+                boxRect.Y + 20f
+            );
+
+            string textToDisplay = _textChanged ? _secondText : _firstText;
+            string[] lines = textToDisplay.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var line in lines)
             {
-                foreach(var line in lines)
-                {
-                    GBL.spriteBatch.DrawString(_gameRoot.font, line, _txtPos, Color.White);
-                    _txtPos.Y += _gameRoot.font.LineSpacing;
-                }
+                GBL.spriteBatch.DrawString(_gameRoot.font, line, textStart, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.08f);
+                textStart.Y += _gameRoot.font.LineSpacing;
             }
         }
     }
