@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nummi;
+using System;
 using System.Diagnostics;
 
 namespace Nummi
@@ -30,6 +31,9 @@ namespace Nummi
                     {
                         case 0:
 
+                            gameRoot._useLighting = false;
+                            gameRoot._torchPositions = Array.Empty<Vector2>();
+
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[0]);
 
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(45, 45), true);
@@ -52,6 +56,9 @@ namespace Nummi
                             break;
                         case 1:
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[2]);
+
+                            gameRoot._useLighting = false;
+                            gameRoot._torchPositions = Array.Empty<Vector2>();
 
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 8), true, savedStats, savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
@@ -90,6 +97,13 @@ namespace Nummi
                             break;
                         case 2:
                             gameRoot._bossDead = false;
+
+                            gameRoot._useLighting = true;
+                            gameRoot._torchPositions = new Vector2[]
+                            {
+                                // Add the torches
+                                LevelData.TilePos(30, 7),  
+                            };
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[3]);
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 8), true, savedStats, savedLevelSystem);

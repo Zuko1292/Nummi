@@ -36,7 +36,7 @@ namespace Nummi
         public float _lastSeenTimer = 2f;
 
         protected Game1 _gameRoot;
-        protected Texture2D _texture;
+        public Texture2D _texture;
 
         public Vector2 _position;
         public Vector2 _velocity;
@@ -46,7 +46,7 @@ namespace Nummi
         protected float _drag;
         protected float _restitution;
 
-        protected Vector2 _origin;
+        public Vector2 _origin;
         protected Vector2 _drawScale;
         protected Vector2 _collisionScale;
 

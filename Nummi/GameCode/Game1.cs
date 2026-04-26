@@ -46,6 +46,12 @@ namespace Nummi
         GridRenderer gridRenderer;
         BuildingSystem buildingSystem;
 
+        // Lighting Variables
+
+        public Vector2[] _torchPositions = Array.Empty<Vector2>();
+        public LightingRenderer _lighting;
+        public bool _useLighting = false;
+
         Texture2D houseTexture;
         Texture2D factoryTexture;
 
@@ -137,6 +143,8 @@ namespace Nummi
                 new BuildingType("Factory", factoryTexture, new Point(2, 2));
 
             _hud = new HUD(this, font);
+
+            _lighting = new LightingRenderer();
         }
 
         protected override void Update(GameTime gameTime)
@@ -178,7 +186,9 @@ namespace Nummi
 
         public void UpdateHeadsLevel(GameTime gameTime)
         {
-            Debug.WriteLine(_health);
+
+            if (_useLighting)
+                _lighting.TorchLightRadius = 80 + (int)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10) * 5);
 
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
                     _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
@@ -449,6 +459,15 @@ namespace Nummi
 
         protected override void Draw(GameTime gameTime)
         {
+            if (_useLighting && _gameState == GameState.HeadsLevel)
+            {
+                _lighting.DrawLighting(
+                    _player._position + new Vector2(-10, -10), 
+                    _torchPositions,
+                    GBL._camera._transform
+                );
+            }
+
             GBL.GD.Clear(Color.DarkGreen);
 
             GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, transformMatrix: GBL._camera._transform);
@@ -475,20 +494,14 @@ namespace Nummi
 
             GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend);
 
+            if (_useLighting && _gameState == GameState.HeadsLevel)
+                _lighting.ApplyLighting();
+
             // controls what to draw on each state
             switch (_gameState)
             {
                 case GameState.Title: DrawTitle(); break;
                 case GameState.MainMenu: DrawMainMenu(); break;
-                
-            }
-
-            // draws each sprite from spritelist
-
-            
-
-            switch (_gameState)
-            {
                 case GameState.Paused: DrawPaused(); break;
                 case GameState.DeathScreen: DrawDeathScreen(); break;
                 case GameState.HeadsLevel:
