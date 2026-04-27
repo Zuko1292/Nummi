@@ -59,6 +59,12 @@ namespace Nummi
             int index = row * Columns + column;
             return GetTile(index);
         }
+        public int GetTileId(int column, int row)
+        {
+            int index = row * Columns + column;
+            if (index < 0 || index >= _tiles.Length) return -1;
+            return _tiles[index];
+        }
         // Draws this tilemap using the GBL.SpriteBatch and creates a destination rectangle.
         public void Draw(float depth)
         {

@@ -29,7 +29,8 @@ namespace Nummi
 
                     switch (level)
                     {
-                        case 0:
+                        case 2:
+                            gameRoot._isTrapLevel = false;
 
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
@@ -55,6 +56,8 @@ namespace Nummi
                             // gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(12, 5), true, 3f));
                             break;
                         case 1:
+                            gameRoot._isTrapLevel = true;
+
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[2]);
 
                             gameRoot._useLighting = false;
@@ -95,7 +98,9 @@ namespace Nummi
 
 
                             break;
-                        case 2:
+                        case 0:
+
+                            gameRoot._isTrapLevel = true;
                             gameRoot._bossDead = false;
 
                             gameRoot._useLighting = true;
@@ -139,6 +144,9 @@ namespace Nummi
                         case 0:
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
 
+                            gameRoot._grid.ResetBuildable(); // Clear old data first
+                            GenerateBuildableFromTilemap(gameRoot._grid, gameRoot._tilemap, 0);
+
                             gameRoot._spriteList.Add(new Grid(gameRoot, new Vector2(1024 + (5 * 32), 1024)));
 
                             gameRoot._levelBackground = new Background(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Backgrounds\\MainMenuBackgroundPlaceholder"));
@@ -162,6 +170,43 @@ namespace Nummi
             return TilePos(new Point(X, Y));
         }
 
+        public static void GenerateBuildableFromTilemap(GridSystem grid, TilemapGroup tilemap, int grassTileId)
+        {
+            var groundLayer = tilemap.Layers[0];
+            var objectLayer = tilemap.Layers[1];
+
+            for (int x = 0; x < groundLayer.Columns; x++)
+            {
+                for (int y = 0; y < groundLayer.Rows; y++)
+                {
+                    int groundTileId = groundLayer.GetTileId(x, y);
+                    int objectTileId = objectLayer.GetTileId(x, y);
+
+                    // Buildable only if grass AND nothing on top
+                    bool isGrass = groundTileId == grassTileId;
+                    bool hasObject = objectTileId >= 0; // -1 = empty, anything else = object
+
+                    grid.SetBuildable(new Point(x, y), isGrass && !hasObject);
+                }
+            }
+        }
+
+        private static void SetBuildingLimits(Game1 gameRoot, int tailsLevel)
+        {
+            gameRoot.buildingSystem.ResetCounts();
+
+            switch (tailsLevel)
+            {
+                case 0:
+                    gameRoot.buildingSystem.SetLimit("House", 3);
+                    gameRoot.buildingSystem.SetLimit("Factory", 1);
+                    break;
+                case 1:
+                    gameRoot.buildingSystem.SetLimit("House", 6);
+                    gameRoot.buildingSystem.SetLimit("Factory", 3);
+                    break;
+            }
+        }
 
     }
 }

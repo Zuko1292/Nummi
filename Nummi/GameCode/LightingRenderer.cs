@@ -71,25 +71,36 @@ namespace Nummi
         public void DrawLighting(Vector2 playerWorldPos, Vector2[] torchWorldPositions, Matrix cameraTransform)
         {
             GBL.GD.SetRenderTarget(_darknessTarget);
-
             GBL.GD.Clear(new Color(0, 0, 0, (int)(AmbientDarkness * 255)));
 
+            // Punch transparent holes in the alpha channel
             GBL.spriteBatch.Begin(SpriteSortMode.Immediate, SubtractAlphaBlend,
                 SamplerState.PointClamp,
                 null, null, null,
                 cameraTransform);
 
-            DrawLight(playerWorldPos, PlayerLightRadius);
-
+            DrawLight(playerWorldPos, PlayerLightRadius, Color.White);
             foreach (var torchPos in torchWorldPositions)
-                DrawLight(torchPos, TorchLightRadius);
+                DrawLight(torchPos, TorchLightRadius, Color.White);
+
+            GBL.spriteBatch.End();
+
+            // Add colour tint on top additively
+            GBL.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
+                SamplerState.PointClamp,
+                null, null, null,
+                cameraTransform);
+
+            // Torches get a subtle orange tint added
+            foreach (var torchPos in torchWorldPositions)
+                DrawLight(torchPos, TorchLightRadius, new Color(80, 40, 0)); // Dark orange, subtle
 
             GBL.spriteBatch.End();
 
             GBL.GD.SetRenderTarget(null);
         }
 
-        private void DrawLight(Vector2 worldPos, int radius)
+        private void DrawLight(Vector2 worldPos, int radius, Color colour)
         {
             GBL.spriteBatch.Draw(
                 _lightGradient,
@@ -99,7 +110,7 @@ namespace Nummi
                     radius * 2,
                     radius * 2),
                 null,
-                Color.White,
+                colour,
                 0f,
                 Vector2.Zero,
                 SpriteEffects.None,

@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Nummi;
 
 namespace Nummi
@@ -19,6 +13,7 @@ namespace Nummi
         public Vector2 Origin { get; set; } = Vector2.Zero;
 
         private bool[,] occupied;
+        private bool[,] buildable;
 
         public GridSystem(int width, int height, int tileSize)
         {
@@ -26,6 +21,7 @@ namespace Nummi
             Height = height;
             TileSize = tileSize;
             occupied = new bool[width, height];
+            buildable = new bool[width, height];
         }
 
         public Point WorldToGrid(Vector2 worldPos)
@@ -58,6 +54,25 @@ namespace Nummi
         public void SetOccupied(Point pos, bool value)
         {
             occupied[pos.X, pos.Y] = value;
+        }
+
+        public void SetBuildable(Point pos, bool value)
+        {
+            if (pos.X >= 0 && pos.Y >= 0 && pos.X < Width && pos.Y < Height)
+                buildable[pos.X, pos.Y] = value;
+        }
+
+        public bool IsBuildable(Point pos)
+        {
+            if (pos.X < 0 || pos.Y < 0 || pos.X >= Width || pos.Y >= Height)
+                return false;
+            return buildable[pos.X, pos.Y];
+        }
+
+        // Call this when switching levels so old buildable data is cleared
+        public void ResetBuildable()
+        {
+            buildable = new bool[Width, Height];
         }
     }
 }

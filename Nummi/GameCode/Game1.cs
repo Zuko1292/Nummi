@@ -36,15 +36,16 @@ namespace Nummi
         public bool _justGoneOverTrapDoor = false;
         public bool _alreadyGoneIntoTrapDoor = false;
         public Point _trapDoorTile;
+        public bool _isTrapLevel = false;
         public Tilemap map => _tilemap.Layers[0];
 
         public bool _bossDead = true;
 
         // Tails Variables
 
-        GridSystem grid;
+        public GridSystem _grid;
         GridRenderer gridRenderer;
-        BuildingSystem buildingSystem;
+        public BuildingSystem buildingSystem;
 
         // Lighting Variables
 
@@ -54,6 +55,7 @@ namespace Nummi
 
         Texture2D houseTexture;
         Texture2D factoryTexture;
+        Texture2D _shopButtonTexture;
 
         public SpriteFont font;
 
@@ -61,6 +63,7 @@ namespace Nummi
 
         public SpritePlayer _player;
         TextButton playButton;
+        TextButton shopButton;
         public Background _levelBackground;
         public SpriteNPC _npc;
         public DialogBox _box;
@@ -104,11 +107,12 @@ namespace Nummi
 
             playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
 
+            shopButton = new TextButton(font, "Shop", new Vector2(740, 450));
+
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
 
-            grid = new GridSystem(64, 64, 32);
-
-            grid.Origin = new Vector2(1, 1);   
+            _grid = new GridSystem(64, 64, 32);
+            _grid.Origin = new Vector2(1, 1);
 
             base.Initialize();
 
@@ -130,17 +134,18 @@ namespace Nummi
 
             _tilemap = Tilemap.FromFile(levelFiles[1]);
 
-            gridRenderer = new GridRenderer(GraphicsDevice, grid);
-            buildingSystem = new BuildingSystem(grid);
+            gridRenderer = new GridRenderer(GraphicsDevice, _grid);
+            buildingSystem = new BuildingSystem(_grid);
 
             houseTexture = Content.Load<Texture2D>("Textures\\Houses\\House1");
             factoryTexture = Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks");
+            _shopButtonTexture = Content.Load<Texture2D>("Textures\\UI\\Dialog Box");
 
             buildingSystem.hotkeys[Keys.D1] =
-                new BuildingType("House", houseTexture, new Point(1, 1));
+                new BuildingType("House", houseTexture, new Point(4, 3));
 
             buildingSystem.hotkeys[Keys.D2] =
-                new BuildingType("Factory", factoryTexture, new Point(2, 2));
+                new BuildingType("Factory", factoryTexture, new Point(4, 4));
 
             _hud = new HUD(this, font);
 
@@ -273,7 +278,7 @@ namespace Nummi
                 _justGoneOverTrapDoor = true;
                 _trapDoorTile = trapDoorTile;
             }
-            if(_justGoneOverTrapDoor)
+            if(_justGoneOverTrapDoor && _isTrapLevel)
             {
                 _trapRoomDoorTimer += GBL.DeltaTime;
                 if(_trapRoomDoorTimer >= _trapDoorTimer)
@@ -322,7 +327,7 @@ namespace Nummi
 
             _tailsCamera.Update(gameTime);
 
-            if (GBL.KeyPress(Keys.LeftShift))
+            if (GBL.KeyPress(Keys.LeftControl))
             {
                 StartHeadsLevel(0);
             }
@@ -344,6 +349,12 @@ namespace Nummi
 
             // Show grid only in build mode
             gridRenderer.Visible = buildingSystem.IsBuildMode;
+
+            shopButton.Update();
+             if (shopButton.IsClicked)
+            {
+                // Open shop menu
+            }
         }
 
         public void UpdateSettings(GameTime gameTime)
@@ -508,6 +519,10 @@ namespace Nummi
                     _hud.Draw(_player);
                     foreach (Sprite s in _spriteList)
                         if (s is DialogBox db) db.Draw(GBL.spriteBatch);
+                    break;
+                case GameState.TailsLevel:
+                    shopButton.Draw();
+                    GBL.spriteBatch.Draw(_shopButtonTexture, new Rectangle(691, 434, 96, 32), _shopButtonTexture.Bounds, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.09f);
                     break;
                 case GameState.Guide: DrawGuide(); break;
                 case GameState.Settings: DrawSettings(); break;
