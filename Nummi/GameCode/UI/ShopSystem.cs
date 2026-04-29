@@ -16,11 +16,13 @@ namespace Nummi
 
         public ShopSystem(Game1 gameRoot)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\UI\\Dialog Box"),
-                   Vector2.Zero, false, false)
+                   new Vector2(675, 20), false, false)
         {
 
         }
 
 
     }
+
+
 }

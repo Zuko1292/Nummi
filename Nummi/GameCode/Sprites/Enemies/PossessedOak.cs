@@ -66,6 +66,11 @@ namespace Nummi
                 _branchSpawnTimer = 0f;
                 BranchSpawn();
             }
+
+            if(GBL.KeyPress(Keys.Space))
+            {
+                Dead = true;
+            }
         }
 
         public void OnDeath()

@@ -13,16 +13,22 @@ namespace Nummi
         public float AmbientDarkness = 0.92f;
         public int PlayerLightRadius = 80;
         public int TorchLightRadius = 50;
-
         private const int PixelSize = 8;
 
-        // This blend subtracts the light texture's alpha from the darkness
-        private static readonly BlendState SubtractAlphaBlend = new BlendState
+        private static readonly BlendState AlphaSubtract = new BlendState
         {
             ColorWriteChannels = ColorWriteChannels.Alpha,
             AlphaBlendFunction = BlendFunction.ReverseSubtract,
             AlphaSourceBlend = Blend.One,
-            AlphaDestinationBlend = Blend.One,
+            AlphaDestinationBlend = Blend.One
+        };
+
+        private static readonly BlendState ColourOnly = new BlendState
+        {
+            ColorWriteChannels = ColorWriteChannels.Red | ColorWriteChannels.Green | ColorWriteChannels.Blue,
+            ColorBlendFunction = BlendFunction.Add,
+            ColorSourceBlend = Blend.One,
+            ColorDestinationBlend = Blend.One
         };
 
         public LightingRenderer()
@@ -60,7 +66,7 @@ namespace Nummi
                     float alpha = 1f - MathHelper.Clamp(dist / (size / 2f), 0f, 1f);
                     alpha = (float)Math.Floor(alpha * 5f) / 5f;
 
-                    data[y * size + x] = new Color(1f, 1f, 1f, alpha);
+                    data[y * size + x] = new Color(alpha, alpha, alpha, alpha);
                 }
             }
 
@@ -73,11 +79,9 @@ namespace Nummi
             GBL.GD.SetRenderTarget(_darknessTarget);
             GBL.GD.Clear(new Color(0, 0, 0, (int)(AmbientDarkness * 255)));
 
-            // Punch transparent holes in the alpha channel
-            GBL.spriteBatch.Begin(SpriteSortMode.Immediate, SubtractAlphaBlend,
-                SamplerState.PointClamp,
-                null, null, null,
-                cameraTransform);
+            // Pass 1 - punch transparent holes in alpha channel only
+            GBL.spriteBatch.Begin(SpriteSortMode.Immediate, AlphaSubtract,
+                SamplerState.PointClamp, null, null, null, cameraTransform);
 
             DrawLight(playerWorldPos, PlayerLightRadius, Color.White);
             foreach (var torchPos in torchWorldPositions)
@@ -85,15 +89,12 @@ namespace Nummi
 
             GBL.spriteBatch.End();
 
-            // Add colour tint on top additively
-            GBL.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive,
-                SamplerState.PointClamp,
-                null, null, null,
-                cameraTransform);
+            // Pass 2 - add colour tint to RGB only, doesnt touch alpha
+            GBL.spriteBatch.Begin(SpriteSortMode.Immediate, ColourOnly,
+                SamplerState.PointClamp, null, null, null, cameraTransform);
 
-            // Torches get a subtle orange tint added
             foreach (var torchPos in torchWorldPositions)
-                DrawLight(torchPos, TorchLightRadius, new Color(80, 40, 0)); // Dark orange, subtle
+                DrawLight(torchPos, TorchLightRadius, new Color(60, 25, 0));
 
             GBL.spriteBatch.End();
 

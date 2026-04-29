@@ -13,6 +13,9 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Maps/Dungeon1-BossRoom.xml
+/copy:Maps/Dungeon1-BossRoom.xml
+
 #begin Maps/Dungeon1-Section1.xml
 /copy:Maps/Dungeon1-Section1.xml
 

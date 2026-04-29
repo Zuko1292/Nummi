@@ -91,5 +91,11 @@ namespace Nummi
             tile = Point.Zero;
             return false;
         }
+        public void SetRules(TilemapRules rules)
+        {
+            // Apply rules to all layers
+            foreach (var layer in _layers)
+                layer.SetRules(rules);
+        }
     }
 }

@@ -53,8 +53,7 @@ namespace Nummi
         public LightingRenderer _lighting;
         public bool _useLighting = false;
 
-        Texture2D houseTexture;
-        Texture2D factoryTexture;
+        Texture2D _barracksTexture, _nuclearReactorTxr, _houseTexture;
         Texture2D _shopButtonTexture;
 
         public SpriteFont font;
@@ -77,7 +76,8 @@ namespace Nummi
             "Maps/HeadsTown.xml",
             "Maps/TailsTown1.xml",
             "Maps/Dungeon1-Section1.xml",
-            "Maps/Dungeon1-Section2.xml"
+            "Maps/Dungeon1-Section2.xml",
+            "Maps/Dungeon1-BossRoom.xml"
         };
 
         public List<Sprite> _spriteList = new List<Sprite>();
@@ -130,22 +130,22 @@ namespace Nummi
         {
             GBL.spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            _tilemap = Tilemap.FromFile(levelFiles[0]);
-
-            _tilemap = Tilemap.FromFile(levelFiles[1]);
-
             gridRenderer = new GridRenderer(GraphicsDevice, _grid);
             buildingSystem = new BuildingSystem(_grid);
 
-            houseTexture = Content.Load<Texture2D>("Textures\\Houses\\House1");
-            factoryTexture = Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks");
+            _houseTexture = Content.Load<Texture2D>("Textures\\Houses\\House1");
+            _barracksTexture = Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks");
+            _nuclearReactorTxr = Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor");
             _shopButtonTexture = Content.Load<Texture2D>("Textures\\UI\\Dialog Box");
 
             buildingSystem.hotkeys[Keys.D1] =
-                new BuildingType("House", houseTexture, new Point(4, 3));
+                new BuildingType("House", _houseTexture, new Point(4, 3));
 
             buildingSystem.hotkeys[Keys.D2] =
-                new BuildingType("Factory", factoryTexture, new Point(4, 4));
+                new BuildingType("Barracks", _barracksTexture, new Point(4, 4));
+
+            buildingSystem.hotkeys[Keys.D3] =
+                new BuildingType("Shop", _shopButtonTexture, new Point(4, 3));
 
             _hud = new HUD(this, font);
 
@@ -691,6 +691,12 @@ namespace Nummi
                 }
             }
             return true;
+        }
+
+        public void OpenShop()
+        {
+            ShopSystem shop = new ShopSystem(this);
+            _newSpriteList.Add(shop);
         }
 
         #endregion ***** Utility Functions *****

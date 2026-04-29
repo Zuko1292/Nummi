@@ -9,7 +9,15 @@ namespace Nummi
     public static class LevelData
     {
 
-        public static int LastLevelIndex = 2;
+        public static int LastLevelIndex = 3;
+
+        // Rules for Heads town and Tails Town and Dungeon 1 section 1 and 2 (which share the same tileSet)
+        public static readonly TilemapRules Rules1 = new TilemapRules()
+            .AddSolid(4, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31)
+            .AddExit(14, 22)
+            .AddChest(7)
+            .AddTrapDoor(3);
+
 
         public static void SpawnLevel(int level, Game1 gameRoot)
         {
@@ -29,13 +37,15 @@ namespace Nummi
 
                     switch (level)
                     {
-                        case 2:
+                        case 0:
+
                             gameRoot._isTrapLevel = false;
 
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[0]);
+                            gameRoot._tilemap.SetRules(Rules1);
 
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(45, 45), true);
                             gameRoot._spriteList.Add(gameRoot._player);
@@ -59,6 +69,7 @@ namespace Nummi
                             gameRoot._isTrapLevel = true;
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[2]);
+                            gameRoot._tilemap.SetRules(Rules1);
 
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
@@ -98,19 +109,33 @@ namespace Nummi
 
 
                             break;
-                        case 0:
+                        case 2:
 
                             gameRoot._isTrapLevel = true;
-                            gameRoot._bossDead = false;
 
                             gameRoot._useLighting = true;
                             gameRoot._torchPositions = new Vector2[]
                             {
-                                // Add the torches
-                                LevelData.TilePos(30, 7),  
+                                TilePos(41, 10)- new Vector2(10, 10),
+                                TilePos(41, 6)- new Vector2(10, 10),
+                                TilePos(49, 4)- new Vector2(10, 10),
+                                TilePos(55, 12)- new Vector2(10, 10),
+                                TilePos(59, 12)- new Vector2(10, 10),
+                                TilePos(49, 19)- new Vector2(10, 10),
+                                TilePos(59, 20)- new Vector2(10, 10),
+                                TilePos(54, 23)- new Vector2(10, 10),
+                                TilePos(54, 25)- new Vector2(10, 10),
+                                TilePos(59, 24)- new Vector2(10, 10),
+                                TilePos(59, 28)- new Vector2(10, 10),
+                                TilePos(41, 21)- new Vector2(10, 10),
+                                TilePos(41, 27)- new Vector2(10, 10),
+                                TilePos(35, 21)- new Vector2(10, 10),
+                                TilePos(35, 27)- new Vector2(10, 10),
+                                TilePos(49, 29)- new Vector2(10, 10)
                             };
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[3]);
+                            gameRoot._tilemap.SetRules(Rules1);
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 8), true, savedStats, savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
@@ -130,6 +155,20 @@ namespace Nummi
                             //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(56, 42)));
 
                             break;
+                        case 3:
+                            gameRoot._bossDead = false;
+                            gameRoot._isTrapLevel = false;
+
+                            gameRoot._useLighting = false;
+                            gameRoot._torchPositions = Array.Empty<Vector2>();
+
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[4]);
+                            gameRoot._tilemap.SetRules(Rules1);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 3), true, savedStats, savedLevelSystem);
+                            gameRoot._spriteList.Add(gameRoot._player);
+
+                            gameRoot._spriteList.Add(new PossessedTree(gameRoot, TilePos(10, 14)));
+                            break;
                     }
                     break;
                 case GameState.TailsLevel:
@@ -143,6 +182,7 @@ namespace Nummi
                     {
                         case 0:
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
+                            SetBuildingLimits(gameRoot, 0);
 
                             gameRoot._grid.ResetBuildable(); // Clear old data first
                             GenerateBuildableFromTilemap(gameRoot._grid, gameRoot._tilemap, 0);
@@ -199,11 +239,11 @@ namespace Nummi
             {
                 case 0:
                     gameRoot.buildingSystem.SetLimit("House", 3);
-                    gameRoot.buildingSystem.SetLimit("Factory", 1);
+                    gameRoot.buildingSystem.SetLimit("Barracks", 1);
                     break;
                 case 1:
                     gameRoot.buildingSystem.SetLimit("House", 6);
-                    gameRoot.buildingSystem.SetLimit("Factory", 3);
+                    gameRoot.buildingSystem.SetLimit("Barracks", 3);
                     break;
             }
         }
