@@ -105,6 +105,8 @@ namespace Nummi
 
             font = Content.Load<SpriteFont>("MyFont");
 
+            _tilemap = Tilemap.FromFile(levelFiles[0]);
+
             playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
 
             shopButton = new TextButton(font, "Shop", new Vector2(740, 450));

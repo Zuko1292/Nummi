@@ -79,7 +79,6 @@ namespace Nummi
             GBL.GD.SetRenderTarget(_darknessTarget);
             GBL.GD.Clear(new Color(0, 0, 0, (int)(AmbientDarkness * 255)));
 
-            // Pass 1 - punch transparent holes in alpha channel only
             GBL.spriteBatch.Begin(SpriteSortMode.Immediate, AlphaSubtract,
                 SamplerState.PointClamp, null, null, null, cameraTransform);
 
@@ -89,7 +88,6 @@ namespace Nummi
 
             GBL.spriteBatch.End();
 
-            // Pass 2 - add colour tint to RGB only, doesnt touch alpha
             GBL.spriteBatch.Begin(SpriteSortMode.Immediate, ColourOnly,
                 SamplerState.PointClamp, null, null, null, cameraTransform);
 
