@@ -11,11 +11,11 @@ namespace Nummi
 
         public List<PlacedBuilding> placedBuildings = new();
         public Dictionary<Keys, BuildingType> hotkeys = new();
-        public Dictionary<string, int> buildingLimits = new();   // Max per building name
-        public Dictionary<string, int> buildingCounts = new();   // Current count per name
+        public Dictionary<string, int> buildingLimits = new();   // Max per building
+        public Dictionary<string, int> buildingCounts = new();   // Current count
 
         private BuildingType selectedBuilding = null;
-        private bool buildMode = false;
+        public bool buildMode = false;
         private bool _leftWasReleased = true;
 
         public BuildingSystem(GridSystem grid)
@@ -39,14 +39,14 @@ namespace Nummi
 
         public bool CanPlaceMore(string buildingName)
         {
-            if (!buildingLimits.ContainsKey(buildingName)) return true; // No limit set = unlimited
+            if (!buildingLimits.ContainsKey(buildingName)) return true;
             if (!buildingCounts.ContainsKey(buildingName)) return true;
             return buildingCounts[buildingName] < buildingLimits[buildingName];
         }
 
         public int RemainingCount(string buildingName)
         {
-            if (!buildingLimits.ContainsKey(buildingName)) return -1; // -1 = unlimited
+            if (!buildingLimits.ContainsKey(buildingName)) return -1;
             int placed = buildingCounts.ContainsKey(buildingName) ? buildingCounts[buildingName] : 0;
             return buildingLimits[buildingName] - placed;
         }
@@ -65,7 +65,7 @@ namespace Nummi
                 }
             }
 
-            if (GBL.KeyPress(Keys.Escape))
+            if (GBL.KeyPress(Keys.B))
             {
                 buildMode = false;
                 selectedBuilding = null;

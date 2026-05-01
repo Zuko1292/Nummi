@@ -83,14 +83,8 @@ namespace Nummi
         {
             base.Update(gameTime);
 
-            if (GBL.KeyPress(Keys.G))
-            {
-                _isHidden = true;
-            }
-            else if (GBL.KeyPress(Keys.H))
-            {
-                _isHidden = false;
-            }
+            if (!_gameRoot.buildingSystem.buildMode) _isHidden = true;
+            else _isHidden = false;
         }
     }
 }

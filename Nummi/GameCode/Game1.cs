@@ -63,7 +63,7 @@ namespace Nummi
         public SpritePlayer _player;
         TextButton playButton;
         TextButton shopButton;
-        public Background _levelBackground;
+        Background _MenuBackground;
         public SpriteNPC _npc;
         public DialogBox _box;
         public Camera2D _tailsCamera;
@@ -110,6 +110,8 @@ namespace Nummi
             playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
 
             shopButton = new TextButton(font, "Shop", new Vector2(740, 450));
+
+            _MenuBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 1);
 
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
 
@@ -189,6 +191,8 @@ namespace Nummi
             {
                 StartNewGame();
             }
+
+            _MenuBackground.Update(gameTime);
         }
 
         public void UpdateHeadsLevel(GameTime gameTime)
@@ -537,18 +541,11 @@ namespace Nummi
 
         public void DrawTitle()
         {
+            _MenuBackground.Draw(GBL.spriteBatch);
 
         }
         public void DrawMainMenu()
         {
-            GBL.spriteBatch.Draw(Content.Load<Texture2D>("Textures\\Backgrounds\\MainMenuBackgroundPlaceHolder"),
-                new Rectangle(0, 0, _screenBounds.Width, _screenBounds.Height),
-                null,
-                Color.White,
-                0f,
-                Vector2.Zero,
-                SpriteEffects.None,
-                0.04f);
             playButton.Draw();
             
         }
