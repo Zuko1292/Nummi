@@ -119,7 +119,7 @@ namespace Nummi
 
         public void ApplyLighting()
         {
-            GBL.spriteBatch.Draw(_darknessTarget, Vector2.Zero, Color.White);
+            GBL.spriteBatch.Draw(_darknessTarget, Vector2.Zero, null,Color.White, 0f, Vector2.Zero, 1f,SpriteEffects.None, 0.15f);
         }
     }
 }

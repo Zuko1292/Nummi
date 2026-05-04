@@ -18,6 +18,13 @@ namespace Nummi
             .AddChest(7)
             .AddTrapDoor(3);
 
+        // Rules for dungeon 1 section 1, 2 and 3 (which share the same tileSet)
+        public static readonly TilemapRules Rules2 = new TilemapRules()
+            .AddSolid(0, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30)
+            .AddExit(39, 47)
+            .AddChest(24)
+            .AddTrapDoor(46);
+
 
         public static void SpawnLevel(int level, Game1 gameRoot)
         {
@@ -37,7 +44,7 @@ namespace Nummi
 
                     switch (level)
                     {
-                        case 0:
+                        case 2:
 
                             gameRoot._isTrapLevel = false;
 
@@ -106,7 +113,7 @@ namespace Nummi
 
 
                             break;
-                        case 2:
+                        case 0:
 
                             gameRoot._isTrapLevel = true;
 

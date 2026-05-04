@@ -460,8 +460,8 @@ namespace Nummi
 
         private void HandleLevelUp()
         {
-            Stats.Strength.Modify(+2);
-            Stats.Vitality.Modify(+2);
+            Stats.Strength.Modify(+1);
+            Stats.Vitality.Modify(+1);
         }
         public void OnEnemyKilled(float xpValue)
         {
@@ -505,7 +505,7 @@ namespace Nummi
             Vitality = new Stat("Vitality", vit, 99);
         }
 
-        public int MaxHP => (int)(Vitality.CurrentValue * 10);
+        public int MaxHP => (int)(Vitality.CurrentValue * 15);
         public int WeaponDmg => (int)(Strength.CurrentValue * 2.5f);
     }
 
@@ -516,7 +516,7 @@ namespace Nummi
         public float XPToNextLevel { get; private set; }
 
         private const float BaseXP = 100f;       
-        private const float ScaleRate = 1.02f;   
+        private const float ScaleRate = 1.08f;   
 
         public event Action OnLevelUp;           
 
