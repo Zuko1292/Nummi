@@ -44,7 +44,7 @@ namespace Nummi
 
                     switch (level)
                     {
-                        case 2:
+                        case 0:
 
                             gameRoot._isTrapLevel = false;
 
@@ -113,7 +113,7 @@ namespace Nummi
 
 
                             break;
-                        case 0:
+                        case 2:
 
                             gameRoot._isTrapLevel = true;
 

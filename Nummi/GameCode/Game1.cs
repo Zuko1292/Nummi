@@ -110,10 +110,9 @@ namespace Nummi
             playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
 
             shopButton = new TextButton(font, "Shop", new Vector2(740, 450));
+            _screenBounds = GBL.GD.PresentationParameters.Bounds;
 
             _MenuBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 1);
-
-            _screenBounds = GBL.GD.PresentationParameters.Bounds;
 
             _grid = new GridSystem(64, 64, 32);
             _grid.Origin = new Vector2(1, 1);
@@ -181,6 +180,7 @@ namespace Nummi
         public void UpdateTitle(GameTime gameTime)
         {
             if (GBL.KeyPress(Keys.Enter)) StartMainMenu();
+            _MenuBackground.Update(gameTime);
         }
 
         public void UpdateMainMenu(GameTime gameTime)

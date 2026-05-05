@@ -31,20 +31,20 @@ namespace Nummi
 
             // Spinning Coin
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 0, 320, 320));
-            animations[0].Add(new Rectangle(320, 0, 320, 320));
-            animations[0].Add(new Rectangle(640, 0, 320, 320));
-            animations[0].Add(new Rectangle(960, 0, 320, 320));
-            animations[0].Add(new Rectangle(1280, 0, 320, 320));
-            animations[0].Add(new Rectangle(1600, 0, 320, 320));
-            animations[0].Add(new Rectangle(1920, 0, 320, 320));
-            animations[0].Add(new Rectangle(2240, 0, 320, 320));
-            animations[0].Add(new Rectangle(2560, 0, 320, 320));
-            animations[0].Add(new Rectangle(2880, 0, 320, 320));
-            animations[0].Add(new Rectangle(3200, 0, 320, 320));
-            animations[0].Add(new Rectangle(3520, 0, 320, 320));
-            animations[0].Add(new Rectangle(3840, 0, 320, 320));
-            animations[0].Add(new Rectangle(3160, 0, 320, 320));
+            animations[0].Add(new Rectangle(0, 0, 800, 480));
+            animations[0].Add(new Rectangle(800, 0, 800, 480));
+            animations[0].Add(new Rectangle(1600, 0, 800, 480));
+            animations[0].Add(new Rectangle(2400, 0, 800, 480));
+            animations[0].Add(new Rectangle(3200, 0, 800, 480));
+            animations[0].Add(new Rectangle(4000, 0, 800, 480));
+            animations[0].Add(new Rectangle(4800, 0, 800, 480));
+            animations[0].Add(new Rectangle(5600, 0, 800, 480));
+            animations[0].Add(new Rectangle(6400, 0, 800, 480));
+            animations[0].Add(new Rectangle(7200, 0, 800, 480));
+            animations[0].Add(new Rectangle(8000, 0, 800, 480));
+            animations[0].Add(new Rectangle(8800, 0, 800, 480));
+            animations[0].Add(new Rectangle(9600, 0, 800, 480));
+            animations[0].Add(new Rectangle(10400, 0, 800, 480));
 
 
             _nextAnim = new List<int>();
