@@ -114,15 +114,8 @@ namespace Nummi
     {
         private Vector2 _attackDirection;
 
-        private float _extendScale = 0f; 
-        private float _extendSpeed = 3f;
-
-        private bool _extending = true;
-        private float _idleTimer = 0f;
-        private float _idleDuration = 3f;
-
         public Branch(Game1 gameRoot, Vector2 position, Vector2 attackDirection)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Branch"), position, true, 100, 220, 10, true, 0, 400f, 0f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Root Slap-Sheet"), position, true, 100, 220, 10, true, 0, 400f, 0f)
         {
             if (attackDirection != Vector2.Zero)
                 _attackDirection = Vector2.Normalize(attackDirection);
@@ -139,15 +132,18 @@ namespace Nummi
 
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 
-            // Idle (retracted)
+            // Slapping (retracted)
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 0, 32, 80));
-
-            // Extending animation
-            animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(0, 0, 32, 80));
-            animations[1].Add(new Rectangle(32, 0, 32, 80));
-            animations[1].Add(new Rectangle(64, 0, 32, 80));
+            animations[0].Add(new Rectangle(116, 11, 11, 5));
+            animations[0].Add(new Rectangle(179, 6, 12, 10));
+            animations[0].Add(new Rectangle(234, 2, 21, 14));
+            animations[0].Add(new Rectangle(276, 3, 43, 13));
+            animations[0].Add(new Rectangle(322, 4, 61, 13));
+            animations[0].Add(new Rectangle(386, 3, 61, 14));
+            animations[0].Add(new Rectangle(468, 3, 43, 13));
+            animations[0].Add(new Rectangle(554, 2, 21, 14));
+            animations[0].Add(new Rectangle(628, 6, 12, 10));
+            animations[0].Add(new Rectangle(691, 11, 12, 5));
 
             _nextAnim = new List<int>() { 0, 0 }; 
 
@@ -156,66 +152,11 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            float dt = GBL.DeltaTime;
-
-            if (_extending)
-            {
-                SetAnimation(1);
-
-                _extendScale += _extendSpeed * dt;
-
-                if (_extendScale >= 1f)
-                {
-                    _extendScale = 1f;
-                    _extending = false;
-                    _idleTimer = _idleDuration;
-                    SetAnimation(0);
-                }
-            }
-
-            else if (_idleTimer > 0f)
-            {
-                _idleTimer -= dt;
-            }
-            else
-            {
-                _extendScale -= _extendSpeed * dt;
-
-                if (_extendScale <= 0f)
-                {
-                    _extendScale = 0f;
-                    Dead = true;
-                }
-            }
 
             base.Update(gameTime);
         }
 
-        protected override void UpdateBounds(GameTime gameTime)
-        {
-            Vector2 baseSize = _txrSourceBounds.Size.ToVector2();
 
-            float length = baseSize.Y * _extendScale;
-
-            // Direction the branch extends in world space
-            Vector2 dir = _attackDirection;
-
-            // Perpendicular vector (for width)
-            Vector2 perp = new Vector2(-dir.Y, dir.X);
-
-            float halfWidth = baseSize.X * 0.5f;
-
-            // Center of the branch (so it grows outward from start point)
-            Vector2 center = _position + dir * (length * 0.5f);
-
-            // Build rectangle manually
-            _visibleBounds = new Rectangle(
-                (center - new Vector2(halfWidth, length * 0.5f)).ToPoint(),
-                new Point((int)(baseSize.X), (int)(length))
-            );
-
-            _collisionBounds = _visibleBounds;
-        }
     }
 }
 

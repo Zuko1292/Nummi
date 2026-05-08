@@ -14,11 +14,13 @@ namespace Nummi
 {
     public class Game1 : Game
     {
-
+        // Used for is visible to make sprite invisible
         public Texture2D _defaultTxr;
 
         public Rectangle _screenBounds;
         public Rectangle _roomBounds;
+
+        // Heads Variables
 
         public GameState _gameState;
         public int _currentLevel;
@@ -60,6 +62,8 @@ namespace Nummi
 
         public float _scaleText = 1.0f;
 
+        // Class Variables
+
         public SpritePlayer _player;
         TextButton playButton;
         TextButton shopButton;
@@ -71,6 +75,7 @@ namespace Nummi
 
         public TilemapGroup _tilemap;
 
+        // Xml files for tilemaps
         public readonly string[] levelFiles =
         {
             "Maps/HeadsTown.xml",
@@ -80,6 +85,7 @@ namespace Nummi
             "Maps/Dungeon1-BossRoom.xml"
         };
 
+        // Sprite lists
         public List<Sprite> _spriteList = new List<Sprite>();
         public List<Sprite> _newSpriteList = new List<Sprite>();
 
@@ -93,6 +99,7 @@ namespace Nummi
             GBL.GDM.PreferredBackBufferHeight =  480;
             GBL.GDM.ApplyChanges();
 
+            // Initializes the cameras
             GBL._camera = new FollowCamera(GBL.GDM.GraphicsDevice.Viewport);
 
             _tailsCamera = new Camera2D(GraphicsDevice.Viewport, 74, 64, 32);
@@ -159,6 +166,8 @@ namespace Nummi
         {
             GBL.Update(gameTime, this);
 
+            // For separating updates into scenes
+
             switch (_gameState)
             {
                 case GameState.Title: UpdateTitle(gameTime); break;
@@ -197,17 +206,19 @@ namespace Nummi
 
         public void UpdateHeadsLevel(GameTime gameTime)
         {
-
+            // Adds flickering to the torches
             if (_useLighting)
                 _lighting.TorchLightRadius = 80 + (int)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10) * 5);
 
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
                     _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
 
+            // Pausing game
             if (GBL.KeyPress(Keys.Escape))
             {
                 SetPaused(true);
             }
+            // Goes through every sprite in sprite list
             foreach (Sprite eachSprite in _spriteList)
             {
                 if (eachSprite is SpriteEnemy enemy)
@@ -221,7 +232,6 @@ namespace Nummi
                     float distance = Vector2.Distance(playerCentre, enemyCentre);
 
                     if(enemy._canPatrol) enemy.Update(gameTime);
-
                     if (distance <= enemy._aggrorange)
                     {
                         // One of these two can see player variables is used in enemy for animation so it doesnt just stop updating and is stuck on a weird frame
@@ -230,6 +240,7 @@ namespace Nummi
 
                         bool _playerSeen = CanSeePlayer(enemyCentre, playerCentre);
 
+                        // Handles the patrolling of enemies if they can patrol
                         if (_playerSeen)
                         {
                             if(!enemy._canPatrol) enemy.Update(gameTime);
@@ -245,6 +256,7 @@ namespace Nummi
                     }
                     continue;
                 }
+                // updates every sprite in spritelist
                 eachSprite.Update(gameTime);
                 if (_prepForNextLevel >= 0)
                 {
