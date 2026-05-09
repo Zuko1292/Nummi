@@ -44,7 +44,7 @@ namespace Nummi
 
                     switch (level)
                     {
-                        case 0:
+                        case 3:
 
                             gameRoot._isTrapLevel = false;
 
@@ -159,7 +159,7 @@ namespace Nummi
                             //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(56, 42)));
 
                             break;
-                        case 3:
+                        case 0:
                             gameRoot._bossDead = false;
                             gameRoot._isTrapLevel = false;
 

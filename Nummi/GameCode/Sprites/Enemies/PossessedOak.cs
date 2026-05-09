@@ -30,7 +30,7 @@ namespace Nummi
         }
 
         public PossessedTree(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\TreeBoss_PH"), position, false, 10000, 220, 10, true, 0, 400f, 0f)// The tree is a stationary enemy That cant be killed
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss Idle-Sheet"), position, false, 10000, 220, 10, true, 0, 400f, 0f)// The tree is a stationary enemy That cant be killed
         {
 
         }
@@ -85,9 +85,18 @@ namespace Nummi
                 _collisionBounds.Center.Y
             );
 
-            Vector2 dir = _gameRoot._player._position - treeCenter;
+            Vector2 playerPos = _gameRoot._player._position;
+            Vector2 dir = playerPos - treeCenter;
 
-            Branch branch = new Branch(_gameRoot, treeCenter, dir);
+            if (dir == Vector2.Zero) return;
+
+            Vector2 dirNorm = Vector2.Normalize(dir);
+
+            // Clamp spawn to within 50px of tree centre
+            float spawnRadius = 50f;
+            Vector2 spawnPos = treeCenter + dirNorm * spawnRadius;
+
+            Branch branch = new Branch(_gameRoot, spawnPos, dir);
             _gameRoot._newSpriteList.Add(branch);
         }
     }
@@ -115,24 +124,24 @@ namespace Nummi
         private Vector2 _attackDirection;
 
         public Branch(Game1 gameRoot, Vector2 position, Vector2 attackDirection)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Root Slap-Sheet"), position, true, 100, 220, 10, true, 0, 400f, 0f)
+        : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Root Slap-Sheet"), position, false, 100, 220, 10, true, 0, 400f, 0f)
         {
             if (attackDirection != Vector2.Zero)
                 _attackDirection = Vector2.Normalize(attackDirection);
             else
                 _attackDirection = Vector2.UnitX;
 
-            _rotation = (float)Math.Atan2(_attackDirection.Y, _attackDirection.X);
-            _rotation -= MathHelper.PiOver2;
+            float angle = (float)Math.Atan2(_attackDirection.Y, _attackDirection.X);
+
+            _rotation = angle + MathHelper.Pi; 
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
         {
-            _frameDuration = 1f / 15f;
+            _frameDuration = 1f / 8f;
 
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 
-            // Slapping (retracted)
             animations.Add(new List<Rectangle>());
             animations[0].Add(new Rectangle(116, 11, 11, 5));
             animations[0].Add(new Rectangle(179, 6, 12, 10));
@@ -145,18 +154,45 @@ namespace Nummi
             animations[0].Add(new Rectangle(628, 6, 12, 10));
             animations[0].Add(new Rectangle(691, 11, 12, 5));
 
-            _nextAnim = new List<int>() { 0, 0 }; 
+            _nextAnim = new List<int>() { 0 };
 
             return animations;
+        }
+
+        protected override void OnAnimationFinished()
+        {
+            Dead = true;
         }
 
         public override void Update(GameTime gameTime)
         {
 
-            base.Update(gameTime);
+            UpdateAnimation(gameTime);
+            // Manually update visible bounds since we skip base.Update
+            _visibleBounds = new Rectangle(
+                (int)(_position.X - _origin.X),
+                (int)(_position.Y - _origin.Y),
+                _txrSourceBounds.Width,
+                _txrSourceBounds.Height
+            );
         }
 
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            if (_dead || _isHidden) return;
 
+            spriteBatch.Draw(
+                _texture,
+                _position,          // ← Use _position not _visibleBounds when using origin
+                _txrSourceBounds,
+                Color.White,
+                _rotation,
+                _origin,            // ← Pivot point for rotation
+                _drawScale,
+                _flipEffect,
+                _layerDepth
+            );
+        }
     }
 }
 

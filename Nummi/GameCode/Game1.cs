@@ -82,7 +82,8 @@ namespace Nummi
             "Maps/TailsTown1.xml",
             "Maps/Dungeon1-Section1.xml",
             "Maps/Dungeon1-Section2.xml",
-            "Maps/Dungeon1-BossRoom.xml"
+            "Maps/Dungeon1-BossRoom.xml",
+            "Maps/Dungeon2-Section1.xml",
         };
 
         // Sprite lists

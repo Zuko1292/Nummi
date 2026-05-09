@@ -97,11 +97,26 @@ namespace Nummi
         protected void ApplyFrame(Rectangle frame)
         {
             _txrSourceBounds = frame;
-
             _origin = new Vector2(frame.Width / 2f, frame.Height / 2f);
 
-            _collisionBounds.Width = (int)(frame.Width * _collisionScale.X);
-            _collisionBounds.Height = (int)(frame.Height * _collisionScale.Y);
+            // Update visible bounds - size and position centred on sprite
+            _visibleBounds = new Rectangle(
+                (int)(_position.X - frame.Width / 2f),
+                (int)(_position.Y - frame.Height / 2f),
+                (int)(frame.Width * _drawScale.X),
+                (int)(frame.Height * _drawScale.Y)
+            );
+
+            // Update collision bounds - size and position centred on sprite
+            float colWidth = frame.Width * _collisionScale.X;
+            float colHeight = frame.Height * _collisionScale.Y;
+
+            _collisionBounds = new Rectangle(
+                (int)(_position.X - colWidth / 2f),
+                (int)(_position.Y - colHeight / 2f),
+                (int)colWidth,
+                (int)colHeight
+            );
         }
         // For setting what animation you want
         protected void SetAnimation(int animIndex)

@@ -22,6 +22,9 @@
 #begin Maps/Dungeon1-Section2.xml
 /copy:Maps/Dungeon1-Section2.xml
 
+#begin Maps/Dungeon2-Section1.xml
+/copy:Maps/Dungeon2-Section1.xml
+
 #begin Maps/HeadsTown.xml
 /copy:Maps/HeadsTown.xml
 
@@ -34,18 +37,6 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:MyFont.spritefont
-
-#begin Textures/Animations/Branch.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Animations/Branch.png
 
 #begin Textures/Animations/Down Slash-Sheet.png
 /importer:TextureImporter
@@ -167,7 +158,7 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Slime Anim-Sheet.png
 
-#begin Textures/Animations/TreeBoss_PH.png
+#begin Textures/Animations/Snake Dealer Idle-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -177,7 +168,43 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Textures/Animations/TreeBoss_PH.png
+/build:Textures/Animations/Snake Dealer Idle-Sheet.png
+
+#begin Textures/Animations/Tree Boss Idle-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Tree Boss Idle-Sheet.png
+
+#begin Textures/Animations/Tree Boss Shooting-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Tree Boss Shooting-Sheet.png
+
+#begin Textures/Animations/Tree Root Slap-Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Tree Root Slap-Sheet.png
 
 #begin Textures/Animations/Up Slash-Sheet.png
 /importer:TextureImporter
@@ -214,18 +241,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Backgrounds/HeadsLevelBackgroundPlaceHolder.png
-
-#begin Textures/Backgrounds/Main Menu.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Backgrounds/Main Menu.png
 
 #begin Textures/Backgrounds/Main Menu.png
 /importer:TextureImporter
@@ -370,6 +385,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/SpecialBuildings/Nuclear Reactor.png
+
+#begin Textures/TileSets/Dungeon 2 TileSheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/TileSets/Dungeon 2 TileSheet.png
 
 #begin Textures/TileSets/Overworld Tilesheet.png
 /importer:TextureImporter
