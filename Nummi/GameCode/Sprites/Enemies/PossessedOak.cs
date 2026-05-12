@@ -30,7 +30,7 @@ namespace Nummi
         }
 
         public PossessedTree(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss Idle-Sheet"), position, false, 10000, 220, 10, true, 0, 400f, 0f)// The tree is a stationary enemy That cant be killed
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss"), position, false, 10000, 220, 10, true, 0, 400f, 0f)// The tree is a stationary enemy That cant be killed
         {
 
         }
@@ -43,7 +43,25 @@ namespace Nummi
 
             // Idle
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 0, 32, 80));
+            animations[0].Add(new Rectangle(0, 69, 64, 72));
+            animations[0].Add(new Rectangle(64, 69, 64, 72));
+            animations[0].Add(new Rectangle(128, 69, 64, 72));
+            animations[0].Add(new Rectangle(192, 69, 64, 72));
+            animations[0].Add(new Rectangle(256, 69, 64, 72));
+            animations[0].Add(new Rectangle(320, 69, 64, 72));
+            animations[0].Add(new Rectangle(384, 69, 64, 72));
+            animations[0].Add(new Rectangle(448, 69, 64, 72));
+
+            // Shooting
+            animations.Add(new List<Rectangle>());
+            animations[1].Add(new Rectangle(0, 0, 64, 69));
+            animations[1].Add(new Rectangle(64, 0, 64, 69));
+            animations[1].Add(new Rectangle(128, 0, 64, 69));
+            animations[1].Add(new Rectangle(192, 0, 64, 69));
+            animations[1].Add(new Rectangle(256, 0, 64, 69));
+            animations[1].Add(new Rectangle(320, 0, 64, 69));
+            animations[1].Add(new Rectangle(384, 0, 64, 69));
+            animations[1].Add(new Rectangle(448, 0, 64, 69));
 
 
             _nextAnim = new List<int>() { 0, 0 };

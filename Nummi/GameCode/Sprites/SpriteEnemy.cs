@@ -15,6 +15,7 @@ namespace Nummi
     {
         protected float _moveSpeed;
         public int _health;
+        public int _maxHealth;
         public Vector2 _lastSeenPos;
         public int _knockbackStrength;
         public int _damageStrength;
@@ -72,6 +73,7 @@ namespace Nummi
             _aggrorange = aggroRange;
             _canFlip = true;
             _xpValue = xpValue;
+            _maxHealth = health;
         }
 
         public override void Update(GameTime gameTime)

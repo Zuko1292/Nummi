@@ -14,9 +14,11 @@ namespace Nummi
         public Dictionary<string, int> buildingLimits = new();   // Max per building
         public Dictionary<string, int> buildingCounts = new();   // Current count
 
-        private BuildingType selectedBuilding = null;
+        public BuildingType selectedBuilding = null;
         public bool buildMode = false;
         private bool _leftWasReleased = true;
+
+        public int _housesPlaced= 0, _barracksPlaced = 0, _farmsPlaced = 0, _nuclearReactorsPlaced = 0;
 
         public BuildingSystem(GridSystem grid)
         {
@@ -51,10 +53,15 @@ namespace Nummi
             return buildingLimits[buildingName] - placed;
         }
 
-        public void Update(Vector2 mouseWorld)
+        public void Update(Vector2 mouseWorld, Shop shop = null)
         {
             KeyboardState keyboard = Keyboard.GetState();
             MouseState mouse = Mouse.GetState();
+
+            _housesPlaced = GetPlacedCount("House");
+            _barracksPlaced = GetPlacedCount("Barracks");
+            _farmsPlaced = GetPlacedCount("Farm");
+            _nuclearReactorsPlaced = GetPlacedCount("Nuclear Reactor");
 
             foreach (var pair in hotkeys)
             {
@@ -65,7 +72,7 @@ namespace Nummi
                 }
             }
 
-            if (GBL.KeyPress(Keys.B))
+            if (GBL.KeyPress(Keys.Escape))
             {
                 buildMode = false;
                 selectedBuilding = null;
@@ -88,6 +95,10 @@ namespace Nummi
 
                 if (CanPlace(gridPos, selectedBuilding.Size))
                 {
+                    // Check shop and deduct coins before placing
+                    if (shop != null && !shop.TryPayForPlacement(selectedBuilding.Name))
+                        return; // Cant afford, dont place
+
                     for (int x = 0; x < selectedBuilding.Size.X; x++)
                     {
                         for (int y = 0; y < selectedBuilding.Size.Y; y++)
@@ -96,7 +107,6 @@ namespace Nummi
                         }
                     }
 
-                    // Track by name instead of on BuildingType itself
                     if (!buildingCounts.ContainsKey(selectedBuilding.Name))
                         buildingCounts[selectedBuilding.Name] = 0;
                     buildingCounts[selectedBuilding.Name]++;
@@ -177,6 +187,13 @@ namespace Nummi
         {
             selectedBuilding = building;
             buildMode = true;
+        }
+
+        public int GetPlacedCount(string buildingName)
+        {
+            if (buildingCounts.ContainsKey(buildingName))
+                return buildingCounts[buildingName];
+            return 0;
         }
 
         public bool IsBuildMode => buildMode;

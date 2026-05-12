@@ -42,6 +42,7 @@ namespace Nummi
         public Tilemap map => _tilemap.Layers[0];
 
         public bool _bossDead = true;
+        public SpriteEnemy _currentBoss;
 
         // Tails Variables
 
@@ -72,6 +73,9 @@ namespace Nummi
         public DialogBox _box;
         public Camera2D _tailsCamera;
         public HUD _hud;
+        public CurrencySystem _currency;
+        public Shop _shop;
+        public ShopUI _shopUI;
 
         public TilemapGroup _tilemap;
 
@@ -144,19 +148,11 @@ namespace Nummi
             gridRenderer = new GridRenderer(GraphicsDevice, _grid);
             buildingSystem = new BuildingSystem(_grid);
 
-            _houseTexture = Content.Load<Texture2D>("Textures\\Houses\\House1");
-            _barracksTexture = Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks");
-            _nuclearReactorTxr = Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor");
             _shopButtonTexture = Content.Load<Texture2D>("Textures\\UI\\Dialog Box");
 
-            buildingSystem.hotkeys[Keys.D1] =
-                new BuildingType("House", _houseTexture, new Point(4, 3));
-
-            buildingSystem.hotkeys[Keys.D2] =
-                new BuildingType("Barracks", _barracksTexture, new Point(4, 4));
-
-            buildingSystem.hotkeys[Keys.D3] =
-                new BuildingType("Shop", _shopButtonTexture, new Point(4, 3));
+            _currency = new CurrencySystem(startingCoins: 200);
+            _shop = new Shop(_currency, buildingSystem);
+            _shopUI = new ShopUI(_shop, _currency, font);
 
             _hud = new HUD(this, font);
 
@@ -165,6 +161,7 @@ namespace Nummi
 
         protected override void Update(GameTime gameTime)
         {
+
             GBL.Update(gameTime, this);
 
             // For separating updates into scenes
@@ -364,16 +361,17 @@ namespace Nummi
 
             Vector2 mouseWorld = _tailsCamera.ScreenToWorld(mouse.Position.ToVector2());
 
-            buildingSystem.Update(mouseWorld);
+            buildingSystem.Update(mouseWorld, _shop);
 
             // Show grid only in build mode
             gridRenderer.Visible = buildingSystem.IsBuildMode;
 
             shopButton.Update();
-             if (shopButton.IsClicked)
+            if (shopButton.IsClicked)
             {
-                // Open shop menu
+                _shop.Toggle();
             }
+            _shopUI.Update();
         }
 
         public void UpdateSettings(GameTime gameTime)
@@ -447,6 +445,8 @@ namespace Nummi
             _newSpriteList.Clear();
             // spawns the sprites that appear at start of game
             LevelData.SpawnLevel(_currentLevel, this);
+
+            _currency.AddCoins(_currency.Population * 50);
         }
         // starts pause when true and unpauses when false
         public void SetPaused(bool paused)
@@ -540,6 +540,7 @@ namespace Nummi
                         if (s is DialogBox db) db.Draw(GBL.spriteBatch);
                     break;
                 case GameState.TailsLevel:
+                    _shopUI.Draw();
                     shopButton.Draw();
                     GBL.spriteBatch.Draw(_shopButtonTexture, new Rectangle(691, 434, 96, 32), _shopButtonTexture.Bounds, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.09f);
                     break;
@@ -703,12 +704,6 @@ namespace Nummi
                 }
             }
             return true;
-        }
-
-        public void OpenShop()
-        {
-            ShopSystem shop = new ShopSystem(this);
-            _newSpriteList.Add(shop);
         }
 
         #endregion ***** Utility Functions *****

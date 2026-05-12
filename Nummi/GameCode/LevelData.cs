@@ -9,7 +9,7 @@ namespace Nummi
     public static class LevelData
     {
 
-        public static int LastLevelIndex = 3;
+        public static int LastLevelIndex = 4;
 
         // Rules for Heads town and Tails Town and Dungeon 1 section 1 and 2 (which share the same tileSet)
         public static readonly TilemapRules Rules1 = new TilemapRules()
@@ -20,7 +20,7 @@ namespace Nummi
 
         // Rules for dungeon 1 section 1, 2 and 3 (which share the same tileSet)
         public static readonly TilemapRules Rules2 = new TilemapRules()
-            .AddSolid(0, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30)
+            .AddSolid(0, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 25, 26, 27, 28, 29, 30, 35, 36, 37, 43, 44, 45, 51, 52, 53)
             .AddExit(39, 47)
             .AddChest(24)
             .AddTrapDoor(46);
@@ -44,7 +44,7 @@ namespace Nummi
 
                     switch (level)
                     {
-                        case 3:
+                        case 4:
 
                             gameRoot._isTrapLevel = false;
 
@@ -159,7 +159,7 @@ namespace Nummi
                             //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(56, 42)));
 
                             break;
-                        case 0:
+                        case 3:
                             gameRoot._bossDead = false;
                             gameRoot._isTrapLevel = false;
 
@@ -171,7 +171,23 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 3), true, savedStats, savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            gameRoot._spriteList.Add(new PossessedTree(gameRoot, TilePos(10, 14)));
+                            SpriteEnemy boss = new PossessedTree(gameRoot, TilePos(10, 14));
+                            gameRoot._currentBoss = boss;
+                            gameRoot._spriteList.Add(boss);
+                            break;
+                        case 0:
+                            gameRoot._isTrapLevel = true;
+
+                            gameRoot._useLighting = false;
+                            gameRoot._torchPositions = Array.Empty<Vector2>();
+
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[5]);
+                            gameRoot._tilemap.SetRules(Rules2);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 10), true, savedStats, savedLevelSystem);
+                            gameRoot._spriteList.Add(gameRoot._player);
+
+                            gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(10, 10), Dealer.TempState.Frozen));
+
                             break;
                     }
                     break;
@@ -235,16 +251,49 @@ namespace Nummi
         private static void SetBuildingLimits(Game1 gameRoot, int tailsLevel)
         {
             gameRoot.buildingSystem.ResetCounts();
+            gameRoot._shop.ClearStock();
 
             switch (tailsLevel)
             {
                 case 0:
                     gameRoot.buildingSystem.SetLimit("House", 3);
                     gameRoot.buildingSystem.SetLimit("Barracks", 1);
+
+                    gameRoot._shop.AddItem(new ShopItem(
+                        "House",
+                        "Provides housing",
+                        GBL.Content.Load<Texture2D>("Textures\\Houses\\House1"),
+                        cost: 50,
+                        building: new BuildingType("House", GBL.Content.Load<Texture2D>("Textures\\Houses\\House1"), new Point(2, 2))
+                    ));
+
+                    gameRoot._shop.AddItem(new ShopItem(
+                        "Barracks",
+                        "Trains soldiers",
+                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks"),
+                        cost: 150,
+                        building: new BuildingType("Barracks", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks"), new Point(3, 3))
+                    ));
+                    gameRoot._shop.AddItem(new ShopItem(
+                        "Farm",
+                        "Produces food",
+                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"),
+                        cost: 150,
+                        building: new BuildingType("Farm", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"), new Point(3, 3))
+                    ));
+                    gameRoot._shop.AddItem(new ShopItem(
+                        "Nuclear Reactor",
+                        "Generates energy",
+                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"),
+                        cost: 150,
+                        building: new BuildingType("Nuclear Reactor", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"), new Point(3, 3))
+                    ));
                     break;
+
                 case 1:
                     gameRoot.buildingSystem.SetLimit("House", 6);
                     gameRoot.buildingSystem.SetLimit("Barracks", 3);
+                    // Add more items or higher limits for level 1
                     break;
             }
         }

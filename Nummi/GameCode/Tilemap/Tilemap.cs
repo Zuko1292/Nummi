@@ -107,48 +107,6 @@ namespace Nummi
         public bool IsExitTileID(int tileID) => _rules.IsExit(tileID);
         public bool IsChestTileID(int tileID) => _rules.IsChest(tileID);
         public bool IsTrapDoorTileID(int tileID) => _rules.IsTrapDoor(tileID);
-        //public bool IsSolidTileID(int tileID)
-        //{
-        //    return tileID == 4 ||
-        //        tileID == 8 ||
-        //        tileID == 9 ||
-        //        tileID == 10 ||
-        //        tileID == 11 ||
-        //        tileID == 12 ||
-        //        tileID == 13 ||
-        //        tileID == 15 ||
-        //        tileID == 16 ||
-        //        tileID == 17 ||
-        //        tileID == 18 ||
-        //        tileID == 19 ||
-        //        tileID == 21 ||
-        //        tileID == 23 ||
-        //        tileID == 24 ||
-        //        tileID == 25 ||
-        //        tileID == 26 ||
-        //        tileID == 27 ||
-        //        tileID == 28 ||
-        //        tileID == 29 ||
-        //        tileID == 30 ||
-        //        tileID == 31;
-        //}
-
-        // Sets the TileID of the Tiles that should be the Exit.
-        //public bool IsExitTileID(int tileID)
-        //{
-        //    return tileID == 14 || tileID == 22;
-        //}
-        //
-        //
-        //public bool IsChestTileID(int tileID)
-        //{
-        //    return tileID == 7;
-        //}
-        //
-        //public bool IsTrapDoorTileID(int tileID)
-        //{
-        //    return tileID == 3;
-        //}
 
 
         // Gets the ID of the Tiles in the world.

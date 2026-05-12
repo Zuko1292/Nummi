@@ -15,6 +15,8 @@ namespace Nummi
 
         public static SpriteBatch spriteBatch;
 
+        public static Game1 Game;
+
         public static float DeltaTime { get; private set; }
 
         public static KeyboardState _kb;
@@ -37,10 +39,12 @@ namespace Nummi
 
         public static void Update(GameTime gameTime, Game1 gameRoot)
         {
-            if (gameRoot._player != null)
+            Game = gameRoot;
+
+            if (Game._player != null)
             {
-                Vector2 playerCentre = new Vector2(gameRoot._player._collisionBounds.X + gameRoot._player._collisionBounds.Width / 2f,
-                    gameRoot._player._collisionBounds.Y + gameRoot._player._collisionBounds.Height / 2f);
+                Vector2 playerCentre = new Vector2(Game._player._collisionBounds.X + Game._player._collisionBounds.Width / 2f,
+                    Game._player._collisionBounds.Y + Game._player._collisionBounds.Height / 2f);
                 _camera.Follow(playerCentre);
                 _camera.Update();
             }
@@ -52,6 +56,7 @@ namespace Nummi
 
             _oldkb = _kb;
             _kb = Keyboard.GetState();
+            
         }
     }
 }

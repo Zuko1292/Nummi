@@ -573,13 +573,20 @@ namespace Nummi
         {
             DrawHealthBar(player);
             DrawXPBar(player.LevelSystem);
+
+            SpriteEnemy boss = _gameRoot._currentBoss;
+
+            if (!_gameRoot._bossDead)
+            {
+                DrawBossBar(boss);
+            }
         }
 
         private void DrawHealthBar(SpritePlayer player)
         {
-            int barWidth = 225;  // 75% of 300
-            int barHeight = 9;   // 75% of 12
-            int x = 20, y = 30; // Above the XP bar
+            int barWidth = 225; 
+            int barHeight = 9;  
+            int x = 20, y = 30; 
 
             float fill = _gameRoot._health / player.Stats.MaxHP;
             fill = Math.Clamp(fill, 0f, 1f);
@@ -627,9 +634,9 @@ namespace Nummi
 
         private void DrawXPBar(LevelSystem lvl)
         {
-            int barWidth = 225;  // 75% of 300
-            int barHeight = 9;   // 75% of 12
-            int x = 20, y = 55; // Below health bar
+            int barWidth = 225; 
+            int barHeight = 9;  
+            int x = 20, y = 55; 
 
             float fill = lvl.CurrentXP / lvl.XPToNextLevel;
             float uiLayer = 0.1f;
@@ -662,6 +669,56 @@ namespace Nummi
             GBL.spriteBatch.DrawString(
                 _font,
                 $"LVL {lvl.Level}  {lvl.CurrentXP:0}/{lvl.XPToNextLevel:0} XP",
+                new Vector2(x, y - 14),
+                Color.White,
+                0f,
+                Vector2.Zero,
+                0.75f, 
+                SpriteEffects.None,
+                uiLayer - 0.002f
+            );
+        }
+
+        private void DrawBossBar(SpriteEnemy boss)
+        {
+            int barWidth = 350; 
+            int barHeight = 25;  
+            int x = 240, y = 420; 
+
+            float fill = boss._health / boss._maxHealth;
+            fill = Math.Clamp(fill, 0f, 1f);
+
+            float uiLayer = 0.1f;
+
+            // Background
+            GBL.spriteBatch.Draw(
+                _pixel,
+                new Rectangle(x, y, barWidth, barHeight),
+                null,
+                Color.DarkRed,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                uiLayer
+            );
+
+            // Fill
+            Color fillColor = Color.Red;
+            GBL.spriteBatch.Draw(
+                _pixel,
+                new Rectangle(x, y, (int)(barWidth * fill), barHeight),
+                null,
+                fillColor,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                uiLayer - 0.001f
+            );
+
+            // Text
+            GBL.spriteBatch.DrawString(
+                _font,
+                $"HP {(int)_gameRoot._health}/{boss._maxHealth}",
                 new Vector2(x, y - 14),
                 Color.White,
                 0f,

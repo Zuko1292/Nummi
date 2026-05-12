@@ -26,7 +26,7 @@ namespace Nummi
         bool _throwing = false;
 
         public Dealer(Game1 gameRoot, Vector2 position, TempState tempState)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Dealer_PH"), position, false, 200, 220, 10, false, 0, 400f, 70f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Snake Dealer"), position, false, 200, 220, 10, false, 0, 400f, 70f)
         {
             _tempState = tempState;
 
@@ -45,21 +45,47 @@ namespace Nummi
                 _throwCooldown = 1.5f;
                 _chipMoveSpeed = 150f;
             }
+
+            _canPatrol = true;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
         {
-            _frameDuration = 1f / 15f;
+            _frameDuration = 1f / 21f;
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 
             // Sleeping Frozen
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 0, 32, 48));
-            animations[0].Add(new Rectangle(32, 0, 32, 48));
+            animations[0].Add(new Rectangle(0, 0, 32, 64));
+            animations[0].Add(new Rectangle(32, 0, 32, 64));
+            animations[0].Add(new Rectangle(64, 0, 32, 64));
+            animations[0].Add(new Rectangle(96, 0, 32, 64));
+            animations[0].Add(new Rectangle(128, 0, 32, 64));
+            animations[0].Add(new Rectangle(160, 0, 32, 64));
+            animations[0].Add(new Rectangle(192, 0, 32, 64));
+            animations[0].Add(new Rectangle(224, 0, 32, 64));
+            animations[0].Add(new Rectangle(256, 0, 32, 64));
+            animations[0].Add(new Rectangle(288, 0, 32, 64));
+            animations[0].Add(new Rectangle(320, 0, 32, 64));
+            animations[0].Add(new Rectangle(352, 0, 32, 64));
+            animations[0].Add(new Rectangle(384, 0, 32, 64));
+            animations[0].Add(new Rectangle(416, 0, 32, 64));
 
             // Throwing Frozen
             animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(0, 48, 32, 48));
+            animations[0].Add(new Rectangle(0, 64, 32, 64));
+            animations[0].Add(new Rectangle(32, 64, 32, 64));
+            animations[0].Add(new Rectangle(64, 64, 32, 64));
+            animations[0].Add(new Rectangle(96, 64, 32, 64));
+            animations[0].Add(new Rectangle(128, 64, 32, 64));
+            animations[0].Add(new Rectangle(160, 64, 32, 64));
+            animations[0].Add(new Rectangle(192, 64, 32, 64));
+            animations[0].Add(new Rectangle(224, 64, 32, 64));
+            animations[0].Add(new Rectangle(256, 64, 32, 64));
+            animations[0].Add(new Rectangle(288, 64, 32, 64));
+            animations[0].Add(new Rectangle(320, 64, 32, 64));
+            animations[0].Add(new Rectangle(352, 64, 32, 64));
+
 
             // Idle Thawed
             animations.Add(new List<Rectangle>());
@@ -95,7 +121,7 @@ namespace Nummi
             switch(_tempState)
             {
                 case TempState.Frozen:
-                    if (_gameRoot._player._position.X < _position.X - _aggrorange || _gameRoot._player._position.X > _position.X + _aggrorange)
+                    if ((_gameRoot._player._position - _position).Length() > _aggrorange)
                     {
                         SetAnimation(0);
                         _throwing = false;
@@ -135,7 +161,7 @@ namespace Nummi
         float _lifeTimer = 0f;
 
         public ChipProjectile(Game1 gameRoot, Vector2 position, Vector2 target, float lifeDuration, float moveSpeed)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\ChipProjectile_PH"), position, moveSpeed, 10)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Chip Projectile"), position, moveSpeed, 10)
         {
             _velocity = Vector2.Normalize(target - _position) * _moveSpeed;
             _lifeDuration = lifeDuration;
@@ -148,14 +174,7 @@ namespace Nummi
 
             // Flying
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 0, 8, 8));
-            animations[0].Add(new Rectangle(8, 0, 8, 8));
-            animations[0].Add(new Rectangle(16, 0, 8, 8));
-            animations[0].Add(new Rectangle(24, 0, 8, 8));
-            animations[0].Add(new Rectangle(32, 0, 8, 8));
-            animations[0].Add(new Rectangle(40, 0, 8, 8));
-            animations[0].Add(new Rectangle(48, 0, 8, 8));
-            animations[0].Add(new Rectangle(56, 0, 8, 8));
+            animations[0].Add(new Rectangle(0, 0, 3, 3));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);

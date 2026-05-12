@@ -38,6 +38,18 @@
 /processorParam:TextureFormat=Compressed
 /build:MyFont.spritefont
 
+#begin Textures/Animations/Chip Projectile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Chip Projectile.png
+
 #begin Textures/Animations/Down Slash-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -170,6 +182,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Snake Dealer Idle-Sheet.png
 
+#begin Textures/Animations/Snake Dealer.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Snake Dealer.png
+
 #begin Textures/Animations/Tree Boss Idle-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -193,6 +217,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Tree Boss Shooting-Sheet.png
+
+#begin Textures/Animations/Tree Boss.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Tree Boss.png
 
 #begin Textures/Animations/Tree Root Slap-Sheet.png
 /importer:TextureImporter
