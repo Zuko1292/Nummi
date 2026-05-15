@@ -36,10 +36,12 @@ namespace Nummi
                 _lifeDuration = 2f;
                 _throwCooldown = 3f;
                 _chipMoveSpeed = 50f;
-                _aggrorange = 100f;
+                _aggrorange = 200f;
+                _frameDuration = 1f / 4f;
             }
             else
             {
+                _frameDuration = 1f / 8f;
                 SetAnimation(2);
                 _lifeDuration = 10f;
                 _throwCooldown = 1.5f;
@@ -51,7 +53,6 @@ namespace Nummi
 
         protected override List<List<Rectangle>> BuildAnimations()
         {
-            _frameDuration = 1f / 21f;
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 
             // Sleeping Frozen
@@ -73,18 +74,18 @@ namespace Nummi
 
             // Throwing Frozen
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 64, 32, 64));
-            animations[0].Add(new Rectangle(32, 64, 32, 64));
-            animations[0].Add(new Rectangle(64, 64, 32, 64));
-            animations[0].Add(new Rectangle(96, 64, 32, 64));
-            animations[0].Add(new Rectangle(128, 64, 32, 64));
-            animations[0].Add(new Rectangle(160, 64, 32, 64));
-            animations[0].Add(new Rectangle(192, 64, 32, 64));
-            animations[0].Add(new Rectangle(224, 64, 32, 64));
-            animations[0].Add(new Rectangle(256, 64, 32, 64));
-            animations[0].Add(new Rectangle(288, 64, 32, 64));
-            animations[0].Add(new Rectangle(320, 64, 32, 64));
-            animations[0].Add(new Rectangle(352, 64, 32, 64));
+            animations[1].Add(new Rectangle(0, 64, 32, 64));
+            animations[1].Add(new Rectangle(32, 64, 32, 64));
+            animations[1].Add(new Rectangle(64, 64, 32, 64));
+            animations[1].Add(new Rectangle(96, 64, 32, 64));
+            animations[1].Add(new Rectangle(128, 64, 32, 64));
+            animations[1].Add(new Rectangle(160, 64, 32, 64));
+            animations[1].Add(new Rectangle(192, 64, 32, 64));
+            animations[1].Add(new Rectangle(224, 64, 32, 64));
+            animations[1].Add(new Rectangle(256, 64, 32, 64));
+            animations[1].Add(new Rectangle(288, 64, 32, 64));
+            animations[1].Add(new Rectangle(320, 64, 32, 64));
+            animations[1].Add(new Rectangle(352, 64, 32, 64));
 
 
             // Idle Thawed
@@ -105,7 +106,31 @@ namespace Nummi
         {
             base.Update(gameTime);
 
-            if(!_throwing) _throwTimer += GBL.DeltaTime;
+            float distanceToPlayer = Vector2.Distance(_gameRoot._player._position, _position);
+
+            Debug.WriteLine($"Aggrorange: {_aggrorange}, Distance to Player: {distanceToPlayer}");
+
+            switch (_tempState)
+            {
+                case TempState.Frozen:
+                    if (distanceToPlayer > _aggrorange)
+                    {
+                        SetAnimation(0);
+                        _throwing = false;
+                        _throwTimer = 0f;
+                    }
+                    break;
+                case TempState.Thawed:
+                    if (distanceToPlayer > _aggrorange)
+                    {
+                        SetAnimation(2);
+                        _throwing = false;
+                        _throwTimer = 0f;
+                    }
+                    break;
+            }
+
+            if (!_throwing) _throwTimer += GBL.DeltaTime;
 
             if (_throwTimer >= _throwCooldown)
             {
@@ -118,23 +143,6 @@ namespace Nummi
                 _throwing = true;
             }
 
-            switch(_tempState)
-            {
-                case TempState.Frozen:
-                    if ((_gameRoot._player._position - _position).Length() > _aggrorange)
-                    {
-                        SetAnimation(0);
-                        _throwing = false;
-                    }
-                    break;
-                case TempState.Thawed:
-                    if (_gameRoot._player._position.X < _position.X - _aggrorange || _gameRoot._player._position.X > _position.X + _aggrorange)
-                    {
-                        SetAnimation(2);
-                        _throwing = false;
-                    }
-                    break;
-            }
         }
 
         protected override void OnAnimationFinished()

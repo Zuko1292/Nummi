@@ -186,7 +186,7 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 10), true, savedStats, savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(10, 10), Dealer.TempState.Frozen));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(10, 10), Waiter.TempState.Thawed));
 
                             break;
                     }
