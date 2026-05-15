@@ -69,7 +69,8 @@ namespace Nummi
                 else
                 {
                     _dead = true;
-                    _gameRoot._player._canMove = true;
+                    if(_gameRoot._gameState == GameState.HeadsLevel)
+                        _gameRoot._player._canMove = true;
                 }
             }
 

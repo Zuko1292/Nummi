@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Code_For_Nummi;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nummi;
@@ -37,6 +38,8 @@ namespace Nummi
         {
             Coins = startingCoins;
             Population = 1;
+            Food = 100;
+            Energy = 100;
         }
 
         public bool CanAfford(int cost) => Coins >= cost;
@@ -251,6 +254,27 @@ namespace Nummi
                         Color.SteelBlue, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.046f);
                 }
             }
+        }
+
+        public void DrawCurrency(int x, int y, int currency, Texture2D txr, string currencyType)
+        {
+            int panelWidth = 100;
+            int panelHeight = 24;
+
+            // Background panel
+            DrawRect(new Rectangle(x, y, panelWidth, panelHeight), Color.Black * 0.8f, 0.05f);
+            DrawRect(new Rectangle(x, y, panelWidth, panelHeight), Color.DarkGoldenrod * 0.4f, 0.051f);
+
+            // Coin icon placeholder - replace with your coin texture if you have one
+            GBL.spriteBatch.Draw(txr,
+                new Rectangle(x + 8, y + 5, 16, 16),
+                null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.048f);
+
+            // Coin amount
+            string coinText = $"{currency}{currencyType}";
+            GBL.spriteBatch.DrawString(_font, coinText,
+                new Vector2(x + 28, y + 4),
+                Color.Gold, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.047f);
         }
 
         private bool _buildingSystem_CanPlaceMore(ShopItem item) =>

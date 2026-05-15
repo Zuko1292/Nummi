@@ -32,6 +32,7 @@ namespace Nummi
         public bool canSeePlayer = false;
         private float _spawnProtectionTimer = 0f;
         private const float SpawnProtectionDuration = 0.1f;
+        public bool _showTailsIntro = false;
 
         public float _trapRoomDoorTimer = 0f;
         public float _trapDoorTimer = 1f;
@@ -335,6 +336,17 @@ namespace Nummi
 
         public void UpdateTailsLevel(GameTime gameTime)
         {
+            if (_showTailsIntro && _box != null)
+            {
+                _box.Update(gameTime);
+                if (_box.Dead)
+                {
+                    _showTailsIntro = false;
+                    _box = null;
+                }
+                return; 
+            }
+
             if (_prepForNextLevel >= 0)
             {
                 StartTailsLevel(_prepForNextLevel);
@@ -447,6 +459,9 @@ namespace Nummi
             LevelData.SpawnLevel(_currentLevel, this);
 
             _currency.AddCoins(_currency.Population * 50);
+
+            _showTailsIntro = true;
+            _box = new DialogBox(this, "Huh What the where did this gold just appear from...", "welp who cares its mine now hehehhe");
         }
         // starts pause when true and unpauses when false
         public void SetPaused(bool paused)
@@ -540,9 +555,15 @@ namespace Nummi
                         if (s is DialogBox db) db.Draw(GBL.spriteBatch);
                     break;
                 case GameState.TailsLevel:
+                    _shopUI.DrawCurrency(10, 10, _currency.Coins, GBL.Content.Load<Texture2D>("Textures\\UI\\Coin Icon"), "g");
+                    _shopUI.DrawCurrency(10, 50, _currency.Population, GBL.Content.Load<Texture2D>("Textures\\UI\\Population Icon"), "p");
+                    _shopUI.DrawCurrency(10, 90, _currency.Food, GBL.Content.Load<Texture2D>("Textures\\UI\\Food Icon"), "f");
+                    _shopUI.DrawCurrency(10, 130, _currency.Energy, GBL.Content.Load<Texture2D>("Textures\\UI\\Energy Icon"), "e");
                     _shopUI.Draw();
                     shopButton.Draw();
                     GBL.spriteBatch.Draw(_shopButtonTexture, new Rectangle(691, 434, 96, 32), _shopButtonTexture.Bounds, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.09f);
+                    if (_showTailsIntro && _box != null)
+                        _box.Draw(GBL.spriteBatch);
                     break;
                 case GameState.Guide: DrawGuide(); break;
                 case GameState.Settings: DrawSettings(); break;

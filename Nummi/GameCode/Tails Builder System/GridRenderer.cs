@@ -73,10 +73,11 @@ namespace Nummi
 
     public class Grid : Sprite
     {
+
         public Grid(Game1 gameRoot, Vector2 position)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\UI\\Grid"), position, false, false)
         {
-
+            _isHidden = true;
         }
 
         public override void Update(GameTime gameTime)
