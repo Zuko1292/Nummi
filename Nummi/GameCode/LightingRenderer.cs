@@ -15,6 +15,7 @@ namespace Nummi
         public int TorchLightRadius = 50;
         private const int PixelSize = 8;
 
+        // These blend states are used to create the lighting effect. The AlphaSubtract blend state is used to subtract the light from the darkness target, while the ColourOnly blend state is used to add the colour of the light to the darkness target. By using these blend states, we can create a more realistic lighting effect where the light not only reduces the darkness but also adds a warm colour to it.
         private static readonly BlendState AlphaSubtract = new BlendState
         {
             ColorWriteChannels = ColorWriteChannels.Alpha,
@@ -33,6 +34,7 @@ namespace Nummi
 
         public LightingRenderer()
         {
+            // The darkness target is a render target that we draw the darkness onto. We then use this render target to apply the lighting effect to the game world. By drawing the darkness onto a separate render target, we can easily manipulate it and apply the lighting effect without affecting the rest of the game's rendering.
             _darknessTarget = new RenderTarget2D(
                 GBL.GD,
                 GBL.GD.Viewport.Width,
@@ -42,9 +44,9 @@ namespace Nummi
                 DepthFormat.None,
                 0,
                 RenderTargetUsage.PreserveContents);
-
+            // The light gradient is a texture that is used to create the light effect
             _lightGradient = CreatePixelatedGradient(GBL.GD, 64);
-
+            // The pixel texture is a simple 1x1 white texture that is used for drawing the darkness and light. By using a single pixel texture, we can easily draw rectangles of any size by scaling it, which is useful for drawing the darkness and light effects.
             _pixel = new Texture2D(GBL.GD, 1, 1);
             _pixel.SetData(new[] { Color.White });
         }
@@ -54,7 +56,7 @@ namespace Nummi
             Texture2D tex = new Texture2D(gd, size, size);
             Color[] data = new Color[size * size];
             Vector2 centre = new Vector2(size / 2f, size / 2f);
-
+            // This makes it so the light gradient has a pixelated effect, which fits the art style of the game. It does this by snapping the coordinates to a grid defined by PixelSize, and then calculating the alpha value based on the distance from the center of the gradient. The alpha value is then quantized to create distinct steps in the gradient, giving it a pixelated look.
             for (int y = 0; y < size; y++)
             {
                 for (int x = 0; x < size; x++)
@@ -73,7 +75,7 @@ namespace Nummi
             tex.SetData(data);
             return tex;
         }
-
+        // This draws the lighting effect onto the darkness target first it clears the darkness aka punches a hole through it and then draws the light pixel in its place
         public void DrawLighting(Vector2 playerWorldPos, Vector2[] torchWorldPositions, Matrix cameraTransform)
         {
             GBL.GD.SetRenderTarget(_darknessTarget);
@@ -98,7 +100,7 @@ namespace Nummi
 
             GBL.GD.SetRenderTarget(null);
         }
-
+        // This draws the light
         private void DrawLight(Vector2 worldPos, int radius, Color colour)
         {
             GBL.spriteBatch.Draw(
@@ -116,7 +118,7 @@ namespace Nummi
                 0f
             );
         }
-
+        // This applies the lighting effect to the game world by drawing the darkness target over the game world. The darkness target has had the light punched through it, so when we draw it over the game world, it creates the effect of darkness with light areas where the player and torches are. By using a separate render target for the darkness, we can easily manipulate it and apply the lighting effect without affecting the rest of the game's rendering.
         public void ApplyLighting()
         {
             GBL.spriteBatch.Draw(_darknessTarget, Vector2.Zero, null,Color.White, 0f, Vector2.Zero, 1f,SpriteEffects.None, 0.15f);

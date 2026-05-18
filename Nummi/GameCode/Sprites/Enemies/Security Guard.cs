@@ -8,6 +8,7 @@ using Nummi;
 
 namespace Nummi
 {
+    // TODO make a security guard class
     public class Security_Guard
     {
         enum TempState

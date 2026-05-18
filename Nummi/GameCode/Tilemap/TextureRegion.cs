@@ -9,6 +9,7 @@ using System.Xml.Linq;
 
 namespace Nummi
 {
+    // This is the class that represents a Tile
     public class TextureRegion
     {
         public Texture2D Texture;

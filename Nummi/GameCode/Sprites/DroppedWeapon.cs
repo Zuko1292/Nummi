@@ -8,6 +8,9 @@ using Nummi;
 
 namespace Nummi
 {
+    // Class for dropped weapons, which are collectable items that the player can pick up to gain new weapons. The class inherits from SpriteCollectable, which means it has all the properties and methods of a collectable sprite, such as collision detection and animation handling. The DroppedWeapon class adds a weapon type property to determine which weapon it represents, and a pickup cooldown to prevent the player from picking it up immediately after it spawns.
+    // When changing weapons literally just change weapon type variable and that changes the animation
+    // TODO make the other weapons animations
     public class DroppedWeapon : SpriteCollectable
     {
         int _weaponType;

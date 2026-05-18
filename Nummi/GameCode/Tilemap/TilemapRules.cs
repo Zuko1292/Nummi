@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Nummi
 {
+    // This class is useful so i can have multiple tilemaps with different rules on each tiles type without needing to hardcode the rules into the tilemap class itself. For example, I can have one tilemap that has solid walls and another tilemap that has chests, and I can use the same tilemap class to handle both of them by just giving them different rules. This also makes it easy to change the rules for a tilemap without needing to change the tilemap class itself, which is useful for things like different levels or different types of maps.
     public class TilemapRules
     {
         private HashSet<int> _solidTiles = new HashSet<int>();

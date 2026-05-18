@@ -14,36 +14,45 @@ namespace Nummi
     public class SpriteEnemy : SpriteCharacter
     {
         protected float _moveSpeed;
+        // the _health is current health and the max health is well max health
         public int _health;
         public int _maxHealth;
+        // this is used to store the last position the enemy saw the player, so that they can move towards it even if they can't see the player anymore. This makes the enemy feel more intelligent and less frustrating to fight, as they will continue to chase you for a short time after losing sight of you, rather than immediately giving up and going back to patrolling.
         public Vector2 _lastSeenPos;
         public int _knockbackStrength;
         public int _damageStrength;
         public bool _isBoss;
         public float _aggrorange;
 
+        // Patrolling variables
         public bool _isPatrolling = true;
         protected float _walkingArea = 50f;
-        public bool _canPatrol = false;  
+        public bool _canPatrol = false;
+
+        // Dashing variables
         protected bool _hasDashed = true;
         public bool _isChargingDash = false;
 
         protected virtual bool IsDashing() => false;
 
+        // Invincibility frames variables
         protected float _damageCooldown = 0.5f;
         protected float _damageTimer = 0f;
         public bool _isInvincible = false;
 
+        // Knockback variables
         public bool _isKnockedback = false;
         protected float _knockbackTimer = 0f;
         protected float _knockbackDuration = 0.2f;
 
+        // Base xp value for killing the enemy, can be modified by the type of enemy or if it's a boss
         public float _xpValue = 10f;
 
         public SpriteEffects _lockedFlipEffect;
 
         private Vector2 Direction;
 
+        // override like this and if you want to do anything before it dies then do the _dead = value after and if you want to play an animation put the _dead value into the animation finished function
         public override bool Dead
         {
             set
@@ -78,7 +87,7 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-
+            // This checks if the enemy can see the player, and if they can, it updates the last seen position to the player's current position. This allows the enemy to continue moving towards the player even if they lose sight of them, creating a more dynamic and engaging combat experience.
             if (_gameRoot.canSeePlayer)
             {
                 _lastSeenPos = _gameRoot._player._position;
@@ -88,7 +97,7 @@ namespace Nummi
             {
                 Dead = true;
             }
-
+            // This makes the enemy move towards the last seen position of the player if they are not patrolling, and it also handles the knockback and invincibility timers. The enemy will continue to move towards the last seen position for a short time after losing sight of the player, making them feel more intelligent and less frustrating to fight.
             if (!_isPatrolling)
             { 
                 Direction = _lastSeenPos - _position;
@@ -102,7 +111,7 @@ namespace Nummi
                     _velocity = Direction * _moveSpeed;
                 }
             }
-
+            // This handles the patrolling behavior of the enemy, making them move back and forth within a certain area. The enemy will switch directions when they reach the edge of their walking area, creating a simple but effective patrolling pattern.
             if (_isKnockedback)
             {
                 _knockbackTimer -= GBL.DeltaTime;
@@ -112,7 +121,7 @@ namespace Nummi
                     _isKnockedback = false;
                 }
             }
-
+            // This handles the invincibility frames of the enemy, making them temporarily invincible after taking damage. This prevents the enemy from taking multiple hits in quick succession, creating a more balanced and fair combat experience.
             if (_isInvincible)
             {
                 _damageTimer -= GBL.DeltaTime;
@@ -124,12 +133,12 @@ namespace Nummi
 
             base.Update(gameTime);
         }
-
+        // Use this when you want enemy to take damage
         public void TakeDamage(int amount)
         {
             _health -= amount;
         }
-
+        // do the oncollide event like this for every class
         protected override void OnCollideEvent(Sprite otherSprite)
         {
             base.OnCollideEvent(otherSprite);
@@ -145,6 +154,7 @@ namespace Nummi
                     _isKnockedback = true;
                     _knockbackTimer = _knockbackDuration;
 
+                    // This locks the enemy's flip effect to the direction of the attack, so that they will always be knocked back in the direction of the attack, creating a more visually satisfying and intuitive combat experience.
                     _lockedFlipEffect = _flipEffect;
 
                     Vector2 knockbackDirection = Vector2.Normalize(_position - weapon._position);
@@ -153,7 +163,7 @@ namespace Nummi
             }
         }
     }
-
+    // Class for enemy projectiles
     public class SpriteEnemyProjectile : SpriteAnimating
     {
         public int _damageStrength;
@@ -188,12 +198,13 @@ namespace Nummi
 
             if (otherSprite is SpritePlayer player)
             {
+                // TODO prolly make a function for taking damage so you arent hard coding it with the variable
                 _gameRoot._health -= _damageStrength;
             }
 
             Dead = true;
         }
-
+        // so that the projectile will also die if it hits a wall, you can change this to make it bounce or something if you want by overriding it in the child class
         protected override void OnTileCollideEvent(int tileX, int tileY)
         {
             Dead = true;

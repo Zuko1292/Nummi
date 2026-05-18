@@ -8,6 +8,7 @@ using Nummi;
 
 namespace Nummi
 {
+    // for setting the backgrounds of the menus mainly
     public class Background : SpriteAnimating
     {
         int _currentbg;
@@ -52,7 +53,7 @@ namespace Nummi
 
             return animations;
         }
-
+        // This update only here if background is added to gameplay but idk
         public override void Update(GameTime gameTime)
         {
             if(_gameRoot._player != null) _position = _gameRoot._player._position;

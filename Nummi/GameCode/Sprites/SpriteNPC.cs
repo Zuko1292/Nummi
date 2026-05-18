@@ -7,6 +7,7 @@ using Nummi;
 
 namespace Nummi
 {
+    // Class for the NPCs
     public class SpriteNPC : SpriteCharacter
     {
         protected bool _isTalking = false;
@@ -61,7 +62,8 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
             _speechTimer -= GBL.DeltaTime;
-
+            // If the speech timer is above 0, the NPC is talking and can't move. Once the speech timer runs out, the NPC can move again but there is a cooldown before they can talk again.
+            // probably could be optimized by just using the talking cooldown and not having a separate speech timer, but this works fine for now
             if (_speechTimer > 0f)
             {
                 _isTalking = true;
@@ -73,7 +75,7 @@ namespace Nummi
                 _isTalking = false;
                 _talkingCooldown -= GBL.DeltaTime;
             }
-
+            // If the NPC can move and isn't talking, they will walk back and forth in a sine wave pattern. The walking area and time can be adjusted in the constructor.
             if (_canMove && !_isTalking)
             {
                 _velocity.X = _walkingArea * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds / _walkingTime) * 0.5f;
@@ -99,7 +101,7 @@ namespace Nummi
 
             base.Update(gameTime);
         }
-
+        // When the player interacts with the NPC, the speech timer is set to the talking duration, the talking cooldown is set to 2 seconds, and a dialog box is created with a message. The player can't move while the dialog box is open.
         public void DialogueTrigger()
         {
             _speechTimer = _talkingDuration;

@@ -10,6 +10,7 @@ using Nummi;
 
 namespace Nummi
 {
+    // This class defines the type of building that can be placed in the game. It includes the name, texture, and size of the building.
     public class BuildingType
     {
         public string Name;

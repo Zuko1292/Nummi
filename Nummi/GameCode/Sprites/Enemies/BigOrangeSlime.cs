@@ -15,11 +15,13 @@ namespace Nummi
 
         private Vector2 _dashDirection;
 
+        // charging dash variables
         public float _chargeDashTimer = 0f;
         public float _chargeDashDuration = 0.5f;
         private float _dashCooldown = 8f;
         private float _dashCooldownTimer = 0f;
 
+        // dash variables
         public bool _isDashing = false;
         protected float _dashTimer = 0f;
         protected float _dashDuration = 1f;

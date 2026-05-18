@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Nummi
 {
+    // This class is for Text Button for example the play button so text highlights and you can click it
     public class TextButton
     {
         private SpriteFont _font;
@@ -18,6 +19,7 @@ namespace Nummi
         private Color _hoverColor = Color.Yellow;
         private Color _currentColor;
 
+        // These properties track whether the button is being hovered over or clicked, which can be used in the game logic to trigger actions when the button is interacted with.
         public bool IsHovering { get; private set; }
         public bool IsClicked { get; private set; }
 
@@ -40,6 +42,7 @@ namespace Nummi
 
             IsHovering = bounds.Contains(mousePos);
 
+            // Handles the clicking
             if(IsHovering && GBL.LeftClick)
             {
                 IsClicked = true;
@@ -48,14 +51,14 @@ namespace Nummi
             {
                 IsClicked = false;
             }
-
+            // Handles the hovering animation and color change
             float targetScale = IsHovering ? _hoverScale : _defaultScale;
             _scale = MathHelper.Lerp(_scale, targetScale, 0.15f);
 
             Color targetColor = IsHovering ? _hoverColor : _defaultColor;
             _currentColor = Color.Lerp(_currentColor, targetColor, 0.15f);
         }
-
+        // The draw makes it so the position of the text is the middle of the text
         public void Draw()
         {
             Vector2 textSize = _font.MeasureString(_text);
@@ -73,7 +76,7 @@ namespace Nummi
                 0.01f
             );
         }
-
+        // Gets the rectangle of the text for the hovering and clicking detection, it also takes into account the scale of the text so that it works correctly when hovering and clicking
         private Rectangle GetBounds()
         {
             Vector2 textSize = _font.MeasureString(_text);

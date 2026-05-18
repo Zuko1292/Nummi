@@ -101,6 +101,7 @@ namespace Nummi
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
+            // Sets the resolution to 800x480 and applies the changes. This is a common resolution for 16:9 aspect ratio games, and it ensures that the game will have a consistent window size when it starts.
             GBL.GDM.PreferredBackBufferWidth = 800;
             GBL.GDM.PreferredBackBufferHeight =  480;
             GBL.GDM.ApplyChanges();
@@ -120,6 +121,7 @@ namespace Nummi
 
             _tilemap = Tilemap.FromFile(levelFiles[0]);
 
+            // for all buttons in the menus initialize them here and then only update and draw in the respective states
             playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
 
             shopButton = new TextButton(font, "Shop", new Vector2(740, 450));
@@ -127,13 +129,14 @@ namespace Nummi
 
             _MenuBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 1);
 
+            // makes the grid for building
             _grid = new GridSystem(64, 64, 32);
             _grid.Origin = new Vector2(1, 1);
 
             base.Initialize();
 
             var map = _tilemap.Layers[0];
-
+            // The room bounds are the area in which the player can move, which is the screen bounds minus the size of the tiles on each side. This is because the tiles on the edges are solid and the player cannot move into them.
             _roomBounds = new Rectangle(
                 (int)map.TileWidth,
                 (int)map.TileHeight,
@@ -146,11 +149,13 @@ namespace Nummi
         {
             GBL.spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // for loading the grid and building system(the grid loading isnt really necessary but it is used for the grid renderer and building system so its here)
             gridRenderer = new GridRenderer(GraphicsDevice, _grid);
             buildingSystem = new BuildingSystem(_grid);
 
             _shopButtonTexture = Content.Load<Texture2D>("Textures\\UI\\Dialog Box");
 
+            // for loading the UI and shop system and lighting system
             _currency = new CurrencySystem(startingCoins: 200);
             _shop = new Shop(_currency, buildingSystem);
             _shopUI = new ShopUI(_shop, _currency, font);
@@ -263,6 +268,7 @@ namespace Nummi
                 }
             }
 
+            // adds new sprites to the sprite list and removes dead sprites from the sprite list
             _spriteList.AddRange(_newSpriteList);
             _newSpriteList.Clear();
             _spriteList.RemoveAll(deadSprite => deadSprite.Dead);
@@ -279,17 +285,18 @@ namespace Nummi
 
             if (_spawnProtectionTimer > 0f)
                 _spawnProtectionTimer -= GBL.DeltaTime;
-
+            // Player spawn protection, if the timer is above 0 the player cannot die and it will only start counting down after the player spawns in so they dont die immediately from something they cant see
             if (_spawnProtectionTimer <= 0f && !_spriteList.OfType<SpritePlayer>().Any())
             {
                 PlayerDied();
             }
-
+            // used for going to next level
             if (_tilemap.IsExitAtWorld((int)_player._position.X, (int)_player._position.Y) && _coinLvl)
             {
                 NextLevel();
             }
-
+            // used to check if the player just went into a trap room
+            // TODO this only can handle one trap room per level right now and is a bit janky so maybe fix that
             if(_tilemap.TryGetTrapDoorTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point trapDoorTile))
             {
                 _justGoneOverTrapDoor = true;
@@ -311,7 +318,7 @@ namespace Nummi
                     
                 }
             }
-
+            // when getting the chest in the trap room it opens the chest and then resets the trap door so you can go back out
             if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile))
             {
                 _player.ChestOpened(_player._position);
@@ -322,13 +329,13 @@ namespace Nummi
 
                 if(_alreadyGoneIntoTrapDoor) map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 3);
             }
-
+            // for testing purposes to skip to tails level
             if (GBL.KeyPress(Keys.Tab))
             {
                 StartTailsLevel(0);
             }
-
-            if(GBL.KeyPress(Keys.G))
+            // for testing boss fight
+            if (GBL.KeyPress(Keys.G))
             {
                 _bossDead = true;
             }
@@ -336,6 +343,7 @@ namespace Nummi
 
         public void UpdateTailsLevel(GameTime gameTime)
         {
+            // plays dialog at start of tails level and stops player from moving until its done
             if (_showTailsIntro && _box != null)
             {
                 _box.Update(gameTime);
@@ -352,14 +360,14 @@ namespace Nummi
                 StartTailsLevel(_prepForNextLevel);
                 _prepForNextLevel = -1;
             }
-
+            // updates the camera 
             _tailsCamera.Update(gameTime);
-
+            // for testing purposes to skip to heads level
             if (GBL.KeyPress(Keys.LeftControl))
             {
                 StartHeadsLevel(0);
             }
-
+            // updates all sprites inside the spritelist not really useful as the tails level doesnt use sprite for the houses
             foreach (Sprite eachSprite in _spriteList)
             {
                 eachSprite.Update(gameTime);
@@ -372,12 +380,12 @@ namespace Nummi
             var mouse = Mouse.GetState();
 
             Vector2 mouseWorld = _tailsCamera.ScreenToWorld(mouse.Position.ToVector2());
-
+            // building system update which handles the building of structures and the preview of where they will be built and if they can be built there or not
             buildingSystem.Update(mouseWorld, _shop);
 
             // Show grid only in build mode
             gridRenderer.Visible = buildingSystem.IsBuildMode;
-
+            // shop updates
             shopButton.Update();
             if (shopButton.IsClicked)
             {
@@ -385,7 +393,7 @@ namespace Nummi
             }
             _shopUI.Update();
         }
-
+        // TODO make the other menus
         public void UpdateSettings(GameTime gameTime)
         {
 
@@ -405,7 +413,7 @@ namespace Nummi
         {
 
         }
-
+        // used to start title and clear sprites for when going back to title from main menu or from beating the game or whatever else might send you back to the title
         public void StartTitle()
         {
             _gameState = GameState.Title;
@@ -421,7 +429,7 @@ namespace Nummi
         }
         public void PrepNextLevel()
         {
-            // if more levels are added this will be used to reset values between levels
+            // used to reset values between levels
 
             _alreadyGoneIntoTrapDoor = false;
             _justGoneOverTrapDoor = false;
@@ -504,6 +512,7 @@ namespace Nummi
 
         protected override void Draw(GameTime gameTime)
         {
+            // applies lighting if its enabled and we are in the heads level since tails level is bright and cheery and doesnt need lighting and it also just looks weird with the lighting system since it was designed for the darker heads levels
             if (_useLighting && _gameState == GameState.HeadsLevel)
             {
                 _lighting.DrawLighting(
@@ -514,6 +523,8 @@ namespace Nummi
             }
 
             GBL.GD.Clear(Color.DarkGreen);
+
+            // this is very messy but its to allow stuff to be drawn without being affected by the cameras and then stuff that needs to be drawn with the cameras and then stuff that needs to be drawn with the tails camera in the tails level since it has a different camera from the heads level and then the UI on top of everything else
 
             GBL.spriteBatch.Begin(SpriteSortMode.BackToFront, BlendState.AlphaBlend, transformMatrix: GBL._camera._transform);
             
@@ -612,7 +623,7 @@ namespace Nummi
         {
 
         }
-
+        // start new game
         public void StartNewGame()
         {
             _player = null;
@@ -625,7 +636,7 @@ namespace Nummi
             _spriteList.Clear();
             _newSpriteList.Clear();
         }
-
+        // player dies and if they have no health left it goes to death screen otherwise it restarts the level they are on(I laid this out like with lives but idk if we will have lives)
         public void PlayerDied()
         {
             _health--;
@@ -639,7 +650,7 @@ namespace Nummi
                 StartHeadsLevel(_currentLevel);
             }
         }
-
+        // going to next level and if you are on the last level it goes back to the title screen
         public void NextLevel()
         {
             PrepNextLevel();
@@ -699,7 +710,7 @@ namespace Nummi
         {
             return ClampVec2(vector, 0, max);
         }
-
+        // checks if the enemy can see the player by sampling points along the line between the enemy and the player and checking if any of those points are solid blocks in the tilemap. If it finds a solid block, it returns false, meaning the enemy cannot see the player. If it reaches the end of the line without finding any solid blocks, it returns true, meaning the enemy can see the player.
         public bool CanSeePlayer(Vector2 enemyCentre, Vector2 playerCentre)
         {
             Vector2 arrow = playerCentre - enemyCentre;
@@ -730,7 +741,7 @@ namespace Nummi
         #endregion ***** Utility Functions *****
 
     }
-
+    // Game states for controlling what update and draw functions to use and what to update and draw in those functions
     public enum GameState
     {
         None,

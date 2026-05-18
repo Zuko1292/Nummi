@@ -106,9 +106,8 @@ namespace Nummi
         {
             base.Update(gameTime);
 
+            // Gets distance to player and checks if it should stop throwing
             float distanceToPlayer = Vector2.Distance(_gameRoot._player._position, _position);
-
-            Debug.WriteLine($"Aggrorange: {_aggrorange}, Distance to Player: {distanceToPlayer}");
 
             switch (_tempState)
             {
@@ -147,14 +146,15 @@ namespace Nummi
 
         protected override void OnAnimationFinished()
         {
-            if(_animIndex == 1 || _animIndex == 3)
+            // makes it so chip throws at end of throwing animation and then goes back to idle animation
+            if (_animIndex == 1 || _animIndex == 3)
             {
                 ThrowChip();
                 SetAnimation(_animIndex - 1);
                 _throwing = false;
             }
         }
-
+        // used for throwing chip
         public void ThrowChip()
         {
             ChipProjectile projectile = new ChipProjectile(_gameRoot, _position, _gameRoot._player._position, _lifeDuration, _chipMoveSpeed);

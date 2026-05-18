@@ -9,8 +9,9 @@ namespace Nummi
     {
         private GridSystem grid;
 
+        // This class manages the building placement system. It keeps track of placed buildings, hotkeys for selecting buildings, and limits on how many of each building can be placed.
         public List<PlacedBuilding> placedBuildings = new();
-        public Dictionary<Keys, BuildingType> hotkeys = new();
+        public Dictionary<Keys, BuildingType> hotkeys = new(); // Key to building type mapping for quick selection (Was only being used during development, but could be useful for debug mode or future features)
         public Dictionary<string, int> buildingLimits = new();   // Max per building
         public Dictionary<string, int> buildingCounts = new();   // Current count
 
@@ -18,34 +19,34 @@ namespace Nummi
         public bool buildMode = false;
         private bool _leftWasReleased = true;
 
-        public int _housesPlaced= 0, _barracksPlaced = 0, _farmsPlaced = 0, _nuclearReactorsPlaced = 0;
+        public int _housesPlaced= 0, _barracksPlaced = 0, _farmsPlaced = 0, _nuclearReactorsPlaced = 0, _blacksmithsPlaced;
 
         public BuildingSystem(GridSystem grid)
         {
             this.grid = grid;
         }
-
+        // Call this to set a limit on how many of a certain building can be placed. If not set, there is no limit.
         public void SetLimit(string buildingName, int max)
         {
             buildingLimits[buildingName] = max;
             if (!buildingCounts.ContainsKey(buildingName))
                 buildingCounts[buildingName] = 0;
         }
-
+        // Call this to reset all building counts back to 0, useful for starting a new game or resetting the state.
         public void ResetCounts()
         {
             var keys = new List<string>(buildingCounts.Keys);
             foreach (var key in keys)
                 buildingCounts[key] = 0;
         }
-
+        // Checks if you can place more of a building
         public bool CanPlaceMore(string buildingName)
         {
             if (!buildingLimits.ContainsKey(buildingName)) return true;
             if (!buildingCounts.ContainsKey(buildingName)) return true;
             return buildingCounts[buildingName] < buildingLimits[buildingName];
         }
-
+        // The remaining count is how many more of a building you can place before hitting the limit. Returns -1 if there is no limit.(This is used by the UI to show how many you have left)
         public int RemainingCount(string buildingName)
         {
             if (!buildingLimits.ContainsKey(buildingName)) return -1;
@@ -62,7 +63,8 @@ namespace Nummi
             _barracksPlaced = GetPlacedCount("Barracks");
             _farmsPlaced = GetPlacedCount("Farm");
             _nuclearReactorsPlaced = GetPlacedCount("Nuclear Reactor");
-
+            _blacksmithsPlaced = GetPlacedCount("Blacksmith");
+            // For hotkey placement aka testing as hotkey placement will not be in the game
             foreach (var pair in hotkeys)
             {
                 if (keyboard.IsKeyDown(pair.Key))
@@ -71,24 +73,24 @@ namespace Nummi
                     buildMode = true;
                 }
             }
-
+            // for exiting building mode and deselecting building
             if (GBL.KeyPress(Keys.Escape))
             {
                 buildMode = false;
                 selectedBuilding = null;
             }
-
+            // If not in build mode or no building selected, skip the rest of the update
             if (!buildMode || selectedBuilding == null)
                 return;
-
+            // Convert mouse world position to grid coordinates
             Point gridPos = grid.WorldToGrid(mouseWorld);
-
+            // Check if the grid position is valid before trying to place a building
             if (!grid.IsInside(gridPos))
                 return;
-
+            // Handle left mouse button input for placing buildings. We check for release first to prevent multiple placements from a single click.
             if (mouse.LeftButton == ButtonState.Released)
                 _leftWasReleased = true;
-
+            // If left button is pressed and it was previously released, attempt to place the building
             if (mouse.LeftButton == ButtonState.Pressed && _leftWasReleased)
             {
                 _leftWasReleased = false;
@@ -119,7 +121,7 @@ namespace Nummi
                 }
             }
         }
-
+        // Checks if a building can be placed at the given grid position, considering its size and whether the tiles are buildable and unoccupied. Also checks if we can place more of this building type based on limits.
         private bool CanPlace(Point pos, Point size)
         {
             if (!CanPlaceMore(selectedBuilding.Name)) return false;
@@ -135,7 +137,7 @@ namespace Nummi
             }
             return true;
         }
-
+        // Draws the building 
         public void Draw(Vector2 mouseWorld)
         {
             foreach (var b in placedBuildings)
@@ -165,7 +167,7 @@ namespace Nummi
 
             bool valid = CanPlace(gridPos, selectedBuilding.Size);
             Color tint = valid ? Color.Green * 0.5f : Color.Red * 0.5f;
-
+            // This draw makes it so the building you are trying to place is drawn on the cursor, tinted green if you can place it there and red if you cant. It also snaps to the grid.
             GBL.spriteBatch.Draw(
                 selectedBuilding.Texture,
                 new Rectangle(
@@ -182,20 +184,20 @@ namespace Nummi
             );
         }
 
-        // Call this from your shop to select a building
+        // Call this from shop to select a building
         public void SelectBuilding(BuildingType building)
         {
             selectedBuilding = building;
             buildMode = true;
         }
-
+        // Get the placed amount of a building type, used for UI and tracking
         public int GetPlacedCount(string buildingName)
         {
             if (buildingCounts.ContainsKey(buildingName))
                 return buildingCounts[buildingName];
             return 0;
         }
-
+        // This is used by the UI to check if we are in build mode, which can affect how the UI looks or what options are available.
         public bool IsBuildMode => buildMode;
     }
 }

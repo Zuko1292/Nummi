@@ -13,7 +13,7 @@ namespace Nummi
     public class TallPurpleSlime : SpriteEnemy
     {
         private Vector2 _dashDirection;
-
+        // dashing variables
         public bool _isDashing = false;
         protected float _dashTimer = 0f;
         protected float _dashDuration = 0.1f;
@@ -93,7 +93,7 @@ namespace Nummi
                     _hasDashed = true;
                 }
             }
-
+            // handles patrolling
             if (_lastSeenTimer <= 1f)
             {
                 SetAnimation(2);
@@ -108,7 +108,7 @@ namespace Nummi
 
             if (_animIndex == 2) _frameDuration = 1f / 8f;
             else _frameDuration = 1f / 15f;
-
+            // handles dashing
             if (!_isPatrolling)
             {
                 SetAnimation(1);
@@ -132,8 +132,8 @@ namespace Nummi
         protected override void OnTileCollideEvent(int tileX, int tileY)
         {
             base.OnTileCollideEvent(tileX, tileY);
-
-            if(_isPatrolling)
+            // makes it so if enemy hits wall while patrolling it turns around, but if it hits wall while dashing it just stops dashing and doesn't turn around, this is to make the enemy feel more responsive and less frustrating when it comes to navigating around walls and obstacles. It also prevents the enemy from getting stuck on walls while dashing, which can be frustrating for players.
+            if (_isPatrolling)
             {
                  _velocity.X = -_velocity.X;
                 _position.X += _velocity.X * 0.1f; // Move a bit away from the tile to prevent sticking

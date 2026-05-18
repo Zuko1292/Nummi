@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Nummi;
 
 public class Camera2D
 {
@@ -31,7 +32,7 @@ public class Camera2D
 
         _previousScroll = Mouse.GetState().ScrollWheelValue;
     }
-
+    // this method calculates the min zoom level needed to fit the entire world within the viewport
     private void CalculateZoomToFit()
     {
         float zoomX = (float)_viewport.Width / _worldWidth;
@@ -40,7 +41,7 @@ public class Camera2D
         _minZoom = MathHelper.Min(zoomX, zoomY);
         Zoom = _minZoom;
     }
-
+    // this centers the camera 
     private void CenterCamera()
     {
         Position = new Vector2(_worldWidth / 2f, _worldHeight / 2f);
@@ -54,10 +55,10 @@ public class Camera2D
 
         UpdateTransform();
     }
-
+    // This handles the zoom
     private void HandleZoom()
     {
-        MouseState mouse = Mouse.GetState();
+        MouseState mouse = GBL.mscurr;
         int scrollDelta = mouse.ScrollWheelValue - _previousScroll;
 
         if (scrollDelta != 0)
@@ -82,7 +83,7 @@ public class Camera2D
 
         _previousScroll = mouse.ScrollWheelValue;
     }
-
+    // This method updates the camera's transformation matrix based on its position and zoom level
     public void UpdateTransform()
     {
         Transform =
@@ -90,7 +91,7 @@ public class Camera2D
             Matrix.CreateScale(Zoom, Zoom, 1f) *
             Matrix.CreateTranslation(new Vector3(_viewport.Width / 2f, _viewport.Height / 2f, 0));
     }
-
+    // This method should be called when the viewport is resized.
     public void OnResize(Viewport newViewport)
     {
         _viewport = newViewport;
@@ -98,7 +99,7 @@ public class Camera2D
         CenterCamera();
         UpdateTransform();
     }
-
+    // This method ensures that the camera's pos is clamped within the bounds of the world, so you cant scroll past the edges of the tilemap
     private void ClampToWorld()
     {
         float viewWidth = _viewport.Width / Zoom;
@@ -131,7 +132,7 @@ public class Camera2D
             Position = new Vector2(Position.X, MathHelper.Clamp(Position.Y, minY, maxY));
         }
     }
-
+    // Gets the world position from the screen position, used for example to get the mouse position in the world
     public Vector2 ScreenToWorld(Vector2 screenPosition)
     {
         return Vector2.Transform(screenPosition, Matrix.Invert(Transform));

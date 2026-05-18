@@ -10,7 +10,7 @@ namespace Nummi
 {
     public class HeadsHouse : Sprite
     {
-        // Need to scale the houses up and fix the collisions so can walk in front of the houses
+        // This makes the heads houses and scales them so you can walk infront of them but they still look big and not like a tiny house. The collision bounds are also adjusted so you can walk infront of the top part of the house but not the bottom part, which makes it feel more natural and less frustrating to navigate around them.
         public HeadsHouse(Game1 gameRoot, Texture2D texture, Vector2 position)
                 : base(gameRoot, texture, position, false, true) 
         {

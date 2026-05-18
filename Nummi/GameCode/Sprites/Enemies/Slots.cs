@@ -8,6 +8,7 @@ using Nummi;
 
 namespace Nummi
 {
+    // TODO create slots enemy do it with the frozen and thawed states 
     public class Slots
     {
         enum TempState

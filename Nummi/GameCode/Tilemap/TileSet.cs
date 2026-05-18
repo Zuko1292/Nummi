@@ -10,6 +10,7 @@ using System.Xml.Linq;
 
 namespace Nummi
 {
+    // This class handles the tileset and gives each 32 x 32 part of an image an xml number that can be used to reference it. This is used by the TileMap class to draw the correct tile at each position in the map. The tileset is created by taking a texture and dividing it into a grid of tiles, where each tile is a TextureRegion that represents a portion of the original texture. The TileSet class also provides methods for getting the TextureRegion for a specific tile index or for a specific column and row in the grid.
     public class TileSet
     {
         private readonly TextureRegion[] _tiles;

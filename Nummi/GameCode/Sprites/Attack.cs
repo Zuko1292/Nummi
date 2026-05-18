@@ -9,6 +9,8 @@ using Nummi;
 
 namespace Nummi
 {
+    // This class handles the player's attacks, it is a sprite that is spawned when the player attacks and it has a short lifetime. It also handles the animation of the attack and the damage it does to enemies. The attack is spawned in the direction the player is facing and it moves with the player, so if the player moves while attacking, the attack will move with them. The attack also has a collision layer that allows it to damage enemies but not collide with the player or other attacks.
+    // TODO right now the attack collides with tilemap so give tilemap a collision layer and make it so attack cant see that so prolly add another layer called like non collidables for attacks and other stuff of the sort
     public class Attack : SpriteAnimating
     {
         public float _weaponDamage;

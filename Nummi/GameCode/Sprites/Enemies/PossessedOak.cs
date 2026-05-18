@@ -9,7 +9,7 @@ using Nummi;
 
 namespace Nummi
 {
-
+    // TODO add comments and finish off the class cause boss still not finished
     public class PossessedTree : SpriteEnemy
     {
 

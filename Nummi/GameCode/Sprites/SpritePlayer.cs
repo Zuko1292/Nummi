@@ -19,10 +19,11 @@ namespace Nummi
         public Vector2 _playerPos;
         public float _posture = 50f;
 
+        // Variable for checking if the player is in the trap room
         public bool _isInTrapRoom = false;
 
         public int _currentWeapon = 0; // 0 = Sword, 1 = Great Sword, 2 = Mace, 3 = Great Hammer, 4 = Bow
-
+        // The damage cooldown and invincibility variables are used to give the player a brief period of invincibility after taking damage, which is a common mechanic in many games to prevent the player from taking rapid consecutive hits. The knockback variables are used to apply a knockback effect when the player takes damage, which can add a sense of impact and make combat feel more dynamic. The dash variables are used to implement a dash mechanic, allowing the player to quickly move in a direction for a short duration, which can be useful for dodging attacks or quickly closing distance with enemies. The blocking variable allows the player to block incoming attacks, which can add an additional layer of strategy to combat.
         protected float _damageCooldown = 0.5f;
         protected float _damageTimer = 0f;
         protected bool _isInvincible = false;
@@ -46,15 +47,18 @@ namespace Nummi
         public bool _isMoving = false;
         private bool _facingLeft = false;
 
+        // checks mouse direction for attacking
         public Vector2 _mouseDirection;
 
+        // This variable is used to determine whether the player's current animation is based on vertical or horizontal movement, which can be useful for determining the direction of attacks or other actions that depend on the player's orientation. By checking whether the current animation index corresponds to a vertical or horizontal movement animation, the game can adjust the player's actions accordingly, such as changing the direction of an attack or adjusting the hitbox for a weapon swing.
         private bool _yORx;
-
+        // Checks if player is attacking
         public bool _attacking = false;
 
         public SpriteEffects _lockedFlipEffect;
-
+        // Loads stats
         public CharacterStats Stats { get; private set; }
+        // Loads level
         public LevelSystem LevelSystem { get; private set; }
 
         #endregion ***** Member variables *****
@@ -197,7 +201,7 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-
+            // Blocking
             if (GBL.KeyHold(Keys.F))
             {
                 SetAnimation(8);
@@ -209,7 +213,7 @@ namespace Nummi
                 SetAnimation(0);
                 _isBlocking = false;
             }
-
+            // Dashing
             if (_isDashing)
             {
                 _dashTimer -= GBL.DeltaTime;
@@ -221,7 +225,7 @@ namespace Nummi
                     _isDashing = false;
                 }
             }
-
+            
             if (GBL.KeyPress(Keys.Q) && !_isDashing && _dashCooldownTimer <= 0f)
             {
                 _isDashing = true;
@@ -259,7 +263,7 @@ namespace Nummi
             }
 
             if(!_isDashing) _dashCooldownTimer -= GBL.DeltaTime;
-
+            // Attacking
             if (_animIndex == 5 || _animIndex == 2 || _animIndex == 6) _yORx = false;
             if (_animIndex == 0 || _animIndex == 1 || _animIndex == 3 || _animIndex == 4) _yORx = true;
 
@@ -270,7 +274,7 @@ namespace Nummi
                 if (GBL._camera.ScreenToWorld(GBL.mousePos).Y > _position.Y && _yORx) Down_Attacking();
                 if (GBL._camera.ScreenToWorld(GBL.mousePos).Y < _position.Y && _yORx) Up_Attacking();
             }
-
+            // Knockback and invincibility timers
             if (_isKnockedback)
             {
                 _knockbackTimer -= GBL.DeltaTime;
@@ -363,8 +367,8 @@ namespace Nummi
         protected override void OnCollideEvent(Sprite otherSprite)
         {
             base.OnCollideEvent(otherSprite);
-
-            if(otherSprite is SpriteEnemy enemy)
+            // Enemy collision
+            if (otherSprite is SpriteEnemy enemy)
             {
                 if (!_isInvincible && !_isBlocking)
                 {
@@ -393,8 +397,8 @@ namespace Nummi
 
                 }
             }
-
-            if(otherSprite is DroppedWeapon droppedWeapon)
+            // Weapon pickup collision
+            if (otherSprite is DroppedWeapon droppedWeapon)
             {
 
                 if (droppedWeapon._pickupCD < 0)
@@ -407,6 +411,7 @@ namespace Nummi
 
         protected override void OnTileCollideEvent(int tileX, int tileY)
         {
+            // Stops dashing if you hit wall
             if (_isDashing)
             {
                 _isDashing = false;
@@ -470,6 +475,7 @@ namespace Nummi
         #endregion ***** Member methods: Update *****
     }
 
+    // Creates stat
     public class Stat
     {
         public string Name { get; private set; }
@@ -492,7 +498,7 @@ namespace Nummi
 
         public void Reset() => CurrentValue = BaseValue;
     }
-
+    // Players stats
     public class CharacterStats
     {
 
@@ -508,7 +514,8 @@ namespace Nummi
         public int MaxHP => (int)(Vitality.CurrentValue * 15);
         public int WeaponDmg => (int)(Strength.CurrentValue * 2.5f);
     }
-
+    // Level system for player progression, it uses a simple exponential growth formula for XP requirements, where each level requires 8% more XP than the previous one. The LevelUp method is called when the player has enough XP to level up, which increases the player's level and updates the XP required for the next level. The OnLevelUp event allows other parts of the game to respond to the player leveling up, such as updating the HUD or unlocking new abilities.
+    // TODO I think the scaling is a bit crazy right now so need to fix that
     public class LevelSystem
     {
         public int Level { get; private set; }
@@ -553,7 +560,7 @@ namespace Nummi
             return xp;
         }
     }
-
+    // For Basic HUD elements like health and XP bars, and boss health bar
     public class HUD
     {
         private Texture2D _pixel;

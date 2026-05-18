@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Nummi
 {
+    // This class is for sprites that have animations, it builds on the base Sprite class and adds functionality for handling animations. It has a list of animations, where each animation is a list of rectangles that define the frames of the animation. It also has a list of next animations, which defines what animation should play after the current animation finishes. The Update method is overridden to update the animation timer and switch frames when necessary. The ApplyFrame method is used to update the source rectangle and bounds based on the current frame of the animation.
     public class SpriteAnimating : Sprite
     {
         #region ***** Member variables *****

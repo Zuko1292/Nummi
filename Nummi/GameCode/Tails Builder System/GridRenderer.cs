@@ -10,6 +10,7 @@ using Nummi;
 
 namespace Nummi
 {
+    // This top class is for drawing the grid however the camera is really weird when trying to build it with pixels and it looks weird so ignore the top class and just look at the bottom one, which is the one that is actually used in the game. The top class was an attempt to draw the grid with pixels, but it ended up looking really weird due to how the camera works in the game. The bottom class is a simple sprite that is drawn over the grid when in build mode, and it looks much better.
     public class GridRenderer
     {
         private Texture2D pixel;

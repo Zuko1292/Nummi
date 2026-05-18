@@ -58,7 +58,8 @@ namespace Nummi
 
         public CollisionLayer CollisionLayer { get; protected set; } = CollisionLayer.None;
         public CollisionLayer CollisionMask { get; protected set;} = CollisionLayer.All;
-            
+
+        // You can override this in child classes to trigger death behaviour
         public virtual bool Dead
         {
             set
@@ -251,6 +252,7 @@ namespace Nummi
                 }
             }
         }
+        // for resolving tilemap collision
         public void ResolveTilemapCollision(TilemapGroup group)
         {
             var map = group.Layers[0];
@@ -389,7 +391,7 @@ namespace Nummi
 
         // for when collision happens
         protected virtual void OnCollideEvent(Sprite otherSprite) { }
-
+        // for when tile collision happens
         protected virtual void OnTileCollideEvent(int tileX, int tileY) { }
 
         #endregion

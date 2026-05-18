@@ -53,7 +53,7 @@ namespace Nummi
         {
             if (_velocity == Vector2.Zero) SetAnimation(0);
             else SetAnimation(1);
-
+            // Makes it so goes back to being idle before stopping update should put this in all enemies that dont patrol however if they have idle animation then make their velocity 0 when not seeing player
             if(_lastSeenTimer <= 0.2f) SetAnimation(0);
 
             base.Update(gameTime);

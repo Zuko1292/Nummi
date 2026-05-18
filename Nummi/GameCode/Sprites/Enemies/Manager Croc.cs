@@ -8,6 +8,7 @@ using Nummi;
 
 namespace Nummi
 {
+    // TODO make Croc boss
     public class Manager_Croc : SpriteEnemy
     {
         enum TempState

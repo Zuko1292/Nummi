@@ -27,6 +27,8 @@ namespace Nummi
         }
     }
 
+    // This class manages the player's currency and resources. It keeps track of coins, population, food, and energy. It also provides methods for checking if the player can afford something and for spending coins.
+    // TODO: Make it so you can get resources at start of every tails side flip based on amount of buildings like food and energy go down based on poulation and up based on farms and nuclear reactors, population goes up based on houses and down based on lack of food or energy, etc. This will make the game more dynamic and give the player more things to manage.
     public class CurrencySystem
     {
         public int Coins { get; private set; }
@@ -42,16 +44,21 @@ namespace Nummi
             Energy = 100;
         }
 
+        // Checks if the player has enough coins to afford a cost. This is used by the shop to determine if an item can be purchased.
         public bool CanAfford(int cost) => Coins >= cost;
-
+        // Tries to spend coins. Returns true if the purchase was successful, false if the player couldn't afford it. This is used by the shop when an item is bought to deduct the cost from the player's coins.
         public bool TrySpend(int cost)
         {
             if (!CanAfford(cost)) return false;
             Coins -= cost;
             return true;
         }
-
+        // Use these when adding to the currencys dont hard code it with the variables
         public void AddCoins(int amount) => Coins += amount;
+        public void AddPopulation(int amount) => Population += amount;
+        public void AddFood(int amount) => Food += amount;
+        public void AddEnergy(int amount) => Energy += amount;
+
     }
 
     public class Shop
@@ -60,7 +67,9 @@ namespace Nummi
         private CurrencySystem _currency;
         private BuildingSystem _buildingSystem;
     
+        // List for stock
         public IReadOnlyList<ShopItem> Stock => _stock;
+        // This property tracks whether the shop is currently open or closed, which can be used by the UI to determine whether to display the shop interface and by the game logic to prevent purchases when the shop is closed.
         public bool IsOpen { get; private set; }
     
         public Shop(CurrencySystem currency, BuildingSystem buildingSystem)
@@ -68,14 +77,15 @@ namespace Nummi
             _currency = currency;
             _buildingSystem = buildingSystem;
         }
-    
+        // Call this to add an item to the shop's stock. This is used during game setup to populate the shop with items for sale.
         public void AddItem(ShopItem item) => _stock.Add(item);
+        // Call this to clear all items from the shop's stock, useful for resetting the shop or starting a new game.
         public void ClearStock() => _stock.Clear();
-    
+        // These methods control the shop's open/closed state. Open() sets IsOpen to true, allowing purchases to be made. Close() sets IsOpen to false, preventing purchases. Toggle() switches between open and closed states. This allows for flexible control of the shop's availability in the game.
         public void Open() => IsOpen = true;
         public void Close() => IsOpen = false;
         public void Toggle() => IsOpen = !IsOpen;
-
+        // This method attempts to purchase an item from the shop. It checks if the player can afford the item and if they can place the associated building (if any). If both checks pass, it selects the building for placement and returns true. If either check fails, it returns false, preventing the purchase.
         public bool TryBuy(ShopItem item)
         {
             if (!_currency.CanAfford(item.Cost)) return false;
@@ -86,9 +96,9 @@ namespace Nummi
 
             return true;
         }
-
+        // This literally just takes from the building systems canplacemore method
         public bool CanPlaceMoreBuilding(string name) => _buildingSystem.CanPlaceMore(name);
-
+        // This method is used when the player tries to place a building after purchasing it. It checks if the player can afford the building and if they can place more of that building type. If both checks pass, it spends the coins and returns true, allowing the placement to proceed. If either check fails, it returns false, preventing the placement.
         public bool TryPayForPlacement(string buildingName)
         {
             // Find the item in stock by name
@@ -135,6 +145,7 @@ namespace Nummi
 
         public void Update()
         {
+            // Don't do anything if the shop isn't open
             if (!_shop.IsOpen) return;
 
             MouseState mouse = Mouse.GetState();
@@ -147,9 +158,9 @@ namespace Nummi
                 GBL.Game.buildingSystem.selectedBuilding = null;
                 return;
             }
-
+            // Check item clicks
             if (!GBL.LeftClick) return;
-
+            // Loop through item rectangles and check if any were clicked
             for (int i = 0; i < _itemRects.Count; i++)
             {
                 if (i >= _shop.Stock.Count) break;
@@ -188,7 +199,7 @@ namespace Nummi
                 PanelY + 4,
                 closeSize,
                 closeSize);
-
+            // Coin text
             GBL.spriteBatch.DrawString(_font, coinText,
                 new Vector2(PanelX + PanelWidth - coinSize.X - closeSize - Padding - 8, PanelY + 8),
                 Color.Gold, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.048f);

@@ -8,7 +8,8 @@ namespace Nummi
 {
     public static class LevelData
     {
-
+        // This class is responsible for spawning levels and contains data related to the levels, such as tilemap rules and level-specific settings. It has a method called SpawnLevel which takes in the level number and the game root object, and based on the current game state (HeadsLevel or TailsLevel), it loads the appropriate tilemap, sets up the player, enemies, and other sprites for that level. It also contains helper methods for converting tile coordinates to world coordinates and generating buildable areas from the tilemap.
+        // This varible is used to determine the final level
         public static int LastLevelIndex = 4;
 
         // Rules for Heads town and Tails Town and Dungeon 1 section 1 and 2 (which share the same tileSet)
@@ -41,22 +42,24 @@ namespace Nummi
                     LevelSystem savedLevelSystem = gameRoot._player?.LevelSystem ?? new LevelSystem();
 
                     gameRoot._player = null;
-
+                    // When adding enemies or NPCs to the levels, make sure to add them to the _spriteList so they get updated and drawn. Also make sure to set their position using the TilePos helper method to convert tile coordinates to world coordinates. For example, if you want to place an enemy at tile (10, 5), you would use TilePos(10, 5) to get the correct world position for that enemy.
+                    // Load stuff into the heads levels here
+                    // If you want to draw like UI which is not offset by camera dont do it here follow where I did it in game1(Developer note)
                     switch (level)
                     {
                         case 4:
-
+                            // If is trap level more it true
                             gameRoot._isTrapLevel = false;
-
+                            // If is a lighting level make it true and set torch positions, if not set to false and empty array, set the torch position. light positions like I did in case 3.
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
-
+                            // Load the tilemap for the level and set the rules for it. The rules determine which tiles are solid, which are exits, which are chests, etc. Make sure to set the rules according to the tile IDs used in the tilemap for that level.
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[0]);
                             gameRoot._tilemap.SetRules(Rules1);
-
+                            // Loads the player always load it like this
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(45, 45), true);
                             gameRoot._spriteList.Add(gameRoot._player);
-
+                            // always load enemies and Npcs like this and set their position using the TilePos helper method. Make sure to add them to the _spriteList so they get updated and drawn.
                             gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(30, 45)));
 
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House2_v2"), TilePos(14, 18)));
@@ -160,6 +163,7 @@ namespace Nummi
 
                             break;
                         case 3:
+                            // When its a boss level make sure you do the _bossDead variable to false and set the current boss to the boss you want in the level.
                             gameRoot._bossDead = false;
                             gameRoot._isTrapLevel = false;
 
@@ -198,6 +202,7 @@ namespace Nummi
                     gameRoot._newSpriteList.Clear();
 
                     gameRoot._player = null;
+                    // Load stuff into the tails levels here
                     switch (level)
                     {
                         case 0:
@@ -213,7 +218,7 @@ namespace Nummi
                     break;
             }
         }
-
+        // This method converts tile coordinates to world coordinates. It takes a Point representing the tile position, an optional grid size (defaulting to 32x32), and a boolean indicating whether to return the position of the center of the tile (defaulting to true). If centred is true, it adds half the grid size to the tile position to return the center; otherwise, it returns the top-left corner of the tile.
         public static Vector2 TilePos(Point tile, Point gridSize = default, bool centred = true)
         {
             if (gridSize == default) gridSize = new Point(32, 32);
@@ -221,12 +226,13 @@ namespace Nummi
             if (centred) return new Vector2(tile.X * 32 + gridSize.X / 2, tile.Y * 32 + gridSize.Y / 2);
             return new Vector2(tile.X * gridSize.X, tile.Y * gridSize.Y);
         }
-
+        // Overload for convenience when you want to pass X and Y directly instead of creating a Point
         public static Vector2 TilePos(int X, int Y)
         {
             return TilePos(new Point(X, Y));
         }
 
+        // This method generates the buildable grid based on the tilemap. It checks each tile in the ground layer to see if it's a grass tile and then checks the object layer to see if there's anything on top of it. If it's grass and there's nothing on top, it marks that tile as buildable in the grid system. This allows the game to determine where the player can place buildings based on the tilemap design.
         public static void GenerateBuildableFromTilemap(GridSystem grid, TilemapGroup tilemap, int grassTileId)
         {
             var groundLayer = tilemap.Layers[0];
@@ -255,6 +261,8 @@ namespace Nummi
 
             switch (tailsLevel)
             {
+                // Once added Item to case 0 it'll be available in all levels, so we can add all items here and just adjust limits for each level. For now we only have 2 levels so I put everything in case 0 and left case 1 empty for future expansion.
+                // TODO probably change it so you only unlock buildings after the dungeons
                 case 0:
                     gameRoot.buildingSystem.SetLimit("House", 3);
                     gameRoot.buildingSystem.SetLimit("Barracks", 1);
@@ -288,6 +296,13 @@ namespace Nummi
                         cost: 150,
                         building: new BuildingType("Nuclear Reactor", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"), new Point(3, 3))
                     ));
+                    gameRoot._shop.AddItem(new ShopItem(
+                        "Black Smith",
+                        "Produces weapons",
+                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"),
+                        cost: 150,
+                        building: new BuildingType("Black Smith", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"), new Point(3, 3))
+                        ));
                     break;
 
                 case 1:

@@ -11,6 +11,7 @@ using System.Xml.Linq;
 
 namespace Nummi
 {
+    // This handles the reading of the xml file and the drawing of the tilemap. It also has some helper functions for checking if a tile is solid or an exit tile, and for getting the tile ID at a specific world position. The tilemap is made up of a tileset, which is a collection of texture regions that represent the individual tiles, and an array of tile IDs that specify which tile from the tileset should be drawn at each position in the map. The tilemap also has rules that specify which tile IDs are solid or exit tiles, which are used for collision detection and level progression.
     public class Tilemap
     {
         private readonly TileSet _tileSet;
@@ -145,7 +146,7 @@ namespace Nummi
         {
             return IsSolidTileID(GetTileIDAtWorld(worldX, worldY));
         }
-
+        // Checks if the tile at the world position is a chest.
         public bool IsChestAtWorld(int worldX, int worldY)
         {
             int tileX = (int)(worldX / TileWidth);
@@ -161,7 +162,7 @@ namespace Nummi
 
             return IsChestTileID(tileID);
         }
-
+        // Checks if the tile at the world position is a trap door.
         public bool IsTrapDoorAtWorld(int worldX, int worldY)
         {
             int tileX = (int)(worldX / TileWidth);
@@ -177,7 +178,7 @@ namespace Nummi
 
             return IsTrapDoorTileID(tileID);
         }
-
+        // This tries to get the tile position of a chest tile at the given world coordinates. It returns true if a chest tile is found, and false otherwise. If a chest tile is found, the tile position is output through the out parameter.
         public bool TryGetChestTileAtWorld(int worldX, int worldY, out Point tilePos)
         {
             int tileX = (int)(worldX / TileWidth);
@@ -201,7 +202,7 @@ namespace Nummi
             tilePos = Point.Zero;
             return false;
         }
-
+        // Works the same as TryGetChestTileAtWorld but for trap doors instead of chests. (brief note: could've done one function that takes a Func<int, bool> as a parameter to check for different tile types but I wanted to keep it simple and straightforward with separate functions for each type.)
         public bool TryGetTrapDoorTileAtWorld(int worldX, int worldY, out Point tilePos)
         {
             int tileX = (int)(worldX / TileWidth);
@@ -223,6 +224,7 @@ namespace Nummi
         }
 
         //Creates a new tilemap based on a tilemap xml configuration file.
+        // The XML file should have a structure that includes a Tileset element with attributes for tile width and height, and a value that specifies the content path to the tileset texture. It should also have a Layers element that contains one or more Layer elements, each of which has a Tiles element that contains the tile IDs for that layer in a grid format. The function reads the XML file, creates the tileset and tilemap based on the specified configuration, and returns the resulting TilemapGroup.
         public static TilemapGroup FromFile(string filename)
         {
             string filePath = Path.Combine(GBL.Content.RootDirectory, filename);
