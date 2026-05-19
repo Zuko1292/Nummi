@@ -12,6 +12,13 @@ using Nummi;
 
 namespace Nummi
 {
+    // TODO IDEAS
+    // - make tails level scale damage and health and maybe add unique abilites onto the heads level
+    // - make the shop have more things to buy and maybe have some unique items that can only be bought with coins or only with population or whatever else we want to add as a currency`
+    // - make the lighting system more robust and maybe add different types of lights or make it so you can place torches in the tails level and they will provide light in the heads level or something like that
+    
+   
+
     public class Game1 : Game
     {
         // Used for is visible to make sprite invisible
@@ -56,8 +63,6 @@ namespace Nummi
         public Vector2[] _torchPositions = Array.Empty<Vector2>();
         public LightingRenderer _lighting;
         public bool _useLighting = false;
-
-        Texture2D _barracksTexture, _nuclearReactorTxr, _houseTexture;
         Texture2D _shopButtonTexture;
 
         public SpriteFont font;

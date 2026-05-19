@@ -16,7 +16,7 @@ namespace Nummi
         {
             CollisionLayer = CollisionLayer.Solid;
             CollisionMask = CollisionLayer.Player;
-            _layerDepth = 0.31f;
+            _layerDepth = 0.32f;
 
         }
 

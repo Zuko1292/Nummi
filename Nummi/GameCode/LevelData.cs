@@ -47,7 +47,7 @@ namespace Nummi
                     // If you want to draw like UI which is not offset by camera dont do it here follow where I did it in game1(Developer note)
                     switch (level)
                     {
-                        case 4:
+                        case 0:
                             // If is trap level more it true
                             gameRoot._isTrapLevel = false;
                             // If is a lighting level make it true and set torch positions, if not set to false and empty array, set the torch position. light positions like I did in case 3.
@@ -179,7 +179,7 @@ namespace Nummi
                             gameRoot._currentBoss = boss;
                             gameRoot._spriteList.Add(boss);
                             break;
-                        case 0:
+                        case 4:
                             gameRoot._isTrapLevel = true;
 
                             gameRoot._useLighting = false;
@@ -190,7 +190,6 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 10), true, savedStats, savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(10, 10), Waiter.TempState.Thawed));
 
                             break;
                     }
