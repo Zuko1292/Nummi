@@ -122,12 +122,13 @@ namespace Nummi
         private SpriteFont _font;
         private Texture2D _pixel;
 
-        private const int PanelX = 50;
+        private const int PanelX = 100;
         private const int PanelY = 50;
-        private const int PanelWidth = 320;
+        private const int ItemWidth = 280; 
         private const int ItemHeight = 80;
         private const int Padding = 10;
         private const int HeaderHeight = 35;
+        private const int ItemsPerColumn = 3;
 
         private List<Rectangle> _itemRects = new();
 
@@ -175,7 +176,9 @@ namespace Nummi
 
             _itemRects.Clear();
 
-            int panelHeight = HeaderHeight + Padding + (_shop.Stock.Count * (ItemHeight + Padding));
+            int columnCount = (int)Math.Ceiling((float)_shop.Stock.Count / ItemsPerColumn);
+            int PanelWidth = Padding + columnCount * (ItemWidth + Padding);
+            int panelHeight = HeaderHeight + Padding + (Math.Min(_shop.Stock.Count, ItemsPerColumn) * (ItemHeight + Padding));
 
             // Panel background
             DrawRect(new Rectangle(PanelX, PanelY, PanelWidth, panelHeight), Color.Black * 0.9f, 0.05f);
@@ -188,29 +191,18 @@ namespace Nummi
                 new Vector2(PanelX + Padding, PanelY + 8),
                 Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.048f);
 
-            // Coin display
-            string coinText = $"Coins: {_currency.Coins}";
-            Vector2 coinSize = _font.MeasureString(coinText);
-
-            // X close button - top right of header
+            // Close button
             int closeSize = HeaderHeight - 8;
             _closeButtonRect = new Rectangle(
                 PanelX + PanelWidth - closeSize - 4,
                 PanelY + 4,
                 closeSize,
                 closeSize);
-            // Coin text
-            GBL.spriteBatch.DrawString(_font, coinText,
-                new Vector2(PanelX + PanelWidth - coinSize.X - closeSize - Padding - 8, PanelY + 8),
-                Color.Gold, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.048f);
 
             MouseState mouse = Mouse.GetState();
             bool hoveringClose = _closeButtonRect.Contains(mouse.Position);
-
-            // Button background - red on hover
             DrawRect(_closeButtonRect, hoveringClose ? Color.Red * 0.9f : Color.DarkRed * 0.7f, 0.047f);
 
-            // X text centred in button
             Vector2 xSize = _font.MeasureString("X");
             GBL.spriteBatch.DrawString(_font, "X",
                 new Vector2(
@@ -218,24 +210,40 @@ namespace Nummi
                     _closeButtonRect.Y + (_closeButtonRect.Height - xSize.Y) / 2f),
                 Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.046f);
 
-            // Items
+            // Coin display
+            string coinText = $"Coins: {_currency.Coins}";
+            Vector2 coinSize = _font.MeasureString(coinText);
+            GBL.spriteBatch.DrawString(_font, coinText,
+                new Vector2(PanelX + PanelWidth - coinSize.X - closeSize - Padding - 8, PanelY + 8),
+                Color.Gold, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.048f);
+
+            // Items - laid out in columns
             for (int i = 0; i < _shop.Stock.Count; i++)
             {
                 var item = _shop.Stock[i];
-                int itemY = PanelY + HeaderHeight + Padding + i * (ItemHeight + Padding);
-                Rectangle itemRect = new Rectangle(PanelX + Padding, itemY, PanelWidth - Padding * 2, ItemHeight);
+
+                // Calculate column and row from index
+                int col = i / ItemsPerColumn;
+                int row = i % ItemsPerColumn;
+
+                int itemX = PanelX + Padding + col * (ItemWidth + Padding);
+                int itemY = PanelY + HeaderHeight + Padding + row * (ItemHeight + Padding);
+
+                Rectangle itemRect = new Rectangle(itemX, itemY, ItemWidth, ItemHeight);
                 _itemRects.Add(itemRect);
 
                 bool canAfford = _currency.CanAfford(item.Cost);
                 bool canPlace = item.Building == null || _buildingSystem_CanPlaceMore(item);
 
-                // Dark gray border
+                // Border
                 Rectangle borderRect = new Rectangle(itemRect.X - 2, itemRect.Y - 2, itemRect.Width + 4, itemRect.Height + 4);
                 DrawRect(borderRect, Color.DarkGray * 0.95f, 0.0471f);
 
+                // Background
                 Color bgColor = (canAfford && canPlace) ? Color.LightGray * 0.85f : Color.Gray * 0.4f;
                 DrawRect(itemRect, bgColor, 0.047f);
 
+                // Icon
                 if (item.Icon != null)
                 {
                     GBL.spriteBatch.Draw(item.Icon,
@@ -243,29 +251,35 @@ namespace Nummi
                         null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.046f);
                 }
 
+                // Name
                 GBL.spriteBatch.DrawString(_font, item.Name,
                     new Vector2(itemRect.X + 75, itemRect.Y + 8),
                     Color.Black, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.046f);
 
+                // Description
                 GBL.spriteBatch.DrawString(_font, item.Description,
                     new Vector2(itemRect.X + 75, itemRect.Y + 28),
                     Color.DarkGray, 0f, Vector2.Zero, 0.75f, SpriteEffects.None, 0.046f);
 
+                // Cost
                 Color costColor = canAfford ? Color.DarkGoldenrod : Color.DarkRed;
                 GBL.spriteBatch.DrawString(_font, $"{item.Cost} coins",
                     new Vector2(itemRect.X + 75, itemRect.Y + 50),
                     costColor, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.046f);
 
+                // Remaining placements
                 if (item.Building != null)
                 {
                     int remaining = _currency_Remaining(item);
                     string remainText = remaining < 0 ? "Unlimited" : $"{remaining} left";
                     GBL.spriteBatch.DrawString(_font, remainText,
-                        new Vector2(itemRect.X + PanelWidth - 100, itemRect.Y + 50),
+                        new Vector2(itemRect.X + ItemWidth - 70, itemRect.Y + 50),
                         Color.SteelBlue, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0.046f);
                 }
             }
+        
         }
+    
 
         public void DrawCurrency(int x, int y, int currency, Texture2D txr, string currencyType)
         {

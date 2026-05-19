@@ -41,6 +41,9 @@ namespace Nummi
         private const float SpawnProtectionDuration = 0.1f;
         public bool _showTailsIntro = false;
 
+        // Global boss variables needed
+        public bool _slimeOffHead = false;
+
         public float _trapRoomDoorTimer = 0f;
         public float _trapDoorTimer = 1f;
         public bool _justGoneOverTrapDoor = false;
@@ -51,6 +54,7 @@ namespace Nummi
 
         public bool _bossDead = true;
         public SpriteEnemy _currentBoss;
+        public string _bossName = "";
 
         // Tails Variables
 

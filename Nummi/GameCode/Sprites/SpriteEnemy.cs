@@ -23,6 +23,7 @@ namespace Nummi
         public int _damageStrength;
         public bool _isBoss;
         public float _aggrorange;
+        public bool _isIndestructible = false;
 
         // Patrolling variables
         public bool _isPatrolling = true;
@@ -144,7 +145,7 @@ namespace Nummi
             base.OnCollideEvent(otherSprite);
             if (otherSprite is Attack weapon)
             {
-                if (!_isInvincible && _gameRoot._player._currentWeapon != 4 && !_isBoss)
+                if (!_isInvincible && _gameRoot._player._currentWeapon != 4 && !_isIndestructible)
                 {
                     TakeDamage((int)weapon._weaponDamage);
 

@@ -47,7 +47,7 @@ namespace Nummi
                     // If you want to draw like UI which is not offset by camera dont do it here follow where I did it in game1(Developer note)
                     switch (level)
                     {
-                        case 0:
+                        case 3:
                             // If is trap level more it true
                             gameRoot._isTrapLevel = false;
                             // If is a lighting level make it true and set torch positions, if not set to false and empty array, set the torch position. light positions like I did in case 3.
@@ -162,7 +162,7 @@ namespace Nummi
                             //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(56, 42)));
 
                             break;
-                        case 3:
+                        case 0:
                             // When its a boss level make sure you do the _bossDead variable to false and set the current boss to the boss you want in the level.
                             gameRoot._bossDead = false;
                             gameRoot._isTrapLevel = false;
@@ -177,6 +177,7 @@ namespace Nummi
 
                             SpriteEnemy boss = new PossessedTree(gameRoot, TilePos(10, 14));
                             gameRoot._currentBoss = boss;
+                            gameRoot._bossName = "POSSESSED OAK";
                             gameRoot._spriteList.Add(boss);
                             break;
                         case 4:
@@ -289,19 +290,19 @@ namespace Nummi
                         building: new BuildingType("Farm", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"), new Point(3, 3))
                     ));
                     gameRoot._shop.AddItem(new ShopItem(
-                        "Nuclear Reactor",
-                        "Generates energy",
-                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"),
-                        cost: 150,
-                        building: new BuildingType("Nuclear Reactor", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"), new Point(3, 3))
-                    ));
-                    gameRoot._shop.AddItem(new ShopItem(
                         "Black Smith",
                         "Produces weapons",
                         GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"),
                         cost: 150,
                         building: new BuildingType("Black Smith", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"), new Point(3, 3))
                         ));
+                    gameRoot._shop.AddItem(new ShopItem(
+                        "Nuclear Reactor",
+                        "Generates energy",
+                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"),
+                        cost: 150,
+                        building: new BuildingType("Nuclear Reactor", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"), new Point(3, 3))
+                    ));
                     break;
 
                 case 1:

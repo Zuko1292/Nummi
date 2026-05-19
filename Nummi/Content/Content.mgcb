@@ -146,6 +146,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Player_SpriteSheet.png
 
+#begin Textures/Animations/PossessingSlime.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/PossessingSlime.png
+
 #begin Textures/Animations/Purple Slime Anim-Sheet-Tall.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -229,6 +241,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Tree Boss Idle-Sheet.png
+
+#begin Textures/Animations/Tree Boss Projectile.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Tree Boss Projectile.png
 
 #begin Textures/Animations/Tree Boss Shooting-Sheet.png
 /importer:TextureImporter

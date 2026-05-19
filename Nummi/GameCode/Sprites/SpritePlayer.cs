@@ -710,7 +710,7 @@ namespace Nummi
             );
 
             // Fill
-            Color fillColor = Color.Red;
+            Color fillColor = fill > 0.5f ? Color.Red : fill > 0.25f ? Color.Orange : Color.IndianRed;
             GBL.spriteBatch.Draw(
                 _pixel,
                 new Rectangle(x, y, (int)(barWidth * fill), barHeight),
@@ -725,7 +725,7 @@ namespace Nummi
             // Text
             GBL.spriteBatch.DrawString(
                 _font,
-                $"HP {(int)_gameRoot._health}/{boss._maxHealth}",
+                $"{_gameRoot._bossName} {(int)boss._health}/{boss._maxHealth}",
                 new Vector2(x, y - 14),
                 Color.White,
                 0f,

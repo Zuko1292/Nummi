@@ -16,12 +16,19 @@ namespace Nummi
         float _branchSpawnTimer = 0f;
         float _branchSpawnInterval = 5f;
 
+        float _shootTimer = 0f;
+        float _shootInterval = 1f;
+
+        float _slimeSpawnTimer = 0f;
+        float _slimeInterval = 10f;
+
         public override bool Dead
         {
             set
             {
+                _gameRoot._bossDead = true;
+                OnDeath();
                 _dead = value;
-                if (_dead) OnDeath();
             }
             get
             {
@@ -32,7 +39,7 @@ namespace Nummi
         public PossessedTree(Game1 gameRoot, Vector2 position)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss"), position, false, 10000, 220, 10, true, 0, 400f, 0f)// The tree is a stationary enemy That cant be killed
         {
-
+            _isIndestructible = true;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -43,14 +50,14 @@ namespace Nummi
 
             // Idle
             animations.Add(new List<Rectangle>());
-            animations[0].Add(new Rectangle(0, 69, 64, 72));
-            animations[0].Add(new Rectangle(64, 69, 64, 72));
-            animations[0].Add(new Rectangle(128, 69, 64, 72));
-            animations[0].Add(new Rectangle(192, 69, 64, 72));
-            animations[0].Add(new Rectangle(256, 69, 64, 72));
-            animations[0].Add(new Rectangle(320, 69, 64, 72));
-            animations[0].Add(new Rectangle(384, 69, 64, 72));
-            animations[0].Add(new Rectangle(448, 69, 64, 72));
+            animations[0].Add(new Rectangle(0, 141, 64, 72));
+            animations[0].Add(new Rectangle(64, 141, 64, 72));
+            animations[0].Add(new Rectangle(128, 141, 64, 72));
+            animations[0].Add(new Rectangle(192, 141, 64, 72));
+            animations[0].Add(new Rectangle(256, 141, 64, 72));
+            animations[0].Add(new Rectangle(320, 141, 64, 72));
+            animations[0].Add(new Rectangle(384, 141, 64, 72));
+            animations[0].Add(new Rectangle(448, 141, 64, 72));
 
             // Shooting
             animations.Add(new List<Rectangle>());
@@ -63,8 +70,19 @@ namespace Nummi
             animations[1].Add(new Rectangle(384, 0, 64, 69));
             animations[1].Add(new Rectangle(448, 0, 64, 69));
 
+            // Idle no Slime
+            animations.Add(new List<Rectangle>());
+            animations[2].Add(new Rectangle(0, 69, 64, 72));
+            animations[2].Add(new Rectangle(64, 69, 64, 72));
+            animations[2].Add(new Rectangle(128, 69, 64, 72));
+            animations[2].Add(new Rectangle(192, 69, 64, 72));
+            animations[2].Add(new Rectangle(256, 69, 64, 72));
+            animations[2].Add(new Rectangle(320, 69, 64, 72));
+            animations[2].Add(new Rectangle(384, 69, 64, 72));
+            animations[2].Add(new Rectangle(448, 69, 64, 72));
 
-            _nextAnim = new List<int>() { 0, 0 };
+            _nextAnim = new List<int>();
+            for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
 
             return animations;
         }
@@ -78,6 +96,16 @@ namespace Nummi
                 Dead = true;
             }
 
+            if (GBL.KeyPress(Keys.Space))
+            {
+                Dead = true;
+            }
+
+            if (_gameRoot._slimeOffHead)
+            {
+                return; // Skip the rest of the update loop if the slime is active, since the tree should be idle during this time
+            }
+
             _branchSpawnTimer += GBL.DeltaTime;
             if (_branchSpawnTimer >= _branchSpawnInterval)
             {
@@ -85,14 +113,38 @@ namespace Nummi
                 BranchSpawn();
             }
 
-            if(GBL.KeyPress(Keys.Space))
+
+            _shootTimer += GBL.DeltaTime;
+            if(_shootTimer >= _shootInterval)
             {
-                Dead = true;
+                _shootTimer = 0f;
+                SetAnimation(1);
+            }
+
+            _slimeSpawnTimer += GBL.DeltaTime;
+            if(!_gameRoot._slimeOffHead && _slimeSpawnTimer >= _slimeInterval)
+            {
+                _slimeSpawnTimer = 0f;
+                PossessingSlime slime = new PossessingSlime(_gameRoot, _position + new Vector2(0, 50));
+                _gameRoot._newSpriteList.Add(slime);
+                SetAnimation(2);
+                _gameRoot._slimeOffHead = true;
+            }
+
+            if (_animIndex == 1 && _frameIndex == 4 && _frameTimer < GBL.DeltaTime)
+            {
+                SpawnProjectile();
             }
         }
 
         public void OnDeath()
         {
+            // Spawns Mirror to next level
+            var map1 = _gameRoot._tilemap.Layers[0];
+
+            map1.SetTile(10, 14, 14);
+            map1.SetTile(10, 15, 22);
+
             // Drop loot, play death animation, etc. 
         }
 
@@ -117,19 +169,85 @@ namespace Nummi
             Branch branch = new Branch(_gameRoot, spawnPos, dir);
             _gameRoot._newSpriteList.Add(branch);
         }
+
+        public void SpawnProjectile()
+        {
+            Vector2 treeCenter = new Vector2(
+                _collisionBounds.Center.X,
+                _collisionBounds.Center.Y
+            );
+            Vector2 playerPos = _gameRoot._player._position;
+            TreeBossProjectile projectile = new TreeBossProjectile(_gameRoot, treeCenter, playerPos);
+            _gameRoot._newSpriteList.Add(projectile);
+        }
     }
 
     public class PossessingSlime : SpriteEnemy
     {
+        public override bool Dead
+        {
+            set
+            {
+                _gameRoot._currentBoss._health -= _gameRoot._currentBoss._maxHealth / 4; 
+                _gameRoot._slimeOffHead = false; // Reset the flag in Game1 to indicate the slime's head is back on
+                _dead = value;
+            }
+            get
+            {
+                return _dead;
+            }
+        }
+
         public PossessingSlime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Enemies\\PossessingSlime"), position, true, 500, 220, 20, true, 100, 400f, 200f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\PossessingSlime"), position, true, 250, 220, 20, true, 100, 200f, 200f)
         {
         }
+
+        protected override List<List<Rectangle>> BuildAnimations()
+        {
+            _frameDuration = 1f / 8f;
+            List<List<Rectangle>> animations = new List<List<Rectangle>>();
+
+            // Idle
+            animations.Add(new List<Rectangle>());
+            animations[0].Add(new Rectangle(0, 0, 64, 48));
+
+            // Walking
+            animations.Add(new List<Rectangle>());
+            animations[1].Add(new Rectangle(0, 0, 64, 48));
+            animations[1].Add(new Rectangle(64, 0, 64, 48));
+            animations[1].Add(new Rectangle(128, 0, 64, 48));
+            animations[1].Add(new Rectangle(192, 0, 64, 48));
+            animations[1].Add(new Rectangle(256, 0, 64, 48));
+            animations[1].Add(new Rectangle(320, 0, 64, 48));
+            animations[1].Add(new Rectangle(384, 0, 64, 48));
+            animations[1].Add(new Rectangle(448, 0, 64, 48));
+            animations[1].Add(new Rectangle(512, 0, 64, 48));
+            animations[1].Add(new Rectangle(576, 0, 64, 48));
+            animations[1].Add(new Rectangle(640, 0, 64, 48));
+            animations[1].Add(new Rectangle(704, 0, 64, 48));
+
+            _nextAnim = new List<int>();
+            for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
+
+            return animations;
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
 
+            if (_velocity == Vector2.Zero) SetAnimation(0);
+            else SetAnimation(1);
+            // Makes it so goes back to being idle before stopping update should put this in all enemies that dont patrol however if they have idle animation then make their velocity 0 when not seeing player
+            if (_lastSeenTimer <= 0.2f) SetAnimation(0);
+
             if (_gameRoot._bossDead)
+            {
+                Dead = true;
+            }
+
+            if (GBL.KeyPress(Keys.K))
             {
                 Dead = true;
             }
@@ -151,7 +269,7 @@ namespace Nummi
 
             float angle = (float)Math.Atan2(_attackDirection.Y, _attackDirection.X);
 
-            _rotation = angle + MathHelper.Pi; 
+            _rotation = angle + MathHelper.Pi;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -210,6 +328,29 @@ namespace Nummi
                 _flipEffect,
                 _layerDepth
             );
+        }
+    }
+
+    public class TreeBossProjectile : SpriteEnemyProjectile
+    {
+        public TreeBossProjectile(Game1 gameRoot, Vector2 position, Vector2 target)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss Projectile"), position, 150f, 10)
+        {
+            _velocity = Vector2.Normalize(target - _position) * _moveSpeed;
+        }
+
+        protected override List<List<Rectangle>> BuildAnimations()
+        {
+            _frameDuration = 1f / 8f;
+
+            List<List<Rectangle>> animations = new List<List<Rectangle>>();
+
+            animations.Add(new List<Rectangle>());
+            animations[0].Add(new Rectangle(0, 0, 8, 8));
+
+            _nextAnim = new List<int>() { 0 };
+
+            return animations;
         }
     }
 }
