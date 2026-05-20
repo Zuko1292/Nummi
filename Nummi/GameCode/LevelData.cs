@@ -193,20 +193,20 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 8), true, savedStats, savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            //// Room 2 Enemies
-                            //gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(26, 5)));
-                            //gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(26, 11)));
-                            //
-                            //// Room 3 Enemies
-                            //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(46, 14)));
-                            //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(52, 7)));
-                            //
-                            //// Room 4 Enemies
-                            //gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(46, 20)));
-                            //gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(51, 28)));
-                            //
-                            //// Trap Room Enemies
-                            //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(56, 42)));
+                            // Room 2 Enemies
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(26, 5)));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(26, 11)));
+                            
+                            // Room 3 Enemies
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(46, 14)));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(52, 7)));
+                            
+                            // Room 4 Enemies
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(46, 20)));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(51, 28)));
+                            
+                            // Trap Room Enemies
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(56, 42)));
 
                             break;
                         case 3:

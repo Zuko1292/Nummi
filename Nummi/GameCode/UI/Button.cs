@@ -23,14 +23,14 @@ namespace Nummi
         public bool IsHovering { get; private set; }
         public bool IsClicked { get; private set; }
 
-        public TextButton(SpriteFont font, string text, Vector2 position)
+        public TextButton(SpriteFont font, string text, Vector2 position, Color color)
         {
             _font = font;
             _text = text;
             _position = position;
 
             _scale = _defaultScale;
-            _currentColor = _defaultColor;
+            _currentColor = color;
         }
 
         public void Update()

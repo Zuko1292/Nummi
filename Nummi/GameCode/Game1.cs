@@ -86,7 +86,7 @@ namespace Nummi
         // Class Variables
 
         public SpritePlayer _player;
-        TextButton playButton, guideButton;
+        TextButton playButton, guideButton, settingsButton, exitButton;
         TextButton shopButton;
         Background _MenuBackground, _GuideBackground, _SettingsBackground;
         public SpriteNPC _npc;
@@ -109,7 +109,7 @@ namespace Nummi
             "Maps/Dungeon1-BossRoom.xml",
             "Maps/Dungeon2-Section1.xml",
             "Maps/Dungeon2-Section2.xml",
-            "Maps/Dungeon3-Section3.xml",
+            "Maps/Dungeon3-Section1.xml",
         };
 
         // Sprite lists
@@ -147,10 +147,12 @@ namespace Nummi
 
 
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
-            shopButton = new TextButton(font, "Shop", ScreenRelative(0.92f, 0.95f));
+            shopButton = new TextButton(font, "Shop", ScreenRelative(0.92f, 0.95f), Color.White);
             // for all buttons in the menus initialize them here and then only update and draw in the respective states
-            playButton = new TextButton(_menuFont, "Play Game", ScreenRelative(0.82f, 0.1f));
-            guideButton = new TextButton(_menuFont, "Guide / Controls", ScreenRelative(0.82f, 0.2f));
+            playButton = new TextButton(_menuFont, "Play Game", ScreenRelative(0.82f, 0.1f), Color.White);
+            guideButton = new TextButton(_menuFont, "Guide / Controls", ScreenRelative(0.82f, 0.2f), Color.White);
+            settingsButton = new TextButton(_menuFont, "Settings", ScreenRelative(0.82f, 0.3f), Color.White);
+            exitButton = new TextButton(_menuFont, "Exit", ScreenRelative(0.95f, 0.1f), Color.Red);
 
             // makes the grid for building
             _grid = new GridSystem(64, 64, 32);
@@ -205,6 +207,16 @@ namespace Nummi
             else if (_headsLevel == 3)
                 _currentCrystalTex = _smithCrystalTex;
 
+            if(exitButton != null)
+                if(exitButton.IsClicked)
+                {
+                    if (_gameState == GameState.Title) Exit();
+                    else if (_gameState == GameState.MainMenu) StartTitle();
+                    else if (_gameState == GameState.Paused) StartMainMenu();
+                    else if (_gameState == GameState.Guide) StartMainMenu();
+                    else if(_gameState == GameState.Settings) StartMainMenu();
+                }
+
             GBL.Update(gameTime, this);
 
             // For separating updates into scenes
@@ -231,6 +243,8 @@ namespace Nummi
         {
             if (GBL.KeyPress(Keys.Enter)) StartMainMenu();
             _MenuBackground.Update(gameTime);
+
+            exitButton.Update();
         }
 
         public void UpdateMainMenu(GameTime gameTime)
@@ -247,6 +261,12 @@ namespace Nummi
             if (guideButton.IsClicked) StartGuide();
 
             _MenuBackground.Update(gameTime);
+
+            settingsButton.Update();
+
+            if(settingsButton.IsClicked) StartSettings();
+
+            exitButton.Update();
         }
 
         public void UpdateHeadsLevel(GameTime gameTime)
@@ -340,45 +360,49 @@ namespace Nummi
             }
             // used to check if the player just went into a trap room
             // TODO this only can handle one trap room per level right now and is a bit janky so maybe fix that
-            if(_tilemap.TryGetTrapDoorTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point trapDoorTile))
+            if (_player != null)
             {
-                _justGoneOverTrapDoor = true;
-                _trapDoorTile = trapDoorTile;
-            }
-            if(_justGoneOverTrapDoor && _isTrapLevel)
-            {
-                _trapRoomDoorTimer += GBL.DeltaTime;
-                if(_trapRoomDoorTimer >= _trapDoorTimer)
+                if (_tilemap.TryGetTrapDoorTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point trapDoorTile))
                 {
-                    _justGoneOverTrapDoor = false;
-                    _trapRoomDoorTimer = 0f;
-
-                    if(!_alreadyGoneIntoTrapDoor)
+                    _justGoneOverTrapDoor = true;
+                    _trapDoorTile = trapDoorTile;
+                }
+                if (_justGoneOverTrapDoor && _isTrapLevel)
+                {
+                    _trapRoomDoorTimer += GBL.DeltaTime;
+                    if (_trapRoomDoorTimer >= _trapDoorTimer)
                     {
-                        map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 17);
-                        _alreadyGoneIntoTrapDoor = true;
+                        _justGoneOverTrapDoor = false;
+                        _trapRoomDoorTimer = 0f;
+
+                        if (!_alreadyGoneIntoTrapDoor)
+                        {
+                            map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 17);
+                            _alreadyGoneIntoTrapDoor = true;
+                        }
+
                     }
-                    
                 }
-            }
-            // when getting the chest in the trap room it opens the chest and then resets the trap door so you can go back out
-            if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile))
-            {
-                if (_isTrapLevel) 
+
+                // when getting the chest in the trap room it opens the chest and then resets the trap door so you can go back out
+                if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile))
                 {
-                    _player.ChestOpened(_player._position, new DroppedWeapon(this, _player._position, new Random().Next(0, 5)));
+                    if (_isTrapLevel)
+                    {
+                        _player.ChestOpened(_player._position, new DroppedWeapon(this, _player._position, new Random().Next(0, 5)));
+                    }
+
+                    else
+                    {
+                        _player.ChestOpened(_player._position, new PossessedOakDrop(this, _currentCrystalTex, _player._position + new Vector2(0, -50))); //Creates drop using the right texture
+                    }
+
+                    var map1 = _tilemap.Layers[1];
+
+                    map1.SetTile(chestTile.X, chestTile.Y, 0);
+
+                    if (_alreadyGoneIntoTrapDoor) map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 3);
                 }
-
-                else
-                {
-                    _player.ChestOpened(_player._position, new PossessedOakDrop(this, _currentCrystalTex, _player._position + new Vector2(0, -50))); //Creates drop using the right texture
-                }
-
-                var map1 = _tilemap.Layers[1];
-
-                map1.SetTile(chestTile.X, chestTile.Y, 0);
-
-                if(_alreadyGoneIntoTrapDoor) map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 3);
             }
             // TESTING PURPOSES ONLY
             // for testing purposes to skip to tails level
@@ -459,17 +483,21 @@ namespace Nummi
         // TODO make the other menus
         public void UpdateSettings(GameTime gameTime)
         {
+            _SettingsBackground.Update(gameTime);
 
+            exitButton.Update();
         }
 
         public void UpdateGuide(GameTime gameTime)
         {
             _GuideBackground.Update(gameTime);
+
+            exitButton.Update();
         }
 
         public void UpdatePaused(GameTime gameTime)
         {
-
+            exitButton.Update();
         }
 
         public void UpdateDeathScreen(GameTime gameTime)
@@ -515,8 +543,11 @@ namespace Nummi
             // spawns the sprites that appear at start of game
             LevelData.SpawnLevel(_headsLevel, this);
 
-            if(_player != null)
+            if (_player != null)
+            {
                 _health = _player.Stats.MaxHP;
+                _player._posture = _player.Stats.Posture;
+            }
         }
         // Start Tails level
         public void StartTailsLevel(int level)
@@ -576,6 +607,8 @@ namespace Nummi
             MediaPlayer.Stop();
 
             _gameState = GameState.Settings;
+
+            _SettingsBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 2);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -657,6 +690,7 @@ namespace Nummi
         public void DrawTitle()
         {
             _MenuBackground.Draw(GBL.spriteBatch);
+            exitButton.Draw();
 
             FancyText(_titleFont, "Nummi", ScreenRelative(0.5f, 0.1f), Color.Gold, Color.White);
             FancyText(_menuFont, "Press [ENTER] to Begin", ScreenRelative(0.5f, 0.9f), Color.Gold, Color.White, 1f, 1.5f);
@@ -666,6 +700,8 @@ namespace Nummi
         {
             playButton.Draw();
             guideButton.Draw();
+            settingsButton.Draw();
+            exitButton.Draw();
 
             _MenuBackground.Draw(GBL.spriteBatch);
 
@@ -699,11 +735,13 @@ namespace Nummi
         }
         public void DrawSettings()
         {
-
+            _SettingsBackground.Draw(GBL.spriteBatch);
+            exitButton.Draw();
         }
         public void DrawGuide()
         {
             _GuideBackground.Draw(GBL.spriteBatch);
+            exitButton.Draw();
 
             Vector2 Rectpos = ScreenRelative(-0.15f, 0f);
 
@@ -733,7 +771,7 @@ namespace Nummi
         }
         public void DrawPaused()
         {
-
+            exitButton.Draw();
         }
         public void DrawDeathScreen()
         {

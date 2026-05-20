@@ -17,7 +17,7 @@ namespace Nummi
         protected bool _hasFloor;
         protected Sprite _floor;
         public Vector2 _playerPos;
-        public float _posture = 50f;
+        public float _posture;
 
         // Variable for checking if the player is in the trap room
         public bool _isInTrapRoom = false;
@@ -515,8 +515,10 @@ namespace Nummi
             Vitality = new Stat("Vitality", vit, 99);
         }
 
-        public int MaxHP => (int)(Vitality.CurrentValue * 15);
+        public int MaxHP => (int)(Vitality.CurrentValue * 7.5f);
         public int WeaponDmg => (int)(Strength.CurrentValue * 2.5f);
+
+        public int Posture => (int)(Strength.CurrentValue * 5f);
     }
     // Level system for player progression, it uses a simple exponential growth formula for XP requirements, where each level requires 8% more XP than the previous one. The LevelUp method is called when the player has enough XP to level up, which increases the player's level and updates the XP required for the next level. The OnLevelUp event allows other parts of the game to respond to the player leveling up, such as updating the HUD or unlocking new abilities.
     // TODO I think the scaling is a bit crazy right now so need to fix that
@@ -696,11 +698,13 @@ namespace Nummi
 
         private void DrawBossBar(SpriteEnemy boss)
         {
+            Vector2 pos = _gameRoot.ScreenRelative(0.35f, 0.8f);
+
             int barWidth = 350; 
             int barHeight = 25;  
-            int x = 240, y = 420; 
+            int x = (int)pos.X, y = (int)pos.Y;
 
-            float fill = boss._health / boss._maxHealth;
+            float fill = (float)boss._health / (float)boss._maxHealth;
             fill = Math.Clamp(fill, 0f, 1f);
 
             float uiLayer = 0.1f;
