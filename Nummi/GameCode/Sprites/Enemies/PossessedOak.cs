@@ -139,6 +139,7 @@ namespace Nummi
 
         public void OnDeath()
         {
+            // When getting tilemap tile layer is 0 object layer is 1
             // Spawns Mirror to next level
             var map1 = _gameRoot._tilemap.Layers[0];
 

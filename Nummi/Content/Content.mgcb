@@ -25,6 +25,9 @@
 #begin Maps/Dungeon2-Section1.xml
 /copy:Maps/Dungeon2-Section1.xml
 
+#begin Maps/Dungeon2-Section2.xml
+/copy:Maps/Dungeon2-Section2.xml
+
 #begin Maps/HeadsTown.xml
 /copy:Maps/HeadsTown.xml
 

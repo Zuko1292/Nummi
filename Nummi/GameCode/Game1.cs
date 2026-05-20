@@ -40,6 +40,7 @@ namespace Nummi
         private float _spawnProtectionTimer = 0f;
         private const float SpawnProtectionDuration = 0.1f;
         public bool _showTailsIntro = false;
+        public bool _isNextLevelTails = false;
 
         // Global boss variables needed
         public bool _slimeOffHead = false;
@@ -98,6 +99,7 @@ namespace Nummi
             "Maps/Dungeon1-Section2.xml",
             "Maps/Dungeon1-BossRoom.xml",
             "Maps/Dungeon2-Section1.xml",
+            "Maps/Dungeon2-Section2.xml",
         };
 
         // Sprite lists
@@ -679,6 +681,16 @@ namespace Nummi
             else
             {
                 _currentLevel++;
+                StartHeadsLevel(_currentLevel);
+            }
+
+            if(_isNextLevelTails)
+            {
+                StartTailsLevel(_currentLevel);
+                _isNextLevelTails = false;
+            }
+            if(!_isNextLevelTails)
+            {
                 StartHeadsLevel(_currentLevel);
             }
         }
