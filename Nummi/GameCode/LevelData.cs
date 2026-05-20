@@ -22,7 +22,7 @@ namespace Nummi
 
         // Rules for dungeon 1 section 1, 2 and 3 (which share the same tileSet)
         public static readonly TilemapRules Rules2 = new TilemapRules()
-            .AddSolid(0, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 25, 26, 27, 28, 29, 30, 35, 36, 37, 43, 44, 45, 51, 52, 53)
+            .AddSolid(0, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 25, 26, 27, 28, 29, 30, 35, 36, 37, 43, 44, 45, 51, 52, 53, 56, 57, 58, 60, 61)
             .AddExit(39, 47)
             .AddChest(24)
             .AddTrapDoor(46);

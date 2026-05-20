@@ -78,15 +78,17 @@ namespace Nummi
 
         public SpriteFont font;
         public SpriteFont _menuFont;
+        public SpriteFont _titleFont;
+        public SpriteFont _smallMenuFont;
 
         public float _scaleText = 1.0f;
 
         // Class Variables
 
         public SpritePlayer _player;
-        TextButton playButton;
+        TextButton playButton, guideButton;
         TextButton shopButton;
-        Background _MenuBackground;
+        Background _MenuBackground, _GuideBackground, _SettingsBackground;
         public SpriteNPC _npc;
         public DialogBox _box;
         public Camera2D _tailsCamera;
@@ -107,6 +109,7 @@ namespace Nummi
             "Maps/Dungeon1-BossRoom.xml",
             "Maps/Dungeon2-Section1.xml",
             "Maps/Dungeon2-Section2.xml",
+            "Maps/Dungeon3-Section3.xml",
         };
 
         // Sprite lists
@@ -120,8 +123,8 @@ namespace Nummi
             IsMouseVisible = true;
 
             // Sets the resolution to 800x480 and applies the changes. This is a common resolution for 16:9 aspect ratio games, and it ensures that the game will have a consistent window size when it starts.
-            GBL.GDM.PreferredBackBufferWidth = 800;
-            GBL.GDM.PreferredBackBufferHeight =  480;
+            GBL.GDM.PreferredBackBufferWidth = 1280;
+            GBL.GDM.PreferredBackBufferHeight =  720;
             GBL.GDM.ApplyChanges();
 
             // Initializes the cameras
@@ -137,16 +140,17 @@ namespace Nummi
 
             font = Content.Load<SpriteFont>("MyFont");
             _menuFont = Content.Load<SpriteFont>("MenuFont");
+            _titleFont = Content.Load<SpriteFont>("TitleFont");
+            _smallMenuFont = Content.Load<SpriteFont>("SmallMenuFont");
 
             _tilemap = Tilemap.FromFile(levelFiles[0]);
 
-            // for all buttons in the menus initialize them here and then only update and draw in the respective states
-            playButton = new TextButton(_menuFont, "Play Game", new Vector2(600, 50));
 
-            shopButton = new TextButton(font, "Shop", new Vector2(740, 450));
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
-
-            _MenuBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 1);
+            shopButton = new TextButton(font, "Shop", ScreenRelative(0.92f, 0.95f));
+            // for all buttons in the menus initialize them here and then only update and draw in the respective states
+            playButton = new TextButton(_menuFont, "Play Game", ScreenRelative(0.82f, 0.1f));
+            guideButton = new TextButton(_menuFont, "Guide / Controls", ScreenRelative(0.82f, 0.2f));
 
             // makes the grid for building
             _grid = new GridSystem(64, 64, 32);
@@ -200,8 +204,6 @@ namespace Nummi
                 _currentCrystalTex = _hayCrystalTex;
             else if (_headsLevel == 3)
                 _currentCrystalTex = _smithCrystalTex;
-            Debug.WriteLine("Current Game State: " + _gameState);
-            Debug.WriteLine("$ TailsLevel: " + _tailsLevel);
 
             GBL.Update(gameTime, this);
 
@@ -239,6 +241,10 @@ namespace Nummi
             {
                 StartNewGame();
             }
+
+            guideButton.Update();
+
+            if (guideButton.IsClicked) StartGuide();
 
             _MenuBackground.Update(gameTime);
         }
@@ -434,7 +440,7 @@ namespace Nummi
                 }
             }
 
-            var mouse = Mouse.GetState();
+            var mouse = GBL.mscurr;
 
             Vector2 mouseWorld = _tailsCamera.ScreenToWorld(mouse.Position.ToVector2());
             // building system update which handles the building of structures and the preview of where they will be built and if they can be built there or not
@@ -458,7 +464,7 @@ namespace Nummi
 
         public void UpdateGuide(GameTime gameTime)
         {
-
+            _GuideBackground.Update(gameTime);
         }
 
         public void UpdatePaused(GameTime gameTime)
@@ -476,6 +482,10 @@ namespace Nummi
             _gameState = GameState.Title;
             // clears all sprites
             _spriteList.Clear();
+
+            _MenuBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 0);
+
+
         }
         //Starts main menu
         public void StartMainMenu()
@@ -556,6 +566,8 @@ namespace Nummi
 
             _gameState = GameState.Guide;
 
+            _GuideBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 1);
+
         }
         // Starts settings
         public void StartSettings()
@@ -628,7 +640,8 @@ namespace Nummi
                     _shopUI.DrawCurrency(10, 130, _currency.Energy, GBL.Content.Load<Texture2D>("Textures\\UI\\Energy Icon"), "e");
                     _shopUI.Draw();
                     shopButton.Draw();
-                    GBL.spriteBatch.Draw(_shopButtonTexture, new Rectangle(691, 434, 96, 32), _shopButtonTexture.Bounds, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.09f);
+                    Vector2 RectPos = ScreenRelative(0.88f, 0.93f);
+                    GBL.spriteBatch.Draw(_shopButtonTexture, new Rectangle((int)RectPos.X, (int)RectPos.Y, 96, 32), _shopButtonTexture.Bounds, Color.White, 0f, Vector2.Zero, SpriteEffects.None, 0.09f);
                     if (_showTailsIntro && _box != null)
                         _box.Draw(GBL.spriteBatch);
                     break;
@@ -645,14 +658,20 @@ namespace Nummi
         {
             _MenuBackground.Draw(GBL.spriteBatch);
 
+            FancyText(_titleFont, "Nummi", ScreenRelative(0.5f, 0.1f), Color.Gold, Color.White);
+            FancyText(_menuFont, "Press [ENTER] to Begin", ScreenRelative(0.5f, 0.9f), Color.Gold, Color.White, 1f, 1.5f);
+
         }
         public void DrawMainMenu()
         {
             playButton.Draw();
+            guideButton.Draw();
 
             _MenuBackground.Draw(GBL.spriteBatch);
 
-            Rectangle rect = new Rectangle(400, 0, 400, 480);
+            Vector2 Rectpos = ScreenRelative(0.65f, 0f);
+
+            Rectangle rect = new Rectangle((int)Rectpos.X, (int)Rectpos.Y, GBL.GDM.PreferredBackBufferWidth / 2, GBL.GDM.PreferredBackBufferHeight);
 
             GBL.spriteBatch.Draw(
                 _defaultTxr,
@@ -684,6 +703,32 @@ namespace Nummi
         }
         public void DrawGuide()
         {
+            _GuideBackground.Draw(GBL.spriteBatch);
+
+            Vector2 Rectpos = ScreenRelative(-0.15f, 0f);
+
+            Rectangle rect = new Rectangle((int)Rectpos.X, (int)Rectpos.Y, GBL.GDM.PreferredBackBufferWidth / 2, GBL.GDM.PreferredBackBufferHeight);
+
+            GBL.spriteBatch.Draw(
+                _defaultTxr,
+                rect,
+                null,
+                Color.White * 0.5f,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0.95f
+            );
+
+            FancyText(_menuFont, "Guide", ScreenRelative(0.16f, 0.1f), Color.White, Color.Black);
+            FancyText(_smallMenuFont, "Your Goal is to traverse through\nthe dungeons and build your town up\n(some town buildings \nwill affect your heads stats)", ScreenRelative(0.15f, 0.15f), Color.White, Color.Black);
+            
+            FancyText(_menuFont, "Controls", ScreenRelative(0.16f, 0.25f), Color.White, Color.Black);
+            FancyText(_smallMenuFont, "WASD for movement", ScreenRelative(0.16f, 0.3f), Color.White, Color.Black);
+            FancyText(_smallMenuFont, "LMB to attack", ScreenRelative(0.16f, 0.35f), Color.White, Color.Black);
+            FancyText(_smallMenuFont, "Q to Dash", ScreenRelative(0.16f, 0.4f), Color.White, Color.Black);
+            FancyText(_smallMenuFont, "F to Block", ScreenRelative(0.16f, 0.45f), Color.White, Color.Black);
+            FancyText(_smallMenuFont, "(Be Aware of your posture)", ScreenRelative(0.16f, 0.5f), Color.White, Color.Black);
 
         }
         public void DrawPaused()

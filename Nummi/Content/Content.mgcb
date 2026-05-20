@@ -28,6 +28,9 @@
 #begin Maps/Dungeon2-Section2.xml
 /copy:Maps/Dungeon2-Section2.xml
 
+#begin Maps/Dungeon3-Section1.xml
+/copy:Maps/Dungeon3-Section1.xml
+
 #begin Maps/HeadsTown.xml
 /copy:Maps/HeadsTown.xml
 
@@ -47,6 +50,13 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:MyFont.spritefont
+
+#begin SmallMenuFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:SmallMenuFont.spritefont
 
 #begin Textures/Animations/Acid Drink.png
 /importer:TextureImporter
@@ -552,6 +562,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/TileSets/Dungeon 2 TileSheet.png
 
+#begin Textures/TileSets/Dungeon 3 TileSheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/TileSets/Dungeon 3 TileSheet.png
+
 #begin Textures/TileSets/Overworld Tilesheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -647,4 +669,11 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/UI/Population Icon.png
+
+#begin TitleFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:TitleFont.spritefont
 

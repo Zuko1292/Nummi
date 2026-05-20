@@ -12,9 +12,8 @@ namespace Nummi
     public class Background : SpriteAnimating
     {
         int _currentbg;
-        // 1 = Main Menu
-        // 2 = Play Menu
-        // 3 = Guide Menu
+        // 0 = Main Menu
+        // 1 = Guide Menu
 
         public Background(Game1 gameRoot, Texture2D currentbg, int currentbgnum)
             : base(gameRoot, currentbg, new Vector2(gameRoot._screenBounds.Width / 2, gameRoot._screenBounds.Height / 2), false, false)
@@ -47,6 +46,10 @@ namespace Nummi
             animations[0].Add(new Rectangle(9600, 0, 800, 480));
             animations[0].Add(new Rectangle(10400, 0, 800, 480));
 
+            // Guide
+            animations.Add(new List<Rectangle>());
+            animations[1].Add(new Rectangle(0, 480, 800, 480));
+
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
@@ -58,7 +61,14 @@ namespace Nummi
         {
             if(_gameRoot._player != null) _position = _gameRoot._player._position;
 
+            SetAnimation(_currentbg);
+
             base.Update(gameTime);
+        }
+
+        protected override void UpdateBounds(GameTime gameTime)
+        {
+            _visibleBounds = new Rectangle(0, 0, GBL.GDM.PreferredBackBufferWidth, GBL.GDM.PreferredBackBufferHeight);
         }
     }
 }
