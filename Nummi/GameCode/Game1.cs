@@ -70,7 +70,11 @@ namespace Nummi
         public Vector2[] _torchPositions = Array.Empty<Vector2>();
         public LightingRenderer _lighting;
         public bool _useLighting = false;
-        Texture2D _shopButtonTexture;
+        Texture2D _shopButtonTexture,
+            _shieldCrystalTex,
+            _hayCrystalTex,
+            _smithCrystalTex,
+            _currentCrystalTex;
 
         public SpriteFont font;
         public SpriteFont _menuFont;
@@ -179,14 +183,28 @@ namespace Nummi
 
             _lighting = new LightingRenderer();
 
+<<<<<<< HEAD
             _defaultTxr = new Texture2D(GraphicsDevice, 1, 1);
             _defaultTxr.SetData(new[] { Color.White });
+=======
+            _shieldCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\ShieldCrystal");
+            _hayCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\hayCrystal");
+            //_smithCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\SmithCrystal");
+>>>>>>> 2be0b98653139313b63434a7110e472b81bbe1f7
         }
 
         protected override void Update(GameTime gameTime)
         {
-            Debug.WriteLine("Current Game State: " + _gameState);
-            Debug.WriteLine("$ TailsLevel: " + _tailsLevel);
+<<<<<<< HEAD
+=======
+            //Makes sure the crystal texture is right
+            if (_currentLevel == 1)
+                _currentCrystalTex = _shieldCrystalTex;
+            else if (_currentLevel == 2)
+                _currentCrystalTex = _hayCrystalTex;
+            else if (_currentLevel == 3)
+                _currentCrystalTex = _smithCrystalTex;
+>>>>>>> 2be0b98653139313b63434a7110e472b81bbe1f7
 
             GBL.Update(gameTime, this);
 
@@ -350,7 +368,7 @@ namespace Nummi
 
                 else
                 {
-                    _player.ChestOpened(_player._position, new PossessedOakDrop(this, _player._position + new Vector2(0, -50)));
+                    _player.ChestOpened(_player._position, new PossessedOakDrop(this, _currentCrystalTex, _player._position + new Vector2(0, -50))); //Creates drop using the right texture
                 }
 
                 var map1 = _tilemap.Layers[1];

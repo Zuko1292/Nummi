@@ -108,6 +108,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/GreenCrystal.png
 
+#begin Textures/Animations/hayCrystal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/hayCrystal.png
+
 #begin Textures/Animations/Left Slash-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
