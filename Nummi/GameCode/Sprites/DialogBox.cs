@@ -11,19 +11,19 @@ namespace Nummi
     public class DialogBox : Sprite
     {
         protected Vector2 _txtPos;
-        private string _firstText, _secondText;
-        private bool _textChanged = false;
+        private List<string> _dialogue;
+        private int _currentLine = 0;
         private bool _justOpened = true;
 
         private int _boxWidth = 600;
         private int _boxHeight = 120;
 
-        public DialogBox(Game1 gameRoot, string first, string second)
+        public DialogBox(Game1 gameRoot, List<string> dialog)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\UI\\Dialog Box"),
                    Vector2.Zero, false, false)
         {
-            _firstText = first;
-            _secondText = second;
+            _gameRoot = gameRoot;
+            _dialogue = dialog;
             PositionToScreen();
         }
         // This method positions the dialog box at the center of the screen horizontally and at 18% of the screen height vertically. This is a common position for dialog boxes in games, as it allows them to be easily noticed by the player without obstructing too much of the gameplay area.
@@ -51,26 +51,25 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
             PositionToScreen();
-            // This updates the visible bounds of the dialog box to match its current position and size. The visible bounds are used for drawing the dialog box on the screen and for any interactions that may occur with it. By calling GetBoxRect(), it ensures that the visible bounds are always accurate based on the current position of the dialog box.
+
             _visibleBounds = GetBoxRect();
-            // This checks if the dialog box has just been opened. If it has, it sets the _justOpened flag to false and returns early from the update method. This allows the dialog box to be displayed for at least one frame before any input is processed, ensuring that the player has a chance to see the dialog box before it can be interacted with.
+
             if (_justOpened)
             {
                 _justOpened = false;
                 base.Update(gameTime);
                 return;
             }
-            // This checks if the E key has been pressed. If it has, it toggles the _textChanged flag. If _textChanged was previously false, it sets it to true, which will cause the second text to be displayed. If _textChanged was already true, it sets the _dead flag to true, which will cause the dialog box to be removed from the game. Additionally, if the current game state is HeadsLevel, it allows the player to move again by setting _canMove to true.
+
             if (GBL.KeyPress(Keys.E))
             {
-                if (!_textChanged)
-                {
-                    _textChanged = true;
-                }
-                else
+                _currentLine++;
+
+                if (_currentLine >= _dialogue.Count)
                 {
                     _dead = true;
-                    if(_gameRoot._gameState == GameState.HeadsLevel)
+
+                    if (_gameRoot._gameState == GameState.HeadsLevel)
                         _gameRoot._player._canMove = true;
                 }
             }
@@ -100,14 +99,49 @@ namespace Nummi
                 boxRect.Y + 20f
             );
 
-            string textToDisplay = _textChanged ? _secondText : _firstText;
+            if (_currentLine >= _dialogue.Count)
+                return;
+            string textToDisplay = _dialogue[_currentLine];
             string[] lines = textToDisplay.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
             // This splits the text to be displayed into lines based on the newline character. It then iterates through each line and draws it on the screen using the sprite batch. The text is drawn starting from the calculated textStart position, and after each line is drawn, the Y position is incremented by the line spacing of the font to ensure that the lines are properly spaced vertically.
             foreach (var line in lines)
             {
-                GBL.spriteBatch.DrawString(_gameRoot.font, line, textStart, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.08f);
+                GBL.spriteBatch.DrawString(
+                    _gameRoot.font,
+                    line,
+                    textStart,
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    1f,
+                    SpriteEffects.None,
+                    0.08f
+                );
+
                 textStart.Y += _gameRoot.font.LineSpacing;
             }
+
+            // Continue prompt text
+            string continueText = "Press [E] to Continue";
+
+            Vector2 continueSize = _gameRoot.font.MeasureString(continueText);
+
+            Vector2 continuePos = new Vector2(
+                boxRect.Right - continueSize.X - 20f,
+                boxRect.Bottom - continueSize.Y - 10f
+            );
+
+            GBL.spriteBatch.DrawString(
+                _gameRoot.font,
+                continueText,
+                continuePos,
+                Color.LightGray,
+                0f,
+                Vector2.Zero,
+                0.8f,
+                SpriteEffects.None,
+                0.08f
+            );
         }
     }
 }

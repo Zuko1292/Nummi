@@ -30,7 +30,9 @@ namespace Nummi
         // Heads Variables
 
         public GameState _gameState;
-        public int _currentLevel;
+        public int _headsLevel;
+        public int _tailsLevel;
+        public int _pendingHeadsLevel = -1;
         public int _prepForNextLevel = -1;
         protected float _stateTimer;
         protected bool _coinLvl = false;
@@ -71,6 +73,7 @@ namespace Nummi
         Texture2D _shopButtonTexture;
 
         public SpriteFont font;
+        public SpriteFont _menuFont;
 
         public float _scaleText = 1.0f;
 
@@ -129,11 +132,12 @@ namespace Nummi
             GBL.Content = Content;
 
             font = Content.Load<SpriteFont>("MyFont");
+            _menuFont = Content.Load<SpriteFont>("MenuFont");
 
             _tilemap = Tilemap.FromFile(levelFiles[0]);
 
             // for all buttons in the menus initialize them here and then only update and draw in the respective states
-            playButton = new TextButton(font, "Play Game", new Vector2(300, 200));
+            playButton = new TextButton(_menuFont, "Play Game", new Vector2(600, 50));
 
             shopButton = new TextButton(font, "Shop", new Vector2(740, 450));
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
@@ -174,10 +178,15 @@ namespace Nummi
             _hud = new HUD(this, font);
 
             _lighting = new LightingRenderer();
+
+            _defaultTxr = new Texture2D(GraphicsDevice, 1, 1);
+            _defaultTxr.SetData(new[] { Color.White });
         }
 
         protected override void Update(GameTime gameTime)
         {
+            Debug.WriteLine("Current Game State: " + _gameState);
+            Debug.WriteLine("$ TailsLevel: " + _tailsLevel);
 
             GBL.Update(gameTime, this);
 
@@ -221,6 +230,8 @@ namespace Nummi
 
         public void UpdateHeadsLevel(GameTime gameTime)
         {
+            if (_player == null) return;
+
             // Adds flickering to the torches
             if (_useLighting)
                 _lighting.TorchLightRadius = 80 + (int)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10) * 5);
@@ -290,9 +301,9 @@ namespace Nummi
                 _prepForNextLevel = -1;
             }
 
-            if (_currentLevel == 0
-                || _currentLevel == 1
-                || _currentLevel == 2) _coinLvl = true;
+            if (_headsLevel == 0
+                || _headsLevel == 1
+                || _headsLevel == 2) _coinLvl = true;
 
             if (_spawnProtectionTimer > 0f)
                 _spawnProtectionTimer -= GBL.DeltaTime;
@@ -348,10 +359,15 @@ namespace Nummi
 
                 if(_alreadyGoneIntoTrapDoor) map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 3);
             }
+            // TESTING PURPOSES ONLY
             // for testing purposes to skip to tails level
             if (GBL.KeyPress(Keys.Tab))
             {
                 StartTailsLevel(0);
+            }
+            if(GBL.KeyPress(Keys.P))
+            {
+                NextLevel();
             }
             // for testing boss fight
             if (GBL.KeyPress(Keys.G))
@@ -362,6 +378,9 @@ namespace Nummi
 
         public void UpdateTailsLevel(GameTime gameTime)
         {
+            // updates the camera 
+            _tailsCamera.Update(gameTime);
+
             // plays dialog at start of tails level and stops player from moving until its done
             if (_showTailsIntro && _box != null)
             {
@@ -379,13 +398,17 @@ namespace Nummi
                 StartTailsLevel(_prepForNextLevel);
                 _prepForNextLevel = -1;
             }
-            // updates the camera 
-            _tailsCamera.Update(gameTime);
+            //TESTING
             // for testing purposes to skip to heads level
             if (GBL.KeyPress(Keys.LeftControl))
             {
                 StartHeadsLevel(0);
             }
+            if (GBL.KeyPress(Keys.P))
+            {
+                NextLevel();
+            }
+            // TESTING CLOSE
             // updates all sprites inside the spritelist not really useful as the tails level doesnt use sprite for the houses
             foreach (Sprite eachSprite in _spriteList)
             {
@@ -459,17 +482,16 @@ namespace Nummi
         {
             _gameState = GameState.HeadsLevel;
             _coinSide = true;
-            _currentLevel = level;
+            _headsLevel = level;
             // clears old sprites
             _spriteList.Clear();
             _newSpriteList.Clear();
             _spawnProtectionTimer = SpawnProtectionDuration;
             // spawns the sprites that appear at start of game
-            LevelData.SpawnLevel(_currentLevel, this);
-            Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
-                    _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
+            LevelData.SpawnLevel(_headsLevel, this);
 
-            _health = _player.Stats.MaxHP;
+            if(_player != null)
+                _health = _player.Stats.MaxHP;
         }
         // Start Tails level
         public void StartTailsLevel(int level)
@@ -477,18 +499,18 @@ namespace Nummi
 
             _gameState = GameState.TailsLevel;
             _coinSide = false;
-            _currentLevel = level;
+            _tailsLevel = level;
 
             // clears old sprites
             _spriteList.Clear();
             _newSpriteList.Clear();
             // spawns the sprites that appear at start of game
-            LevelData.SpawnLevel(_currentLevel, this);
+            LevelData.SpawnLevel(_tailsLevel, this);
 
             _currency.AddCoins(_currency.Population * 50);
 
             _showTailsIntro = true;
-            _box = new DialogBox(this, "Huh What the where did this gold just appear from...", "welp who cares its mine now hehehhe");
+            _box = new DialogBox(this, new List<string>() { "Huh What the where did this gold just appear from...", "welp who cares its mine now hehehhe" });
         }
         // starts pause when true and unpauses when false
         public void SetPaused(bool paused)
@@ -612,7 +634,22 @@ namespace Nummi
         public void DrawMainMenu()
         {
             playButton.Draw();
-            
+
+            _MenuBackground.Draw(GBL.spriteBatch);
+
+            Rectangle rect = new Rectangle(400, 0, 400, 480);
+
+            GBL.spriteBatch.Draw(
+                _defaultTxr,
+                rect,
+                null,
+                Color.White * 0.5f,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0.95f
+            );
+
         }
         public void DrawHeadsLevel()
         {
@@ -647,13 +684,13 @@ namespace Nummi
         {
             _player = null;
 
-            StartHeadsLevel(0);
-
-            Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
-                    _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
+            _headsLevel = 0;
+            _tailsLevel = 0;
 
             _spriteList.Clear();
             _newSpriteList.Clear();
+
+            StartHeadsLevel(_headsLevel);
         }
         // player dies and if they have no health left it goes to death screen otherwise it restarts the level they are on(I laid this out like with lives but idk if we will have lives)
         public void PlayerDied()
@@ -666,50 +703,123 @@ namespace Nummi
             }
             else
             {
-                StartHeadsLevel(_currentLevel);
+                StartHeadsLevel(_headsLevel);
             }
         }
         // going to next level and if you are on the last level it goes back to the title screen
         public void NextLevel()
         {
             PrepNextLevel();
-            if (_currentLevel >= LevelData.LastLevelIndex)
+
+            // =========================================
+            // HEADS LEVEL
+            // =========================================
+            if (_gameState == GameState.HeadsLevel)
             {
-                StartTitle();
-            }
-            // otherwise, start the next level.
-            else
-            {
-                _currentLevel++;
-                StartHeadsLevel(_currentLevel);
+                // Going to tails first
+                if (_isNextLevelTails)
+                {
+                    // Save the NEXT heads level
+                    _pendingHeadsLevel = _headsLevel + 1;
+
+                    // Go to next tails level
+                    _tailsLevel++;
+
+                    StartTailsLevel(_tailsLevel);
+
+                    _isNextLevelTails = false;
+
+                    return;
+                }
+
+                // Normal heads progression
+                _headsLevel++;
+
+                if (_headsLevel > LevelData.LastHeadsLevelIndex)
+                {
+                    StartTitle();
+                    return;
+                }
+
+                StartHeadsLevel(_headsLevel);
             }
 
-            if(_isNextLevelTails)
+            // =========================================
+            // TAILS LEVEL
+            // =========================================
+            else if (_gameState == GameState.TailsLevel)
             {
-                StartTailsLevel(_currentLevel);
-                _isNextLevelTails = false;
-            }
-            if(!_isNextLevelTails)
-            {
-                StartHeadsLevel(_currentLevel);
+                // Resume stored heads level
+                if (_pendingHeadsLevel >= 0)
+                {
+                    _headsLevel = _pendingHeadsLevel;
+
+                    _pendingHeadsLevel = -1;
+
+                    StartHeadsLevel(_headsLevel);
+
+                    return;
+                }
+
+                _headsLevel++;
+
+                if (_headsLevel > LevelData.LastHeadsLevelIndex)
+                {
+                    StartTitle();
+                    return;
+                }
+
+                StartHeadsLevel(_headsLevel);
             }
         }
 
 
         #region ***** Utility Functions *****
         // For fancy out lined shadowed text
-        public void FancyText(SpriteFont font, string text, Vector2 position, Color foreground, Color shadow, float shadowSize = 2f)
+        public void FancyText(
+            SpriteFont font,
+            string text,
+            Vector2 position,
+            Color foreground,
+            Color shadow,
+            float scale = 1f,
+            float shadowSize = 2f)
         {
-            Vector2 textPos = position - (font.MeasureString(text) / 2f);
-            GBL.spriteBatch.DrawString(font, text, textPos - new Vector2(shadowSize), shadow, 0f, Vector2.Zero, _scaleText, SpriteEffects.None, 0.02f);
-            GBL.spriteBatch.DrawString(font, text, textPos + new Vector2(shadowSize), shadow, 0f, Vector2.Zero, _scaleText, SpriteEffects.None, 0.02f);
-            GBL.spriteBatch.DrawString(font, text, textPos, foreground, 0f, Vector2.Zero, _scaleText, SpriteEffects.None, 0.01f);
+            Vector2 size = font.MeasureString(text) * scale;
+            Vector2 textPos = position - (size / 2f);
 
-            Rectangle bounds = new Rectangle(
-                (int)Math.Round(position.X),
-                (int)Math.Round(position.Y),
-                (int)Math.Round(position.X - font.MeasureString(text).X),
-                (int)Math.Round(position.Y - font.MeasureString(text).Y));
+            GBL.spriteBatch.DrawString(
+                font,
+                text,
+                textPos - new Vector2(shadowSize),
+                shadow,
+                0f,
+                Vector2.Zero,
+                scale,
+                SpriteEffects.None,
+                0.9f);
+
+            GBL.spriteBatch.DrawString(
+                font,
+                text,
+                textPos + new Vector2(shadowSize),
+                shadow,
+                0f,
+                Vector2.Zero,
+                scale,
+                SpriteEffects.None,
+                0.9f);
+
+            GBL.spriteBatch.DrawString(
+                font,
+                text,
+                textPos,
+                foreground,
+                0f,
+                Vector2.Zero,
+                scale,
+                SpriteEffects.None,
+                0.01f);
         }
         // for position of text
         public Vector2 ScreenRelative(Vector2 relative)

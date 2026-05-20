@@ -62,19 +62,15 @@ namespace Nummi
         public void Draw()
         {
             Vector2 textSize = _font.MeasureString(_text);
-            Vector2 origin = textSize / 2f; 
+            Vector2 origin = textSize / 2f;
 
-            GBL.spriteBatch.DrawString(
+            GBL.Game.FancyText(
                 _font,
                 _text,
                 _position,
                 _currentColor,
-                0f,
-                origin,
-                _scale,
-                SpriteEffects.None,
-                0.01f
-            );
+                Color.Black,
+                _scale);
         }
         // Gets the rectangle of the text for the hovering and clicking detection, it also takes into account the scale of the text so that it works correctly when hovering and clicking
         private Rectangle GetBounds()

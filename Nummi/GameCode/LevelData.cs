@@ -1,8 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nummi;
-using System;
-using System.Diagnostics;
 
 namespace Nummi
 {
@@ -10,7 +11,7 @@ namespace Nummi
     {
         // This class is responsible for spawning levels and contains data related to the levels, such as tilemap rules and level-specific settings. It has a method called SpawnLevel which takes in the level number and the game root object, and based on the current game state (HeadsLevel or TailsLevel), it loads the appropriate tilemap, sets up the player, enemies, and other sprites for that level. It also contains helper methods for converting tile coordinates to world coordinates and generating buildable areas from the tilemap.
         // This varible is used to determine the final level
-        public static int LastLevelIndex = 4;
+        public static int LastHeadsLevelIndex = 5;
 
         // Rules for Heads town and Tails Town and Dungeon 1 section 1 and 2 (which share the same tileSet)
         public static readonly TilemapRules Rules1 = new TilemapRules()
@@ -34,7 +35,7 @@ namespace Nummi
             {
 
                 case GameState.HeadsLevel:
-                    gameRoot._currentLevel = level;
+                    gameRoot._headsLevel = level;
                     gameRoot._spriteList.Clear();
                     gameRoot._newSpriteList.Clear();
 
@@ -47,7 +48,7 @@ namespace Nummi
                     // If you want to draw like UI which is not offset by camera dont do it here follow where I did it in game1(Developer note)
                     switch (level)
                     {
-                        case 5:
+                        case 0:
                             // If is trap level more it true
                             gameRoot._isTrapLevel = false;
                             // If is a lighting level make it true and set torch positions, if not set to false and empty array, set the torch position. light positions like I did in case 3.
@@ -65,10 +66,56 @@ namespace Nummi
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House2_v2"), TilePos(14, 18)));
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House1_v2"), TilePos(20, 18)));
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House3_v2"), TilePos(26, 18)));
+                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\BlackSmith_HeadsTown"), TilePos(37, 18)));
 
-                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(26, 21), true, 3f, 85f, 0.98f));
-                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(14, 20), true, 3f, 75f, 1.02f));
-                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(20, 23), true, 3f, 50f, 1.05f));
+                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
+                                GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"),
+                                TilePos(37, 20),
+                                false, 3f, 85f, 0.98f,
+                                new List<string>()
+                                {
+                                    "God These people have gone mad",
+                                    "I'm just the weapon maker",
+                                    "I've got Swords, Great Swords, Maces, Great Hammers and a Bow",
+                                    "Take your pick"
+                                }));
+                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
+                                GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"),
+                                TilePos(26, 21),
+                                true, 3f, 85f, 0.98f,
+                                new List<string>()
+                                {
+                                    "Are you just Another Delusion",
+                                    "Oh, your not well thats a relief",
+                                    "But still my mind is trapped in this nightmare",
+                                    "It's MR Mirror, He torments my dreams, I get no sleep",
+                                    "I see him in the shadows, I see him in the light",
+                                    "I dont know whats real anymore",
+                                    "*Goes back to screaming*"
+                                }));
+                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
+                                GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"),
+                                TilePos(14, 20),
+                                true, 3f, 85f, 0.98f,
+                                new List<string>()
+                                {
+                                    "He's all I see",
+                                    "He's all I see",
+                                    "He's all I see",
+                                    "MR MIRROR, MR MIRROR, MR MIRROR"
+                                }));
+                            gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
+                                GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"),
+                                TilePos(20, 23),
+                                true, 3f, 85f, 0.98f,
+                                new List<string>()
+                                {
+                                    "Seems I'm one of the few left with my wits about me",
+                                    "MR Mirror isn't all that scary just annoying to me\n*cackles cockily*",
+                                    "Anyway I guess I still care some what for my fellow\nTownspeople, He resides in the mirrors. Look over there",
+                                    "Do me a favour and go into the mirror\n east of the town square, youll find him",
+                                    "Well somewhere in the mirror world at least"
+                                }));
 
                             // gameRoot._spriteList.Add(new SpriteNPC(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"), TilePos(12, 5), true, 3f));
                             break;
@@ -166,7 +213,6 @@ namespace Nummi
                             // When its a boss level make sure you do the _bossDead variable to false and set the current boss to the boss you want in the level.
                             gameRoot._bossDead = false;
                             gameRoot._isTrapLevel = false;
-                            gameRoot._isNextLevelTails = true;
 
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
@@ -194,7 +240,7 @@ namespace Nummi
 
 
                             break;
-                        case 0:
+                        case 5:
                             gameRoot._isTrapLevel = true;
 
                             gameRoot._useLighting = false;
@@ -208,7 +254,7 @@ namespace Nummi
                     }
                     break;
                 case GameState.TailsLevel:
-                    gameRoot._currentLevel = level + LastLevelIndex;
+                    gameRoot._tailsLevel = level;
 
                     gameRoot._spriteList.Clear();
                     gameRoot._newSpriteList.Clear();
@@ -218,8 +264,10 @@ namespace Nummi
                     switch (level)
                     {
                         case 0:
+                            break;
+                        case 1:
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
-                            SetBuildingLimits(gameRoot, 0);
+                            SetBuildingLimits(gameRoot, 1);
 
                             gameRoot._grid.ResetBuildable(); // Clear old data first
                             GenerateBuildableFromTilemap(gameRoot._grid, gameRoot._tilemap, 0);
@@ -276,6 +324,8 @@ namespace Nummi
                 // Once added Item to case 0 it'll be available in all levels, so we can add all items here and just adjust limits for each level. For now we only have 2 levels so I put everything in case 0 and left case 1 empty for future expansion.
                 // TODO probably change it so you only unlock buildings after the dungeons
                 case 0:
+                    break;
+                case 1:
                     gameRoot.buildingSystem.SetLimit("House", 3);
                     gameRoot.buildingSystem.SetLimit("Barracks", 1);
 
@@ -311,7 +361,7 @@ namespace Nummi
                     ));
                     break;
 
-                case 1:
+                case 2:
                     gameRoot.buildingSystem.SetLimit("House", 6);
                     gameRoot.buildingSystem.SetLimit("Barracks", 3);
                     // Add more items or higher limits for level 1

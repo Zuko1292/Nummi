@@ -27,6 +27,7 @@ namespace Nummi
             set
             {
                 _gameRoot._bossDead = true;
+                _gameRoot._isNextLevelTails = true;
                 OnDeath();
                 _dead = value;
             }

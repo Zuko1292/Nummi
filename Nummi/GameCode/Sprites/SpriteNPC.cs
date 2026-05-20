@@ -19,7 +19,17 @@ namespace Nummi
         protected float _spawnPlace;
         protected float _walkingTime;
 
-        public SpriteNPC(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, float speechTimer, float walkingArea, float walkingTime)
+        protected List<string> _dialogue;
+
+        public SpriteNPC(
+            Game1 gameRoot,
+            Texture2D texture,
+            Vector2 position,
+            bool canMove,
+            float speechTimer,
+            float walkingArea,
+            float walkingTime,
+            List<string> dialogue)
             : base(gameRoot, texture, position, canMove)
         {
             _canFlip = true;
@@ -29,6 +39,7 @@ namespace Nummi
             _talkingDuration = speechTimer;
             _walkingArea = walkingArea;
             _walkingTime = walkingTime;
+            _dialogue = dialogue;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -109,9 +120,51 @@ namespace Nummi
             _gameRoot._player._canMove = false;
             _gameRoot._box = new DialogBox(
                 _gameRoot,
-                "Hello there!\nWelcome to the world of Nummi!",
-                "Feel free to explore and talk to other characters!");
+                _dialogue);
             _gameRoot._newSpriteList.Add(_gameRoot._box);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+
+            if (_canInteract && (_gameRoot._box == null || _gameRoot._box.Dead))
+            {
+                string prompt = "Press [E] to Interact";
+                Vector2 textSize = _gameRoot.font.MeasureString(prompt);
+
+                // Position above the NPC, centred
+                Vector2 textPos = new Vector2(
+                    _position.X - textSize.X / 2f + 32f,
+                    _position.Y - _origin.Y - textSize.Y - 6f
+                );
+
+                // Shadow for readability
+                GBL.spriteBatch.DrawString(
+                    _gameRoot.font,
+                    prompt,
+                    textPos + new Vector2(1, 1),
+                    Color.Black * 0.8f,
+                    0f,
+                    Vector2.Zero,
+                    0.6f,
+                    SpriteEffects.None,
+                    _layerDepth - 0.001f
+                );
+
+                // White text
+                GBL.spriteBatch.DrawString(
+                    _gameRoot.font,
+                    prompt,
+                    textPos,
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    0.6f,
+                    SpriteEffects.None,
+                    _layerDepth - 0.002f
+                );
+            }
         }
     }
 }

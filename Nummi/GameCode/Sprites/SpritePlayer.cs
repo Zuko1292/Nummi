@@ -582,6 +582,8 @@ namespace Nummi
 
         public void Draw(SpritePlayer player)
         {
+            if (_gameRoot._player == null) return;
+
             DrawHealthBar(player);
             DrawXPBar(player.LevelSystem);
 
@@ -595,10 +597,12 @@ namespace Nummi
 
         private void DrawHealthBar(SpritePlayer player)
         {
+            if (_gameRoot._player == null) return;
+
             int barWidth = 225; 
             int barHeight = 9;  
             int x = 20, y = 30; 
-
+            
             float fill = _gameRoot._health / player.Stats.MaxHP;
             fill = Math.Clamp(fill, 0f, 1f);
 
