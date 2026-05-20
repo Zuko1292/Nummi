@@ -50,7 +50,7 @@ namespace Nummi
         public void OnPickup()
         {
             // unlocks crystal based on the level.
-            if(_gameRoot._currentLevel == 0)
+            if(_gameRoot._tailsLevel == 1)
                 _gameRoot._shop.AddItem(new ShopItem(
                         "Barracks",
                         "Increases Defense",
@@ -58,7 +58,7 @@ namespace Nummi
                         cost: 150,
                         building: new BuildingType("Barracks", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks"), new Point(3, 3))
                     ));
-            else if (_gameRoot._currentLevel == 1)
+            else if (_gameRoot._tailsLevel == 2)
                 _gameRoot._shop.AddItem(new ShopItem(
                         "Farm",
                         "Increases Health",
@@ -66,7 +66,7 @@ namespace Nummi
                         cost: 150,
                         building: new BuildingType("Farm", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"), new Point(3, 3))
                     ));
-            else if (_gameRoot._currentLevel == 2)
+            else if (_gameRoot._tailsLevel == 3)
                 _gameRoot._shop.AddItem(new ShopItem(
                         "Black Smith",
                         "Increases Attack",

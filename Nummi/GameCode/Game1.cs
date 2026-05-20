@@ -378,7 +378,7 @@ namespace Nummi
             // for testing purposes to skip to tails level
             if (GBL.KeyPress(Keys.Tab))
             {
-                StartTailsLevel(0);
+                StartTailsLevel(1);
             }
             if(GBL.KeyPress(Keys.P))
             {
