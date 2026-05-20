@@ -407,6 +407,10 @@ namespace Nummi
                     droppedWeapon.Dead = true;
                 }
             }
+            else if (otherSprite is SpriteCollectable)
+            {
+                otherSprite.Dead = true;
+            }
         }
 
         protected override void OnTileCollideEvent(int tileX, int tileY)
@@ -457,10 +461,10 @@ namespace Nummi
             _currentWeapon = weaponType;
         } 
 
-        public void ChestOpened(Vector2 pos)
+        public void ChestOpened(Vector2 pos, SpriteCollectable collectable)
         {
-            DroppedWeapon droppedWeapon = new DroppedWeapon(_gameRoot, _position, new Random().Next(0, 5));
-            _gameRoot._newSpriteList.Add(droppedWeapon);
+            //DroppedWeapon droppedWeapon = new DroppedWeapon(_gameRoot, _position, new Random().Next(0, 5));
+            _gameRoot._newSpriteList.Add(collectable);
         }
 
         private void HandleLevelUp()

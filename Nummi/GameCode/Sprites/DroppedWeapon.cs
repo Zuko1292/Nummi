@@ -14,7 +14,7 @@ namespace Nummi
     public class DroppedWeapon : SpriteCollectable
     {
         int _weaponType;
-        public float _pickupCD = 1.5f;
+        
 
         public DroppedWeapon(Game1 gameRoot, Vector2 position, int WeaponType)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Weapons-SpriteSheet"), position)
@@ -59,7 +59,7 @@ namespace Nummi
             base.Update(gameTime);
             SetAnimation(_weaponType);
 
-            _pickupCD -= GBL.DeltaTime;
+            
         }
     }
 }

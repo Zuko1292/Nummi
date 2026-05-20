@@ -269,21 +269,15 @@ namespace Nummi
 
                     gameRoot._shop.AddItem(new ShopItem(
                         "House",
-                        "Provides housing",
+                        "Increases Population",
                         GBL.Content.Load<Texture2D>("Textures\\Houses\\House1"),
                         cost: 50,
                         building: new BuildingType("House", GBL.Content.Load<Texture2D>("Textures\\Houses\\House1"), new Point(2, 2))
                     ));
 
+                    
                     gameRoot._shop.AddItem(new ShopItem(
-                        "Barracks",
-                        "Trains soldiers",
-                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks"),
-                        cost: 150,
-                        building: new BuildingType("Barracks", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks"), new Point(3, 3))
-                    ));
-                    gameRoot._shop.AddItem(new ShopItem(
-                        "Farm",
+                        "Farmhouse",
                         "Produces food",
                         GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"),
                         cost: 150,

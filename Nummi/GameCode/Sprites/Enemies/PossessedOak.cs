@@ -145,6 +145,10 @@ namespace Nummi
             map1.SetTile(10, 14, 14);
             map1.SetTile(10, 15, 22);
 
+            var map2 = _gameRoot._tilemap.Layers[1];
+
+            map2.SetTile(10, 11, 7);
+
             // Drop loot, play death animation, etc. 
         }
 

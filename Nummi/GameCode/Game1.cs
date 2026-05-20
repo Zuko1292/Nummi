@@ -330,7 +330,15 @@ namespace Nummi
             // when getting the chest in the trap room it opens the chest and then resets the trap door so you can go back out
             if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile))
             {
-                _player.ChestOpened(_player._position);
+                if (_isTrapLevel) 
+                {
+                    _player.ChestOpened(_player._position, new DroppedWeapon(this, _player._position, new Random().Next(0, 5)));
+                }
+
+                else
+                {
+                    _player.ChestOpened(_player._position, new PossessedOakDrop(this, _player._position + new Vector2(0, -50)));
+                }
 
                 var map1 = _tilemap.Layers[1];
 
