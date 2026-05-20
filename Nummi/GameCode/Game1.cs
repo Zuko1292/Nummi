@@ -183,28 +183,25 @@ namespace Nummi
 
             _lighting = new LightingRenderer();
 
-<<<<<<< HEAD
-            _defaultTxr = new Texture2D(GraphicsDevice, 1, 1);
-            _defaultTxr.SetData(new[] { Color.White });
-=======
             _shieldCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\ShieldCrystal");
             _hayCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\hayCrystal");
             //_smithCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\SmithCrystal");
->>>>>>> 2be0b98653139313b63434a7110e472b81bbe1f7
+
+            _defaultTxr = new Texture2D(GraphicsDevice, 1, 1);
+            _defaultTxr.SetData(new[] { Color.White });
         }
 
         protected override void Update(GameTime gameTime)
         {
-<<<<<<< HEAD
-=======
             //Makes sure the crystal texture is right
-            if (_currentLevel == 1)
+            if (_headsLevel == 1)
                 _currentCrystalTex = _shieldCrystalTex;
-            else if (_currentLevel == 2)
+            else if (_headsLevel == 2)
                 _currentCrystalTex = _hayCrystalTex;
-            else if (_currentLevel == 3)
+            else if (_headsLevel == 3)
                 _currentCrystalTex = _smithCrystalTex;
->>>>>>> 2be0b98653139313b63434a7110e472b81bbe1f7
+            Debug.WriteLine("Current Game State: " + _gameState);
+            Debug.WriteLine("$ TailsLevel: " + _tailsLevel);
 
             GBL.Update(gameTime, this);
 
