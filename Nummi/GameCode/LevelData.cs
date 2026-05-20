@@ -47,7 +47,7 @@ namespace Nummi
                     // If you want to draw like UI which is not offset by camera dont do it here follow where I did it in game1(Developer note)
                     switch (level)
                     {
-                        case 3:
+                        case 5:
                             // If is trap level more it true
                             gameRoot._isTrapLevel = false;
                             // If is a lighting level make it true and set torch positions, if not set to false and empty array, set the torch position. light positions like I did in case 3.
@@ -162,10 +162,11 @@ namespace Nummi
                             //gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(56, 42)));
 
                             break;
-                        case 0:
+                        case 3:
                             // When its a boss level make sure you do the _bossDead variable to false and set the current boss to the boss you want in the level.
                             gameRoot._bossDead = false;
                             gameRoot._isTrapLevel = false;
+                            gameRoot._isNextLevelTails = true;
 
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
@@ -181,7 +182,7 @@ namespace Nummi
                             gameRoot._spriteList.Add(boss);
                             break;
                         case 4:
-                            gameRoot._isTrapLevel = true;
+                            gameRoot._isTrapLevel = false;
 
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
@@ -192,6 +193,17 @@ namespace Nummi
                             gameRoot._spriteList.Add(gameRoot._player);
 
 
+                            break;
+                        case 0:
+                            gameRoot._isTrapLevel = true;
+
+                            gameRoot._useLighting = false;
+                            gameRoot._torchPositions = Array.Empty<Vector2>();
+
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[6]);
+                            gameRoot._tilemap.SetRules(Rules2);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(150, 47), true, savedStats, savedLevelSystem);
+                            gameRoot._spriteList.Add(gameRoot._player);
                             break;
                     }
                     break;
