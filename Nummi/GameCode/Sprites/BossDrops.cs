@@ -10,6 +10,7 @@ namespace Nummi
 {
     public class PossessedOakDrop : SpriteCollectable
     {
+
         public override bool Dead
         {
             set
@@ -24,10 +25,10 @@ namespace Nummi
             }
         }
 
-        public PossessedOakDrop(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\ShieldCrystal"), position)
+        public PossessedOakDrop(Game1 gameRoot, Texture2D texture, Vector2 position)
+            : base(gameRoot, texture, position) //previously done using Textures\\Animations\\Crystal to set the crystal. TODO get texture to be right texture
         {
-
+            
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -48,10 +49,28 @@ namespace Nummi
 
         public void OnPickup()
         {
-            _gameRoot._shop.AddItem(new ShopItem(
+            // unlocks crystal based on the level.
+            if(_gameRoot._currentLevel == 0)
+                _gameRoot._shop.AddItem(new ShopItem(
                         "Barracks",
                         "Increases Defense",
                         GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks"),
+                        cost: 150,
+                        building: new BuildingType("Barracks", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks"), new Point(3, 3))
+                    ));
+            else if (_gameRoot._currentLevel == 1)
+                _gameRoot._shop.AddItem(new ShopItem(
+                        "Farm",
+                        "Increases Health",
+                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"),
+                        cost: 150,
+                        building: new BuildingType("Farm", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"), new Point(3, 3))
+                    ));
+            else if (_gameRoot._currentLevel == 2)
+                _gameRoot._shop.AddItem(new ShopItem(
+                        "Black Smith",
+                        "Increases Attack",
+                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"),
                         cost: 150,
                         building: new BuildingType("Barracks", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks"), new Point(3, 3))
                     ));

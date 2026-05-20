@@ -68,7 +68,11 @@ namespace Nummi
         public Vector2[] _torchPositions = Array.Empty<Vector2>();
         public LightingRenderer _lighting;
         public bool _useLighting = false;
-        Texture2D _shopButtonTexture;
+        Texture2D _shopButtonTexture,
+            _shieldCrystalTex,
+            _hayCrystalTex,
+            _smithCrystalTex,
+            _currentCrystalTex;
 
         public SpriteFont font;
 
@@ -174,10 +178,21 @@ namespace Nummi
             _hud = new HUD(this, font);
 
             _lighting = new LightingRenderer();
+
+            _shieldCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\ShieldCrystal");
+            _hayCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\hayCrystal");
+            //_smithCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\SmithCrystal");
         }
 
         protected override void Update(GameTime gameTime)
         {
+            //Makes sure the crystal texture is right
+            if (_currentLevel == 1)
+                _currentCrystalTex = _shieldCrystalTex;
+            else if (_currentLevel == 2)
+                _currentCrystalTex = _hayCrystalTex;
+            else if (_currentLevel == 3)
+                _currentCrystalTex = _smithCrystalTex;
 
             GBL.Update(gameTime, this);
 
@@ -339,7 +354,7 @@ namespace Nummi
 
                 else
                 {
-                    _player.ChestOpened(_player._position, new PossessedOakDrop(this, _player._position + new Vector2(0, -50)));
+                    _player.ChestOpened(_player._position, new PossessedOakDrop(this, _currentCrystalTex, _player._position + new Vector2(0, -50))); //Creates drop using the right texture
                 }
 
                 var map1 = _tilemap.Layers[1];
