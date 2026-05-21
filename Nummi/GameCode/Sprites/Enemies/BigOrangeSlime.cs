@@ -32,7 +32,7 @@ namespace Nummi
         protected override bool IsDashing() => _isDashing;
 
         public BigOrangeSlime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Orange Slime Anim-Sheet-Big"), position, true, 100, 250, 20, false, 25, 400f, 50f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Orange Slime Anim-Sheet-Big"), position, true, 100, 250, 20, false, 25, 400f, 50f, 25)
         {
 
         }

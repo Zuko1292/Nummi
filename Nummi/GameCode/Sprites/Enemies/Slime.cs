@@ -14,8 +14,9 @@ namespace Nummi
     {
 
         public Slime(Game1 gameRoot, Texture2D texture,Vector2 position)
-            : base(gameRoot, texture, position, true, 20, 200, 10, false, 50, 400f, 20f)
+            : base(gameRoot, texture, position, true, 1, 200, 10, false, 50, 400f, 20f, 10)
         {
+
         }
 
         protected override List<List<Rectangle>> BuildAnimations()

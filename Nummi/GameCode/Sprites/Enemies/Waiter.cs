@@ -43,7 +43,7 @@ namespace Nummi
         TempState _tempState;
 
         public Waiter(Game1 gameRoot, Vector2 position, TempState tempState, bool inBackRoom = false)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Bunny Guard"), position, true, 150, 220, 20, false, 50, 400f, 80f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Bunny Guard"), position, true, 150, 220, 20, false, 50, 400f, 80f, 10)
         {
             _tempState = tempState;
             _inBackRoom = inBackRoom;

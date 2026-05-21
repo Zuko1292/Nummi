@@ -262,6 +262,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Slime Anim-Sheet.png
 
+#begin Textures/Animations/SmithCrystal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/SmithCrystal.png
+
 #begin Textures/Animations/Snake Dealer Idle-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor

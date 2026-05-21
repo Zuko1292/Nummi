@@ -38,7 +38,7 @@ namespace Nummi
         }
 
         public PossessedTree(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss"), position, false, 10000, 220, 10, true, 0, 400f, 0f)// The tree is a stationary enemy That cant be killed
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss"), position, false, 10000, 220, 10, true, 0, 400f, 0f, 150)// The tree is a stationary enemy That cant be killed
         {
             _isIndestructible = true;
         }

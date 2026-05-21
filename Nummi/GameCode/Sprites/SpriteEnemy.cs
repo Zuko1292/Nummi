@@ -68,7 +68,7 @@ namespace Nummi
             }
         }
 
-        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health, int knockbackStrength, int damageStrength, bool isBoss, float moveSpeed, float aggroRange, float xpValue)
+        public SpriteEnemy(Game1 gameRoot, Texture2D texture, Vector2 position, bool canMove, int health, int knockbackStrength, int damageStrength, bool isBoss, float moveSpeed, float aggroRange, float xpValue, int goldValue)
             : base(gameRoot, texture, position, canMove)
         {
             CollisionLayer = CollisionLayer.Enemy;

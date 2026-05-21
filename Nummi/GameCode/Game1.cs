@@ -191,7 +191,7 @@ namespace Nummi
 
             _shieldCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\ShieldCrystal");
             _hayCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\hayCrystal");
-            //_smithCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\SmithCrystal");
+            _smithCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\SmithCrystal");
 
             _defaultTxr = new Texture2D(GraphicsDevice, 1, 1);
             _defaultTxr.SetData(new[] { Color.White });

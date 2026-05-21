@@ -63,7 +63,7 @@ namespace Nummi
                         "Farm",
                         "Increases Health",
                         GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"),
-                        cost: 150,
+                        cost: 300,
                         building: new BuildingType("Farm", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"), new Point(3, 3))
                     ));
             else if (_gameRoot._tailsLevel == 3)
@@ -71,7 +71,7 @@ namespace Nummi
                         "Black Smith",
                         "Increases Attack",
                         GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"),
-                        cost: 150,
+                        cost: 300,
                         building: new BuildingType("Barracks", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Barracks"), new Point(3, 3))
                     ));
         }
