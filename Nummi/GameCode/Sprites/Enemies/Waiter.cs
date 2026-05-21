@@ -40,7 +40,7 @@ namespace Nummi
             Thawed
         }
 
-        TempState _tempState;
+        public TempState _tempState;
 
         public Waiter(Game1 gameRoot, Vector2 position, TempState tempState, bool inBackRoom = false)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Bunny Guard"), position, true, 150, 220, 20, false, 50, 400f, 80f, 10)
@@ -52,7 +52,6 @@ namespace Nummi
             {
                 SetAnimation(0);
                 _aggrorange = 100f;
-                _canMove = false;
             }
             else
             {
@@ -140,11 +139,28 @@ namespace Nummi
 
             // 5 - Idle Thawed (outside backroom - with tray)
             animations.Add(new List<Rectangle>());
-            animations[5].Add(new Rectangle(0, 96, 32, 48));
+            animations[5].Add(new Rectangle(224, 128, 32, 64));
+            animations[5].Add(new Rectangle(256, 128, 32, 64));
+            animations[5].Add(new Rectangle(288, 128, 32, 64));
+            animations[5].Add(new Rectangle(320, 128, 32, 64));
+            animations[5].Add(new Rectangle(352, 128, 32, 64));
+            animations[5].Add(new Rectangle(384, 128, 32, 64));
+            animations[5].Add(new Rectangle(416, 128, 32, 64));
+            animations[5].Add(new Rectangle(448, 128, 32, 64));
+            animations[5].Add(new Rectangle(480, 128, 32, 64));
+            animations[5].Add(new Rectangle(512, 128, 32, 64));
 
             // 6 - Swiping Thawed (backroom)
             animations.Add(new List<Rectangle>());
-            animations[6].Add(new Rectangle(0, 128, 32, 48));
+            animations[6].Add(new Rectangle(0, 0, 32, 64));
+            animations[6].Add(new Rectangle(32, 0, 32, 64));
+            animations[6].Add(new Rectangle(64, 0, 32, 64));
+            animations[6].Add(new Rectangle(96, 0, 32, 64));
+            animations[6].Add(new Rectangle(128, 0, 32, 64));
+            animations[6].Add(new Rectangle(160, 0, 32, 64));
+            animations[6].Add(new Rectangle(192, 0, 32, 64));
+            animations[6].Add(new Rectangle(224, 0, 32, 64));
+            animations[6].Add(new Rectangle(256, 0, 32, 64));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);

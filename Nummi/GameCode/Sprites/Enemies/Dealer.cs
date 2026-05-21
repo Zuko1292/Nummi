@@ -25,8 +25,8 @@ namespace Nummi
 
         bool _throwing = false;
 
-        public Dealer(Game1 gameRoot, Vector2 position, TempState tempState)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Snake Dealer"), position, false, 200, 220, 10, false, 0, 400f, 70f)
+        public Dealer(Game1 gameRoot, Vector2 position, TempState tempState, int health = 200, int knockbackStrength = 220, int damageStrength = 10, float xpValue = 70f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Snake Dealer"), position, false, health, knockbackStrength, damageStrength, false, 0, 400f, xpValue)
         {
             _tempState = tempState;
 
@@ -90,11 +90,35 @@ namespace Nummi
 
             // Idle Thawed
             animations.Add(new List<Rectangle>());
-            animations[2].Add(new Rectangle(0, 96, 32, 48));
+            animations[2].Add(new Rectangle(0, 0, 32, 64));
+            animations[2].Add(new Rectangle(32, 0, 32, 64));
+            animations[2].Add(new Rectangle(64, 0, 32, 64));
+            animations[2].Add(new Rectangle(96, 0, 32, 64));
+            animations[2].Add(new Rectangle(128, 0, 32, 64));
+            animations[2].Add(new Rectangle(160, 0, 32, 64));
+            animations[2].Add(new Rectangle(192, 0, 32, 64));
+            animations[2].Add(new Rectangle(224, 0, 32, 64));
+            animations[2].Add(new Rectangle(256, 0, 32, 64));
+            animations[2].Add(new Rectangle(288, 0, 32, 64));
+            animations[2].Add(new Rectangle(320, 0, 32, 64));
+            animations[2].Add(new Rectangle(352, 0, 32, 64));
+            animations[2].Add(new Rectangle(384, 0, 32, 64));
+            animations[2].Add(new Rectangle(416, 0, 32, 64));
 
             // Throwing Thawed
             animations.Add(new List<Rectangle>());
-            animations[3].Add(new Rectangle(0, 144, 32, 48));
+            animations[3].Add(new Rectangle(0, 64, 32, 64));
+            animations[3].Add(new Rectangle(32, 64, 32, 64));
+            animations[3].Add(new Rectangle(64, 64, 32, 64));
+            animations[3].Add(new Rectangle(96, 64, 32, 64));
+            animations[3].Add(new Rectangle(128, 64, 32, 64));
+            animations[3].Add(new Rectangle(160, 64, 32, 64));
+            animations[3].Add(new Rectangle(192, 64, 32, 64));
+            animations[3].Add(new Rectangle(224, 64, 32, 64));
+            animations[3].Add(new Rectangle(256, 64, 32, 64));
+            animations[3].Add(new Rectangle(288, 64, 32, 64));
+            animations[3].Add(new Rectangle(320, 64, 32, 64));
+            animations[3].Add(new Rectangle(352, 64, 32, 64));
 
 
             _nextAnim = new List<int>();

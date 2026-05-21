@@ -15,6 +15,9 @@ namespace Nummi
     {
         private List<Tilemap> _layers = new List<Tilemap>();
         public List<Tilemap> Layers => _layers;
+
+        // Expose rules from first layer
+        public TilemapRules Rules => _layers.Count > 0 ? _layers[0].Rules : null;
         // This adds a layer to the tilemap group, the first layer added will be drawn first (at the back) and the last layer added will be drawn last (at the front)
         public void AddLayer(Tilemap map)
         {

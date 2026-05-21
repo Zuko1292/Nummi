@@ -15,6 +15,15 @@ namespace Nummi
         private HashSet<int> _chestTiles = new HashSet<int>();
         private HashSet<int> _trapDoorTiles = new HashSet<int>();
 
+        // Which collision layers are affected by this tilemap
+        public CollisionLayer AffectsLayers { get; private set; } = CollisionLayer.All;
+
+        public TilemapRules SetAffectsLayers(CollisionLayer layers)
+        {
+            AffectsLayers = layers;
+            return this;
+        }
+
         public TilemapRules AddSolid(params int[] ids)
         {
             foreach (var id in ids) _solidTiles.Add(id);

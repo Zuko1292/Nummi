@@ -24,6 +24,7 @@ namespace Nummi
         public bool _isBoss;
         public float _aggrorange;
         public bool _isIndestructible = false;
+        private Attack _lastAttack = null;
 
         // Patrolling variables
         public bool _isPatrolling = true;
@@ -89,29 +90,6 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
             // This checks if the enemy can see the player, and if they can, it updates the last seen position to the player's current position. This allows the enemy to continue moving towards the player even if they lose sight of them, creating a more dynamic and engaging combat experience.
-            if (_gameRoot.canSeePlayer)
-            {
-                _lastSeenPos = _gameRoot._player._position;
-            }
-
-            if (_health <= 0)
-            {
-                Dead = true;
-            }
-            // This makes the enemy move towards the last seen position of the player if they are not patrolling, and it also handles the knockback and invincibility timers. The enemy will continue to move towards the last seen position for a short time after losing sight of the player, making them feel more intelligent and less frustrating to fight.
-            if (!_isPatrolling)
-            { 
-                Direction = _lastSeenPos - _position;
-
-                if (Direction != Vector2.Zero)
-                {
-                    Direction.Normalize();
-                }
-                if (!_isKnockedback && !IsDashing())
-                {
-                    _velocity = Direction * _moveSpeed;
-                }
-            }
             // This handles the patrolling behavior of the enemy, making them move back and forth within a certain area. The enemy will switch directions when they reach the edge of their walking area, creating a simple but effective patrolling pattern.
             if (_isKnockedback)
             {
@@ -131,6 +109,37 @@ namespace Nummi
                     _isInvincible = false;
                 }
             }
+            if (_health <= 0)
+            {
+                Dead = true;
+            }
+            if(_gameRoot._headsLevel == 4)
+            {
+                foreach (Waiter w in _gameRoot._spriteList)
+                {
+                    if (w._tempState == Waiter.TempState.Frozen) return;
+                }
+
+            }
+            if (_gameRoot.canSeePlayer)
+            {
+                _lastSeenPos = _gameRoot._player._position;
+            }
+
+            // This makes the enemy move towards the last seen position of the player if they are not patrolling, and it also handles the knockback and invincibility timers. The enemy will continue to move towards the last seen position for a short time after losing sight of the player, making them feel more intelligent and less frustrating to fight.
+            if (!_isPatrolling)
+            { 
+                Direction = _lastSeenPos - _position;
+
+                if (Direction != Vector2.Zero)
+                {
+                    Direction.Normalize();
+                }
+                if (!_isKnockedback && !IsDashing())
+                {
+                    _velocity = Direction * _moveSpeed;
+                }
+            }
 
             base.Update(gameTime);
         }
@@ -145,21 +154,20 @@ namespace Nummi
             base.OnCollideEvent(otherSprite);
             if (otherSprite is Attack weapon)
             {
-                if (!_isInvincible && _gameRoot._player._currentWeapon != 4 && !_isIndestructible)
+                if (weapon != _lastAttack && _gameRoot._player._currentWeapon != 4 && !_isIndestructible)
                 {
-                    TakeDamage((int)weapon._weaponDamage);
+                    _lastAttack = weapon;
 
-                    _isInvincible = true;
-                    _damageTimer = _damageCooldown;
+                    TakeDamage((int)weapon._weaponDamage);
 
                     _isKnockedback = true;
                     _knockbackTimer = _knockbackDuration;
 
-                    // This locks the enemy's flip effect to the direction of the attack, so that they will always be knocked back in the direction of the attack, creating a more visually satisfying and intuitive combat experience.
                     _lockedFlipEffect = _flipEffect;
 
-                    Vector2 knockbackDirection = Vector2.Normalize(_position - weapon._position);
-                    _velocity += knockbackDirection * 200;                   
+                    Vector2 diff = _position - _gameRoot._player._position;
+                    Vector2 knockbackDirection = diff == Vector2.Zero ? new Vector2(0f, -1f) : Vector2.Normalize(diff);
+                    _velocity += knockbackDirection * 230;
                 }
             }
         }

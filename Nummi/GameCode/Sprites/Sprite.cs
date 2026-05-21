@@ -17,6 +17,7 @@ namespace Nummi
         Enemy = 1 << 1,
         Collectable = 1 << 2,
         Solid = 1 << 3,
+        Attacks = 1 << 4,
         All = ~0,
     }
 
@@ -258,6 +259,11 @@ namespace Nummi
             var map = group.Layers[0];
 
             if (!_canCollide) return;
+
+            // Check if this sprite's collision layer is affected by the tilemap
+            var rules = group.Rules;
+            if (rules != null && (rules.AffectsLayers & CollisionLayer) == 0)
+                return; // This sprite is not affected by this tilemap
 
             Rectangle bounds = _collisionBounds;
 

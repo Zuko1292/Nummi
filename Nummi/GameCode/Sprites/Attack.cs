@@ -19,7 +19,7 @@ namespace Nummi
         public Attack(Game1 gameRoot, Texture2D weaponTxr, Vector2 position, bool canMove, int currentWeapon) : 
             base(gameRoot,weaponTxr, position, canMove, true)
         {
-            CollisionLayer = CollisionLayer.Player;
+            CollisionLayer = CollisionLayer.Attacks;
             CollisionMask = CollisionLayer.Enemy & ~CollisionLayer.Player;
         }
 

@@ -18,6 +18,8 @@ namespace Nummi
         private readonly int[] _tiles;
         private TilemapRules _rules;
 
+        public TilemapRules Rules => _rules;
+
         public int Rows;
         public int Columns;
         public int Count;

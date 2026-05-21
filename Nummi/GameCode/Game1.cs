@@ -737,6 +737,21 @@ namespace Nummi
         {
             _SettingsBackground.Draw(GBL.spriteBatch);
             exitButton.Draw();
+
+            Vector2 Rectpos = ScreenRelative(-0.15f, 0f);
+
+            Rectangle rect = new Rectangle((int)Rectpos.X, (int)Rectpos.Y, GBL.GDM.PreferredBackBufferWidth / 2, GBL.GDM.PreferredBackBufferHeight);
+
+            GBL.spriteBatch.Draw(
+                _defaultTxr,
+                rect,
+                null,
+                Color.White * 0.5f,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0.95f
+            );
         }
         public void DrawGuide()
         {
