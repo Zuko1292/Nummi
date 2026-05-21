@@ -221,7 +221,7 @@ namespace Nummi
                 }
             }
         }
-
+        
         protected virtual void UpdateBounds(GameTime gameTime)
         {
             _visibleBounds = new Rectangle(
@@ -360,14 +360,18 @@ namespace Nummi
                 return false;
 
             Vector2 depenetration = Vector2.Zero;
-            
+
+            bool playerKnockback = this is SpritePlayer
+                && _gameRoot._player != null
+                && _gameRoot._player._isKnockedback;
+
             if (intersection.Height < intersection.Width)
             {
                 depenetration.Y = (_position.Y < other._position.Y)
                     ? -intersection.Height
                     : intersection.Height;
 
-                _velocity.Y = 0f;
+                if (!playerKnockback) _velocity.Y = 0f;
             }
             else
             {
@@ -375,7 +379,7 @@ namespace Nummi
                     ? -intersection.Width
                     : intersection.Width;
 
-                _velocity.X = 0f;
+                if (!playerKnockback) _velocity.X = 0f;
             }
             
 

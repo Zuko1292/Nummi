@@ -15,6 +15,7 @@ namespace Nummi
         // 0 = Main Menu
         // 1 = Guide Menu
         // 2 = Settings
+        // 3 = Paused
 
         public Background(Game1 gameRoot, Texture2D currentbg, int currentbgnum)
             : base(gameRoot, currentbg, new Vector2(gameRoot._screenBounds.Width / 2, gameRoot._screenBounds.Height / 2), false, false)
@@ -55,6 +56,10 @@ namespace Nummi
             animations.Add(new List<Rectangle>());
             animations[2].Add(new Rectangle(800, 480, 800, 480));
             animations[2].Add(new Rectangle(1600, 480, 800, 480));
+
+            // Paused
+            animations.Add(new List<Rectangle>());
+            animations[3].Add(new Rectangle(2400, 480, 800, 480));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);

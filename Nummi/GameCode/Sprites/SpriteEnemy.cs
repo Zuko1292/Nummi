@@ -25,11 +25,17 @@ namespace Nummi
         public float _aggrorange;
         public bool _isIndestructible = false;
         private Attack _lastAttack = null;
+        public int _goldValue;
 
         // Patrolling variables
         public bool _isPatrolling = true;
         protected float _walkingArea = 50f;
         public bool _canPatrol = false;
+
+        // When true the enemy never self-propels (chase/patrol movement is skipped and its
+        // velocity is forced to zero each frame), but it can still be hit and knocked back.
+        // Used for frozen enemies that must hold their position.
+        public bool _isStationary = false;
 
         // Dashing variables
         protected bool _hasDashed = true;
@@ -60,7 +66,7 @@ namespace Nummi
             set
             {
                 _dead = value;
-                _gameRoot._player.OnEnemyKilled(_xpValue);
+                _gameRoot._player.OnEnemyKilled(_xpValue, _goldValue);
             }
 
             get
@@ -85,6 +91,7 @@ namespace Nummi
             _canFlip = true;
             _xpValue = xpValue;
             _maxHealth = health;
+            _goldValue = goldValue;
         }
 
         public override void Update(GameTime gameTime)
@@ -113,22 +120,14 @@ namespace Nummi
             {
                 Dead = true;
             }
-            if(_gameRoot._headsLevel == 4)
-            {
-                foreach (Waiter w in _gameRoot._spriteList)
-                {
-                    if (w._tempState == Waiter.TempState.Frozen) return;
-                }
-
-            }
             if (_gameRoot.canSeePlayer)
             {
                 _lastSeenPos = _gameRoot._player._position;
             }
 
             // This makes the enemy move towards the last seen position of the player if they are not patrolling, and it also handles the knockback and invincibility timers. The enemy will continue to move towards the last seen position for a short time after losing sight of the player, making them feel more intelligent and less frustrating to fight.
-            if (!_isPatrolling)
-            { 
+            if (!_isPatrolling && !_isStationary)
+            {
                 Direction = _lastSeenPos - _position;
 
                 if (Direction != Vector2.Zero)
@@ -139,6 +138,13 @@ namespace Nummi
                 {
                     _velocity = Direction * _moveSpeed;
                 }
+            }
+
+            // Stationary enemies hold their position, but knockback impulses are still allowed
+            // to play out (this runs before the movement integration in base.Update).
+            if (_isStationary && !_isKnockedback)
+            {
+                _velocity = Vector2.Zero;
             }
 
             base.Update(gameTime);

@@ -358,7 +358,7 @@ namespace Nummi
             }
 
             // Clamp horizontal speed
-            if(!_isDashing) _velocity.X = MathHelper.Clamp(_velocity.X, -_moveSpeed, _moveSpeed);
+            if(!_isDashing && !_isKnockedback) _velocity.X = MathHelper.Clamp(_velocity.X, -_moveSpeed, _moveSpeed);
 
 
             base.Update(gameTime);
@@ -384,6 +384,9 @@ namespace Nummi
 
                     Vector2 knockbackDirection = Vector2.Normalize(_position - enemy._position);
                     _velocity += knockbackDirection * enemy._knockbackStrength;
+
+                    if(_gameRoot._soundeffectsOn)
+                        _gameRoot._gettingHitSound.Play();
                 }
                 else if(!_isInvincible && _isBlocking)
                 {
@@ -472,9 +475,10 @@ namespace Nummi
             Stats.Strength.Modify(+1);
             Stats.Vitality.Modify(+1);
         }
-        public void OnEnemyKilled(float xpValue)
+        public void OnEnemyKilled(float xpValue, float goldValue)
         {
             LevelSystem.AddXP(xpValue);
+            _gameRoot._currency.AddCoins((int)goldValue);
         }
         #endregion ***** Member methods: Update *****
     }

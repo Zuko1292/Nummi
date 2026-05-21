@@ -26,7 +26,7 @@ namespace Nummi
         bool _throwing = false;
 
         public Dealer(Game1 gameRoot, Vector2 position, TempState tempState, int health = 200, int knockbackStrength = 220, int damageStrength = 10, float xpValue = 70f)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Snake Dealer"), position, false, health, knockbackStrength, damageStrength, false, 0, 400f, xpValue)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Snake Dealer"), position, false, health, knockbackStrength, damageStrength, false, 0, 400f, xpValue, 25)
         {
             _tempState = tempState;
 
@@ -38,6 +38,7 @@ namespace Nummi
                 _chipMoveSpeed = 50f;
                 _aggrorange = 200f;
                 _frameDuration = 1f / 4f;
+                _canMove = true;
             }
             else
             {
@@ -129,6 +130,8 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+
+            if (_tempState == TempState.Frozen && !_isKnockedback) _velocity = Vector2.Zero;
 
             // Gets distance to player and checks if it should stop throwing
             float distanceToPlayer = Vector2.Distance(_gameRoot._player._position, _position);

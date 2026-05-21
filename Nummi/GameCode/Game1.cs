@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml;
 using Code_For_Nummi;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -86,9 +87,9 @@ namespace Nummi
         // Class Variables
 
         public SpritePlayer _player;
-        TextButton playButton, guideButton, settingsButton, exitButton;
+        TextButton playButton, guideButton, settingsButton, exitButton, resumeButton;
         TextButton shopButton;
-        Background _MenuBackground, _GuideBackground, _SettingsBackground;
+        Background _MenuBackground, _GuideBackground, _SettingsBackground, _PauseBackground;
         public SpriteNPC _npc;
         public DialogBox _box;
         public Camera2D _tailsCamera;
@@ -96,6 +97,12 @@ namespace Nummi
         public CurrencySystem _currency;
         public Shop _shop;
         public ShopUI _shopUI;
+
+        public SoundEffect _weaponHitSound, _gettingHitSound;
+        public bool _musicOn = true;
+        public string _musicState = "ON";
+        public bool _soundeffectsOn = true;
+        public string _soundeffectsState = "ON";
 
         public TilemapGroup _tilemap;
 
@@ -149,10 +156,11 @@ namespace Nummi
             _screenBounds = GBL.GD.PresentationParameters.Bounds;
             shopButton = new TextButton(font, "Shop", ScreenRelative(0.92f, 0.95f), Color.White);
             // for all buttons in the menus initialize them here and then only update and draw in the respective states
-            playButton = new TextButton(_menuFont, "Play Game", ScreenRelative(0.82f, 0.1f), Color.White);
-            guideButton = new TextButton(_menuFont, "Guide / Controls", ScreenRelative(0.82f, 0.2f), Color.White);
-            settingsButton = new TextButton(_menuFont, "Settings", ScreenRelative(0.82f, 0.3f), Color.White);
-            exitButton = new TextButton(_menuFont, "Exit", ScreenRelative(0.95f, 0.1f), Color.Red);
+            playButton = new TextButton(_menuFont, "Play Game", ScreenRelative(0.82f, 0.4f), Color.White);
+            guideButton = new TextButton(_menuFont, "Guide / Controls", ScreenRelative(0.82f, 0.5f), Color.White);
+            settingsButton = new TextButton(_menuFont, "Settings", ScreenRelative(0.82f, 0.6f), Color.White);
+            exitButton = new TextButton(_menuFont, "Exit", ScreenRelative(0.97f, 0.03f), Color.Red);
+            resumeButton = new TextButton(_menuFont, "Resume", ScreenRelative(0.16f, 0.5f), Color.White);
 
             // makes the grid for building
             _grid = new GridSystem(64, 64, 32);
@@ -192,9 +200,14 @@ namespace Nummi
             _shieldCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\ShieldCrystal");
             _hayCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\hayCrystal");
             _smithCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\SmithCrystal");
+            _gettingHitSound = Content.Load<SoundEffect>("Sounds\\Getting hit");
 
             _defaultTxr = new Texture2D(GraphicsDevice, 1, 1);
             _defaultTxr.SetData(new[] { Color.White });
+
+            // Making music Repeat and 50% volume
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Volume = 0.5f;
         }
 
         protected override void Update(GameTime gameTime)
@@ -486,6 +499,41 @@ namespace Nummi
             _SettingsBackground.Update(gameTime);
 
             exitButton.Update();
+
+            // controlling music volume
+            if (GBL.KeyPress(Keys.Up))
+            {
+                MediaPlayer.Volume = MathHelper.Clamp(MediaPlayer.Volume + 0.1f, 0f, 1f);
+            }
+            if (GBL.KeyPress(Keys.Down))
+            {
+                MediaPlayer.Volume = MathHelper.Clamp(MediaPlayer.Volume - 0.1f, 0f, 1f);
+            }
+            // turn on and off music and sound effects
+            if (GBL.KeyPress(Keys.M))
+            {
+                _musicOn = !_musicOn;
+                if (_musicOn)
+                {
+                    _musicState = "ON";
+                }
+                else
+                {
+                    _musicState = "OFF";
+                }
+            }
+            if (GBL.KeyPress(Keys.N))
+            {
+                _soundeffectsOn = !_soundeffectsOn;
+                if (_soundeffectsOn)
+                {
+                    _soundeffectsState = "ON";
+                }
+                else
+                {
+                    _soundeffectsState = "OFF";
+                }
+            }
         }
 
         public void UpdateGuide(GameTime gameTime)
@@ -498,11 +546,18 @@ namespace Nummi
         public void UpdatePaused(GameTime gameTime)
         {
             exitButton.Update();
+            _PauseBackground.Update(gameTime);
+
+            resumeButton.Update();
+            if (resumeButton.IsClicked) StartHeadsLevel(_headsLevel);
         }
 
         public void UpdateDeathScreen(GameTime gameTime)
         {
-
+            // timer ticks down
+            _stateTimer -= GBL.DeltaTime;
+            // makes game over only last a couple seconds
+            if (_stateTimer <= 0f || GBL.KeyPress(Keys.Escape)) StartTitle();
         }
         // used to start title and clear sprites for when going back to title from main menu or from beating the game or whatever else might send you back to the title
         public void StartTitle()
@@ -579,6 +634,8 @@ namespace Nummi
             {
                 _gameState = GameState.Paused;
             }
+
+            _PauseBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 3);
         }
         // starts DeathScreen
         public void StartDeathScreen()
@@ -738,6 +795,12 @@ namespace Nummi
             _SettingsBackground.Draw(GBL.spriteBatch);
             exitButton.Draw();
 
+            FancyText(_menuFont, "Settings", ScreenRelative(0.16f, 0.1f), Color.White, Color.Black);
+            FancyText(_smallMenuFont, "UP/DOWN to Control Music Volume ", ScreenRelative(0.16f, 0.15f), Color.White, Color.Black, 1.5f);
+            FancyText(_smallMenuFont, "Current Volume: " + (int)(MediaPlayer.Volume * 100) + "%", ScreenRelative(0.16f, 0.2f), Color.White, Color.Black, 1.5f);
+            FancyText(_smallMenuFont, "M Toggle Music On/Off: " + _musicState, ScreenRelative(0.16f, 0.3f), Color.White, Color.Black, 1.5f);
+            FancyText(_smallMenuFont, "N Toggle Sound Effects On/Off: " + _soundeffectsState, ScreenRelative(0.16f, 0.35f), Color.White, Color.Black, 1.5f);
+
             Vector2 Rectpos = ScreenRelative(-0.15f, 0f);
 
             Rectangle rect = new Rectangle((int)Rectpos.X, (int)Rectpos.Y, GBL.GDM.PreferredBackBufferWidth / 2, GBL.GDM.PreferredBackBufferHeight);
@@ -787,10 +850,41 @@ namespace Nummi
         public void DrawPaused()
         {
             exitButton.Draw();
+            _PauseBackground.Draw(GBL.spriteBatch);
+            resumeButton.Draw();
+
+            Vector2 Rectpos = ScreenRelative(-0.15f, 0f);
+
+            Rectangle rect = new Rectangle((int)Rectpos.X, (int)Rectpos.Y, GBL.GDM.PreferredBackBufferWidth / 2, GBL.GDM.PreferredBackBufferHeight);
+
+            GBL.spriteBatch.Draw(
+                _defaultTxr,
+                rect,
+                null,
+                Color.White * 0.5f,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0.95f
+            );
         }
         public void DrawDeathScreen()
         {
+            Rectangle rect = new Rectangle(0,0, GBL.GDM.PreferredBackBufferWidth, GBL.GDM.PreferredBackBufferHeight);
 
+            GBL.spriteBatch.Draw(
+                _defaultTxr,
+                rect,
+                null,
+                Color.Black,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0.95f
+            );
+
+            FancyText(_titleFont, "GAME OVER", ScreenRelative(0.5f, 0.5f), Color.Red, Color.White);
+            FancyText(_menuFont, "Mr Mirrors Reign Continues", ScreenRelative(0.5f, 0.6f), Color.Red, Color.White);
         }
         // start new game
         public void StartNewGame()

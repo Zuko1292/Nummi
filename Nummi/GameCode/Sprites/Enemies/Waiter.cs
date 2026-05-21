@@ -52,6 +52,10 @@ namespace Nummi
             {
                 SetAnimation(0);
                 _aggrorange = 100f;
+                // Movable (so it can be hit/knocked back) but stationary (so the base chase
+                // code can't push it toward the player). It holds position unless knocked back.
+                _canMove = true;
+                _isStationary = true;
             }
             else
             {
@@ -195,6 +199,9 @@ namespace Nummi
 
         private void UpdateFrozen(GameTime gameTime, bool playerInRange)
         {
+            // Stay rooted in place unless an attack is currently knocking us back.
+            if (!_isKnockedback) _velocity = Vector2.Zero;
+
             if (!playerInRange)
             {
                 // Player left - go back to sleep
@@ -370,7 +377,7 @@ namespace Nummi
         float _lifeDuration = 0.15f;
 
         public WaiterPawSwipe(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Waiter Smash"), position, false, 10000, 300, 20, false, 0, 400f, 80f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Waiter Smash"), position, false, 10000, 300, 20, false, 0, 400f, 80f, 25)
         {
             SetAnimation(0);
         }
