@@ -11,16 +11,27 @@ namespace Nummi
     // TODO make Croc boss
     public class Manager_Croc : SpriteEnemy
     {
-        enum TempState
+        TempState _state;
+        public enum TempState
         {
             Frozen,
             Thawed
         }
 
-        public Manager_Croc(Game1 gameRoot, Texture2D texture, Vector2 position)
-            : base(gameRoot, texture, position, true, 100, 200, 30, true, 50f, 400f, 300f, 300)
+        public Manager_Croc(Game1 gameRoot, Vector2 position, TempState state)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Croc_Boss"), position, true, 100, 200, 30, true, 50f, 400f, 300f, 300)
         {
 
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            if (_state == TempState.Frozen)
+                return;
+            else if (_state == TempState.Thawed)
+            {
+                base.Update(gameTime);
+            } 
         }
     }
 }
