@@ -55,6 +55,9 @@ namespace Nummi
         // Checks if player is attacking
         public bool _attacking = false;
 
+        private const float _bowCooldown = 0.8f;
+        private float _bowCooldownTimer = 0f;
+
         public SpriteEffects _lockedFlipEffect;
         // Loads stats
         public CharacterStats Stats { get; private set; }
@@ -263,12 +266,14 @@ namespace Nummi
             }
 
             if(!_isDashing) _dashCooldownTimer -= GBL.DeltaTime;
+            if (_bowCooldownTimer > 0f) _bowCooldownTimer -= GBL.DeltaTime;
             // Attacking
             if (_animIndex == 5 || _animIndex == 2 || _animIndex == 6) _yORx = false;
             if (_animIndex == 0 || _animIndex == 1 || _animIndex == 3 || _animIndex == 4) _yORx = true;
 
-            if(GBL.LeftClick && !_attacking && !_isBlocking)
+            if(GBL.LeftClick && !_attacking && !_isBlocking && !(_currentWeapon == 4 && _bowCooldownTimer > 0f))
             {
+                if (_currentWeapon == 4) _bowCooldownTimer = _bowCooldown;
                 if (GBL._camera.ScreenToWorld(GBL.mousePos).X > _position.X && !_yORx) Right_Attacking();
                 if (GBL._camera.ScreenToWorld(GBL.mousePos).X < _position.X && !_yORx) Left_Attacking();
                 if (GBL._camera.ScreenToWorld(GBL.mousePos).Y > _position.Y && _yORx) Down_Attacking();

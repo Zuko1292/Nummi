@@ -160,7 +160,7 @@ namespace Nummi
             base.OnCollideEvent(otherSprite);
             if (otherSprite is Attack weapon)
             {
-                if (weapon != _lastAttack && _gameRoot._player._currentWeapon != 4 && !_isIndestructible)
+                if (weapon != _lastAttack && !_isIndestructible && (weapon is Arrow || _gameRoot._player._currentWeapon != 4))
                 {
                     _lastAttack = weapon;
 
@@ -174,6 +174,8 @@ namespace Nummi
                     Vector2 diff = _position - _gameRoot._player._position;
                     Vector2 knockbackDirection = diff == Vector2.Zero ? new Vector2(0f, -1f) : Vector2.Normalize(diff);
                     _velocity += knockbackDirection * 230;
+
+                    if (weapon is Arrow) weapon.Dead = true;
                 }
             }
         }
@@ -223,6 +225,305 @@ namespace Nummi
         protected override void OnTileCollideEvent(int tileX, int tileY)
         {
             Dead = true;
+        }
+    }
+    // trigger zone is an invisible rectangle that detects when a SpriteEnemy enters it.
+    public class TriggerZone : Sprite
+    {
+        // Tracks which enemies are currently inside the zone so we can fire
+        // enter/exit events
+        private readonly HashSet<SpriteEnemy> _enemiesInside = new HashSet<SpriteEnemy>();
+
+        // Width and height of the trigger in world pixels.
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+
+        public TriggerZone(Game1 gameRoot, Vector2 position, int width, int height)
+            : base(gameRoot)
+        {
+            Width = width;
+            Height = height;
+
+            InitTexture(gameRoot._defaultTxr);
+
+            InitBounds(position, canCollide: true, collisionScale: Vector2.One);
+
+            _collisionBounds = new Rectangle(
+                (int)(position.X - width / 2f),
+                (int)(position.Y - height / 2f),
+                width,
+                height
+            );
+
+            _visibleBounds = _collisionBounds; // not drawn anyway
+
+            InitMovement(canMove: false);
+
+            _isHidden = true;
+            _canMove = false;
+            _canCollide = true; 
+
+            CollisionLayer = CollisionLayer.None;  
+            CollisionMask = CollisionLayer.Enemy;  
+        }
+        public override void Update(GameTime gameTime)
+        {
+            if (_dead) return;
+
+            // Re-sync bounds in case the zone was moved at runtime.
+            _collisionBounds = new Rectangle(
+                (int)(_position.X - Width / 2f),
+                (int)(_position.Y - Height / 2f),
+                Width,
+                Height
+            );
+
+            HashSet<SpriteEnemy> currentlyInside = new HashSet<SpriteEnemy>();
+
+            foreach (Sprite sprite in _gameRoot._spriteList)
+            {
+                if (sprite is SpriteEnemy enemy && !enemy.Dead)
+                {
+                    if (_collisionBounds.Intersects(enemy._collisionBounds))
+                    {
+                        currentlyInside.Add(enemy);
+
+                        if (!_enemiesInside.Contains(enemy))
+                        {
+                            // Enemy just entered this frame.
+                            OnEnemyEntered(enemy);
+                        }
+                        else
+                        {
+                            // Enemy is staying inside.
+                            OnEnemyStay(enemy);
+                        }
+                    }
+                }
+            }
+
+            // Any enemy that was inside last frame but isn't now has left.
+            foreach (SpriteEnemy enemy in _enemiesInside)
+            {
+                if (!currentlyInside.Contains(enemy))
+                {
+                    OnEnemyExited(enemy);
+                }
+            }
+
+            _enemiesInside.Clear();
+            foreach (SpriteEnemy e in currentlyInside) _enemiesInside.Add(e);
+        }
+
+        public bool HasEnemyInside => _enemiesInside.Count > 0;
+
+        // Convenience: get a snapshot of all enemies currently inside.
+        public IReadOnlyCollection<SpriteEnemy> EnemiesInside => _enemiesInside;
+
+        // ------------------------------------------------------------------
+        // Override these in subclasses to add custom behaviour.
+        // ------------------------------------------------------------------
+
+        // Called once when an enemy first enters the zone.
+        protected virtual void OnEnemyEntered(SpriteEnemy enemy) { }
+
+        // Called every frame while an enemy remains inside the zone.
+        protected virtual void OnEnemyStay(SpriteEnemy enemy) { }
+
+        // Called once when an enemy leaves the zone.
+        protected virtual void OnEnemyExited(SpriteEnemy enemy) { }
+
+        // Zone is invisible — drawing is intentionally skipped.
+        public override void Draw(SpriteBatch spriteBatch) { }
+    }
+
+    public class DetectionZone : TriggerZone
+    {
+        private bool _triggered = false;
+        int _roomNum;
+        public DetectionZone(Game1 gameRoot, Vector2 position, int width, int height, int roomNum)
+            : base(gameRoot, position, width, height)
+        {
+            _roomNum = roomNum;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            Debug.WriteLine($"Enemies Inside: {EnemiesInside.Count}");
+
+            if(EnemiesInside.Count <= 0)
+            {
+                var map = _gameRoot._tilemap.Layers[0];
+                // These will take down the walls when all enemies inside the room are killed
+                if (_roomNum == 1)
+                {
+                    if (_gameRoot._headsLevel == 6)
+                    {
+                        map.SetTile(46, 17, 1);
+                        map.SetTile(46, 18, 1);
+                        map.SetTile(46, 19, 1);
+                        map.SetTile(46, 20, 1);
+                        map.SetTile(46, 21, 1);
+                        map.SetTile(46, 22, 1);
+                        map.SetTile(46, 23, 1);
+                        map.SetTile(46, 24, 1);
+                        map.SetTile(46, 25, 1);
+                        map.SetTile(46, 26, 1);
+                        map.SetTile(46, 27, 1);
+                        map.SetTile(46, 28, 1);
+                        map.SetTile(46, 29, 1);
+                        map.SetTile(46, 30, 1);
+                        map.SetTile(46, 31, 1);
+                        map.SetTile(46, 32, 1);
+                        map.SetTile(46, 33, 1);
+                        map.SetTile(46, 34, 1);
+                        map.SetTile(46, 35, 1);
+                        map.SetTile(46, 36, 1);
+                        map.SetTile(46, 37, 1);
+                    }
+                    if (_gameRoot._headsLevel == 7)
+                    {
+                        map.SetTile(84, 17, 1);
+                        map.SetTile(84, 18, 1);
+                        map.SetTile(84, 19, 1);
+                        map.SetTile(84, 20, 1);
+                        map.SetTile(84, 21, 1);
+                        map.SetTile(84, 22, 1);
+                        map.SetTile(84, 23, 1);
+                        map.SetTile(84, 24, 1);
+                        map.SetTile(84, 25, 1);
+                        map.SetTile(84, 26, 1);
+                        map.SetTile(84, 27, 1);
+                        map.SetTile(84, 28, 1);
+                        map.SetTile(84, 29, 1);
+                        map.SetTile(84, 30, 1);
+                        map.SetTile(84, 31, 1);
+                        map.SetTile(84, 32, 1);
+                        map.SetTile(84, 33, 1);
+                        map.SetTile(84, 34, 1);
+                        map.SetTile(84, 35, 1);
+                        map.SetTile(84, 36, 1);
+                        map.SetTile(84, 37, 1);
+                    }
+                }
+                else if (_roomNum == 2)
+                {
+                    map.SetTile(65, 17, 1);
+                    map.SetTile(65, 18, 1);
+                    map.SetTile(65, 19, 1);
+                    map.SetTile(65, 20, 1);
+                    map.SetTile(65, 21, 1);
+                    map.SetTile(65, 22, 1);
+                    map.SetTile(65, 23, 1);
+                    map.SetTile(65, 24, 1);
+                    map.SetTile(65, 25, 1);
+                    map.SetTile(65, 26, 1);
+                    map.SetTile(65, 27, 1);
+                    map.SetTile(65, 28, 1);
+                    map.SetTile(65, 29, 1);
+                    map.SetTile(65, 30, 1);
+                    map.SetTile(65, 31, 1);
+                    map.SetTile(65, 32, 1);
+                    map.SetTile(65, 33, 1);
+                    map.SetTile(65, 34, 1);
+                    map.SetTile(65, 35, 1);
+                    map.SetTile(65, 36, 1);
+                    map.SetTile(65, 37, 1);
+                }
+                else if (_roomNum == 3)
+                {
+                    if (_gameRoot._headsLevel == 6)
+                    {
+                        map.SetTile(84, 17, 1);
+                        map.SetTile(84, 18, 1);
+                        map.SetTile(84, 19, 1);
+                        map.SetTile(84, 20, 1);
+                        map.SetTile(84, 21, 1);
+                        map.SetTile(84, 22, 1);
+                        map.SetTile(84, 23, 1);
+                        map.SetTile(84, 24, 1);
+                        map.SetTile(84, 25, 1);
+                        map.SetTile(84, 26, 1);
+                        map.SetTile(84, 27, 1);
+                        map.SetTile(84, 28, 1);
+                        map.SetTile(84, 29, 1);
+                        map.SetTile(84, 30, 1);
+                        map.SetTile(84, 31, 1);
+                        map.SetTile(84, 32, 1);
+                        map.SetTile(84, 33, 1);
+                        map.SetTile(84, 34, 1);
+                        map.SetTile(84, 35, 1);
+                        map.SetTile(84, 36, 1);
+                        map.SetTile(84, 37, 1);
+                    }
+                    if (_gameRoot._headsLevel == 7)
+                    {
+                        map.SetTile(46, 17, 1);
+                        map.SetTile(46, 18, 1);
+                        map.SetTile(46, 19, 1);
+                        map.SetTile(46, 20, 1);
+                        map.SetTile(46, 21, 1);
+                        map.SetTile(46, 22, 1);
+                        map.SetTile(46, 23, 1);
+                        map.SetTile(46, 24, 1);
+                        map.SetTile(46, 25, 1);
+                        map.SetTile(46, 26, 1);
+                        map.SetTile(46, 27, 1);
+                        map.SetTile(46, 28, 1);
+                        map.SetTile(46, 29, 1);
+                        map.SetTile(46, 30, 1);
+                        map.SetTile(46, 31, 1);
+                        map.SetTile(46, 32, 1);
+                        map.SetTile(46, 33, 1);
+                        map.SetTile(46, 34, 1);
+                        map.SetTile(46, 35, 1);
+                        map.SetTile(46, 36, 1);
+                        map.SetTile(46, 37, 1);
+                    }
+                }
+                else if (_roomNum == 4)
+                {
+                    if (_gameRoot._headsLevel == 6)
+                    {
+                        map.SetTile(103, 17, 1);
+                        map.SetTile(103, 18, 1);
+                        map.SetTile(103, 19, 1);
+                        map.SetTile(103, 20, 1);
+                        map.SetTile(103, 21, 1);
+                        map.SetTile(103, 22, 1);
+                        map.SetTile(103, 23, 1);
+                        map.SetTile(103, 24, 1);
+                        map.SetTile(103, 25, 1);
+                        map.SetTile(103, 26, 1);
+                        map.SetTile(103, 27, 1);
+                        map.SetTile(103, 28, 1);
+                        map.SetTile(103, 29, 1);
+                        map.SetTile(103, 30, 1);
+                        map.SetTile(103, 31, 1);
+                        map.SetTile(103, 32, 1);
+                        map.SetTile(103, 33, 1);
+                        map.SetTile(103, 34, 1);
+                        map.SetTile(103, 35, 1);
+                        map.SetTile(103, 36, 1);
+                        map.SetTile(103, 37, 1);
+                    }
+                }
+            }
+        }
+
+        protected override void OnEnemyEntered(SpriteEnemy enemy)
+        {
+            if (_triggered) return;
+            _triggered = true;
+        }
+
+        protected override void OnEnemyExited(SpriteEnemy enemy)
+        {
+            if (!HasEnemyInside) _triggered = false;
+
+            
         }
     }
 }

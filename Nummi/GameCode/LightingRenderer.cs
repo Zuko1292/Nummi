@@ -10,7 +10,7 @@ namespace Nummi
         private Texture2D _lightGradient;
         private Texture2D _pixel;
 
-        public float AmbientDarkness = 0.92f;
+        public float AmbientDarkness = 0.85f;
         public int PlayerLightRadius = 80;
         public int TorchLightRadius = 50;
         private const int PixelSize = 8;

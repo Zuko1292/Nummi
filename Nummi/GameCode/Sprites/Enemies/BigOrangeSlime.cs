@@ -27,7 +27,7 @@ namespace Nummi
         protected float _dashDuration = 1f;
         private Vector2 _dashTarget;
 
-        private float _dashSpeed = 400f;
+        private float _dashSpeed = 200f;
 
         protected override bool IsDashing() => _isDashing;
 

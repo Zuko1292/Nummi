@@ -76,6 +76,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Acid Drink.png
 
+#begin Textures/Animations/Arrow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Arrow.png
+
 #begin Textures/Animations/Bunny Guard.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -267,18 +279,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Slime Anim-Sheet.png
-
-#begin Textures/Animations/Slots.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Animations/Slots.png
 
 #begin Textures/Animations/Slots.png
 /importer:TextureImporter

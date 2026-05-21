@@ -86,6 +86,9 @@ namespace Nummi
 
         // Class Variables
 
+        public CharacterStats savedStats;
+        public LevelSystem savedLevelSystem;
+
         public SpritePlayer _player;
         TextButton playButton, guideButton, settingsButton, exitButton, resumeButton;
         TextButton shopButton;
@@ -212,6 +215,7 @@ namespace Nummi
 
         protected override void Update(GameTime gameTime)
         {
+
             //Makes sure the crystal texture is right
             if (_headsLevel == 1)
                 _currentCrystalTex = _shieldCrystalTex;
@@ -286,6 +290,11 @@ namespace Nummi
         {
             if (_player == null) return;
 
+            if(GBL.KeyPress(Keys.D1))
+            {
+                _player._currentWeapon = 4;
+            }
+
             // Adds flickering to the torches
             if (_useLighting)
                 _lighting.TorchLightRadius = 80 + (int)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 10) * 5);
@@ -299,7 +308,7 @@ namespace Nummi
                 SetPaused(true);
             }
             // Goes through every sprite in sprite list
-            foreach (Sprite eachSprite in _spriteList)
+            foreach (Sprite eachSprite in _spriteList.ToList())
             {
                 if (eachSprite is SpriteEnemy enemy)
                 {
@@ -690,7 +699,11 @@ namespace Nummi
             switch(_gameState)
             {
                 case GameState.HeadsLevel: DrawHeadsLevel();
-                    foreach (Sprite eachSprite in _spriteList) eachSprite.Draw(GBL.spriteBatch);
+                    foreach (Sprite eachSprite in _spriteList)
+                    {
+                        if (eachSprite is DialogBox || eachSprite is WeaponSelection) continue;
+                        eachSprite.Draw(GBL.spriteBatch);
+                    }
                     break;
             }
             GBL.spriteBatch.End();
@@ -721,7 +734,10 @@ namespace Nummi
                 case GameState.HeadsLevel:
                     _hud.Draw(_player);
                     foreach (Sprite s in _spriteList)
+                    {
                         if (s is DialogBox db) db.Draw(GBL.spriteBatch);
+                        if (s is WeaponSelection ws) ws.Draw(GBL.spriteBatch);
+                    }
                     break;
                 case GameState.TailsLevel:
                     _shopUI.DrawCurrency(10, 10, _currency.Coins, GBL.Content.Load<Texture2D>("Textures\\UI\\Coin Icon"), "g");

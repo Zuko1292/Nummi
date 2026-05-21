@@ -21,6 +21,9 @@ namespace Nummi
 
         protected List<string> _dialogue;
 
+        public bool _isBlackSmith;
+        private bool _dialogueActive = false;
+
         public SpriteNPC(
             Game1 gameRoot,
             Texture2D texture,
@@ -29,7 +32,8 @@ namespace Nummi
             float speechTimer,
             float walkingArea,
             float walkingTime,
-            List<string> dialogue)
+            List<string> dialogue,
+            bool isBlackSmith = false)
             : base(gameRoot, texture, position, canMove)
         {
             _canFlip = true;
@@ -40,6 +44,7 @@ namespace Nummi
             _walkingArea = walkingArea;
             _walkingTime = walkingTime;
             _dialogue = dialogue;
+            _isBlackSmith = isBlackSmith;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -110,6 +115,17 @@ namespace Nummi
                 _canInteract = false;
             }
 
+            // When the blacksmith's dialogue finishes, open the weapon-selection UI.
+            if (_dialogueActive && (_gameRoot._box == null || _gameRoot._box.Dead))
+            {
+                _dialogueActive = false;
+                if (_isBlackSmith)
+                {
+                    WeaponSelection ws = new WeaponSelection(_gameRoot);
+                    _gameRoot._newSpriteList.Add(ws);
+                }
+            }
+
             base.Update(gameTime);
         }
         // When the player interacts with the NPC, the speech timer is set to the talking duration, the talking cooldown is set to 2 seconds, and a dialog box is created with a message. The player can't move while the dialog box is open.
@@ -122,6 +138,7 @@ namespace Nummi
                 _gameRoot,
                 _dialogue);
             _gameRoot._newSpriteList.Add(_gameRoot._box);
+            _dialogueActive = true;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

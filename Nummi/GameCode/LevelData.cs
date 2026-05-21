@@ -11,7 +11,7 @@ namespace Nummi
     {
         // This class is responsible for spawning levels and contains data related to the levels, such as tilemap rules and level-specific settings. It has a method called SpawnLevel which takes in the level number and the game root object, and based on the current game state (HeadsLevel or TailsLevel), it loads the appropriate tilemap, sets up the player, enemies, and other sprites for that level. It also contains helper methods for converting tile coordinates to world coordinates and generating buildable areas from the tilemap.
         // This varible is used to determine the final level
-        public static int LastHeadsLevelIndex = 5;
+        public static int LastHeadsLevelIndex = 7;
 
         // Rules for Heads town and Tails Town and Dungeon 1 section 1 and 2 (which share the same tileSet)
         public static readonly TilemapRules Rules1 = new TilemapRules()
@@ -48,8 +48,8 @@ namespace Nummi
                     gameRoot._spriteList.Clear();
                     gameRoot._newSpriteList.Clear();
 
-                    CharacterStats savedStats = gameRoot._player?.Stats ?? new CharacterStats(str: 1, vit: 1);
-                    LevelSystem savedLevelSystem = gameRoot._player?.LevelSystem ?? new LevelSystem();
+                    gameRoot.savedStats = gameRoot._player?.Stats ?? new CharacterStats(str: 1, vit: 1);
+                    gameRoot.savedLevelSystem = gameRoot._player?.LevelSystem ?? new LevelSystem();
 
                     gameRoot._player = null;
                     // When adding enemies or NPCs to the levels, make sure to add them to the _spriteList so they get updated and drawn. Also make sure to set their position using the TilePos helper method to convert tile coordinates to world coordinates. For example, if you want to place an enemy at tile (10, 5), you would use TilePos(10, 5) to get the correct world position for that enemy.
@@ -88,7 +88,8 @@ namespace Nummi
                                     "I'm just the weapon maker",
                                     "I've got Swords, Great Swords, Maces, Great Hammers and a Bow",
                                     "Take your pick"
-                                }));
+                                },
+                                isBlackSmith: true));
                             gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
                                 GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"),
                                 TilePos(26, 21),
@@ -138,7 +139,7 @@ namespace Nummi
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
 
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 8), true, savedStats, savedLevelSystem);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 8), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
                            // Room 2 Enemies
@@ -200,7 +201,7 @@ namespace Nummi
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[3]);
                             gameRoot._tilemap.SetRules(Rules1);
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 8), true, savedStats, savedLevelSystem);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 8), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
                             // Room 2 Enemies
@@ -229,7 +230,7 @@ namespace Nummi
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[4]);
                             gameRoot._tilemap.SetRules(Rules1);
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 3), true, savedStats, savedLevelSystem);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(9, 3), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
                             SpriteEnemy boss = new PossessedTree(gameRoot, TilePos(10, 14));
@@ -245,7 +246,7 @@ namespace Nummi
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[5]);
                             gameRoot._tilemap.SetRules(Rules2);
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 10), true, savedStats, savedLevelSystem);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 10), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
                             // Room 1 Enemies
@@ -297,7 +298,7 @@ namespace Nummi
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[6]);
                             gameRoot._tilemap.SetRules(Rules2);
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(150, 47), true, savedStats, savedLevelSystem);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(150, 47), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
                             break;
                         case 6:
@@ -308,8 +309,39 @@ namespace Nummi
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[7]);
                             gameRoot._tilemap.SetRules(Rules3);
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(7, 27), true, savedStats, savedLevelSystem);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(7, 27), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
+
+                            var zone = new DetectionZone(gameRoot, TilePos(28, 17), 576, 672, 1);
+                            gameRoot._spriteList.Add(zone);
+                            var zone2 = new DetectionZone(gameRoot, TilePos(47, 17), 576, 672, 2);
+                            gameRoot._spriteList.Add(zone2);
+                            var zone3 = new DetectionZone(gameRoot, TilePos(66, 17), 576, 672, 3);
+                            gameRoot._spriteList.Add(zone3);
+                            var zone4 = new DetectionZone(gameRoot, TilePos(85, 17), 576, 672, 4);
+                            gameRoot._spriteList.Add(zone4);
+
+                            break;
+                        case 7:
+                            gameRoot._isTrapLevel = true;
+
+                            gameRoot._useLighting = false;
+                            gameRoot._torchPositions = Array.Empty<Vector2>();
+
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[7]);
+                            gameRoot._tilemap.SetRules(Rules3);
+                            var map = gameRoot._tilemap.Layers[1];
+
+                            map.SetTile(115, 26, -1);
+                            map.SetTile(115, 27, -1); 
+
+                            var map2 = gameRoot._tilemap.Layers[0];
+
+                            map.SetTile(103, 27, 1);
+
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(113, 27), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
+                            gameRoot._spriteList.Add(gameRoot._player);
+
                             break;
                     }
                     break;
@@ -326,6 +358,10 @@ namespace Nummi
                         case 0:
                             break;
                         case 1:
+                            //Load the player so the stats save and load properly when going between levels, also make sure to set the position of the player using the TilePos helper method to convert tile coordinates to world coordinates.
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
+                            gameRoot._spriteList.Add(gameRoot._player);
+
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
                             SetBuildingLimits(gameRoot, 1);
 
