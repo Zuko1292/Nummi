@@ -205,7 +205,7 @@ namespace Nummi
         }
 
         public PossessingSlime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\PossessingSlime"), position, true, 250, 220, 20, true, 100, 200f, 200f)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\PossessingSlime"), position, true, 250, 220, 20, true, 100, 200f, 200f, 0)
         {
         }
 
@@ -266,7 +266,7 @@ namespace Nummi
         private Vector2 _attackDirection;
 
         public Branch(Game1 gameRoot, Vector2 position, Vector2 attackDirection)
-        : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Root Slap-Sheet"), position, false, 100, 220, 10, true, 0, 400f, 0f)
+        : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Root Slap-Sheet"), position, false, 100, 220, 10, true, 0, 400f, 0f, 0)
         {
             if (attackDirection != Vector2.Zero)
                 _attackDirection = Vector2.Normalize(attackDirection);
