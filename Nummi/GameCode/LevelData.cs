@@ -321,6 +321,13 @@ namespace Nummi
                             var zone4 = new DetectionZone(gameRoot, TilePos(85, 17), 576, 672, 4);
                             gameRoot._spriteList.Add(zone4);
 
+                            gameRoot._spriteList.Add(new Bartender(gameRoot, TilePos(36, 18)));
+                            gameRoot._spriteList.Add(new Bartender(gameRoot, TilePos(54, 18)));
+                            gameRoot._spriteList.Add(new Bartender(gameRoot, TilePos(72, 18)));
+                            gameRoot._spriteList.Add(new Bartender(gameRoot, TilePos(90, 18)));
+                            gameRoot._spriteList.Add(new Bartender(gameRoot, TilePos(108, 18)));
+                            gameRoot._spriteList.Add(new Bartender(gameRoot, TilePos(126, 18)));
+
                             break;
                         case 7:
                             gameRoot._isTrapLevel = true;
