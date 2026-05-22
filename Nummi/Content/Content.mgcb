@@ -655,6 +655,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Houses/BlackSmith_HeadsTown.png
 
+#begin Textures/Houses/BrokenMayorHouse.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Houses/BrokenMayorHouse.png
+
 #begin Textures/Houses/House1_v2.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -726,6 +738,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Houses/House3.png
+
+#begin Textures/Houses/MayorHouse1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Houses/MayorHouse1.png
+
+#begin Textures/Houses/MayorShack.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Houses/MayorShack.png
 
 #begin Textures/SpecialBuildings/Barracks.png
 /importer:TextureImporter

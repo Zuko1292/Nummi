@@ -588,6 +588,8 @@ namespace Nummi
                         case 1:
                             gameRoot._showTailsIntro = true;
 
+                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\MayorShack"), TilePos(38, 15), new Vector2(2f, 2f)));
+
                             //Load the player so the stats save and load properly when going between levels
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
 
@@ -601,6 +603,8 @@ namespace Nummi
                             break;
                         case 2:
                             gameRoot._showTailsIntro = false;
+                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\BrokenMayorHouse"), TilePos(38, 15), new Vector2(2f, 2f)));
+
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
@@ -612,6 +616,7 @@ namespace Nummi
                             break;
                         case 3:
                             gameRoot._showTailsIntro = false;
+                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\MayorHouse1"), TilePos(38, 15), new Vector2(2f, 2f)));
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
