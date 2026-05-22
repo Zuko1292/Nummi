@@ -93,7 +93,7 @@ namespace Nummi
         public int savedWeapon;
 
         public SpritePlayer _player;
-        TextButton playButton, guideButton, settingsButton, exitButton, resumeButton;
+        TextButton playButton, guideButton, settingsButton, exitButton, resumeButton, tailsFlipButton;
         TextButton shopButton;
         Background _MenuBackground, _GuideBackground, _SettingsBackground, _PauseBackground;
         public SpriteNPC _npc;
@@ -111,7 +111,8 @@ namespace Nummi
         // one key; the count is what the Big Dealer uses for its dialogue.
         public List<int> _keys = new List<int>();
 
-        public SoundEffect _weaponHitSound, _gettingHitSound;
+        public SoundEffect _pickUpSound, _gettingHitSound, _slamSound;
+        public Song _titleMusic, _gameplayMusic;
         public bool _musicOn = true;
         public string _musicState = "ON";
         public bool _soundeffectsOn = true;
@@ -174,6 +175,7 @@ namespace Nummi
             settingsButton = new TextButton(_menuFont, "Settings", ScreenRelative(0.82f, 0.6f), Color.White);
             exitButton = new TextButton(_menuFont, "Exit", ScreenRelative(0.97f, 0.03f), Color.Red);
             resumeButton = new TextButton(_menuFont, "Resume", ScreenRelative(0.16f, 0.5f), Color.White);
+            tailsFlipButton = new TextButton(_menuFont, "Flip to Heads", ScreenRelative(0.09f, 0.5f), Color.White);
 
             // makes the grid for building
             _grid = new GridSystem(64, 64, 32);
@@ -214,6 +216,11 @@ namespace Nummi
             _hayCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\hayCrystal");
             _smithCrystalTex = Content.Load<Texture2D>("Textures\\Animations\\SmithCrystal");
             _gettingHitSound = Content.Load<SoundEffect>("Sounds\\Getting hit");
+            _pickUpSound = Content.Load<SoundEffect>("Sounds\\Item_Pickup");
+            _slamSound = Content.Load<SoundEffect>("Sounds\\Slam");
+            _titleMusic = Content.Load<Song>("Sounds\\Title Music");
+            _gameplayMusic = Content.Load<Song>("Sounds\\Game Level Music");
+
 
             _defaultTxr = new Texture2D(GraphicsDevice, 1, 1);
             _defaultTxr.SetData(new[] { Color.White });
@@ -258,6 +265,7 @@ namespace Nummi
                 case GameState.Guide: UpdateGuide(gameTime); break;
                 case GameState.Paused: UpdatePaused(gameTime); break;
                 case GameState.DeathScreen: UpdateDeathScreen(gameTime); break;
+                case GameState.GameFinished: UpdateGameFinished(gameTime); break;
                 default: StartTitle(); break;
             }
 
@@ -557,6 +565,8 @@ namespace Nummi
 
         public void UpdateTailsLevel(GameTime gameTime)
         {
+            tailsFlipButton.Update();
+            if (tailsFlipButton.IsClicked) NextLevel();
             // updates the camera 
             _tailsCamera.Update(gameTime);
 
@@ -680,9 +690,21 @@ namespace Nummi
             // makes game over only last a couple seconds
             if (_stateTimer <= 0f || GBL.KeyPress(Keys.Escape)) StartTitle();
         }
+        public void UpdateGameFinished(GameTime gameTime)
+        {
+            // timer ticks down
+            _stateTimer -= GBL.DeltaTime;
+            // makes game over only last a couple seconds
+            if (_stateTimer <= 0f || GBL.KeyPress(Keys.Escape)) StartTitle();
+        }
         // used to start title and clear sprites for when going back to title from main menu or from beating the game or whatever else might send you back to the title
         public void StartTitle()
         {
+            // makes any other music stop and plays title music
+            MediaPlayer.Stop();
+            if (_musicOn)
+                MediaPlayer.Play(_titleMusic);
+
             _gameState = GameState.Title;
             // clears all sprites
             _spriteList.Clear();
@@ -694,6 +716,11 @@ namespace Nummi
         //Starts main menu
         public void StartMainMenu()
         {
+            // makes any other music stop and plays title music
+            MediaPlayer.Stop();
+            if (_musicOn)
+                MediaPlayer.Play(_titleMusic);
+
             _gameState = GameState.MainMenu;
             // clears all sprites
             _spriteList.Clear();
@@ -710,6 +737,11 @@ namespace Nummi
         // Starts Heads level
         public void StartHeadsLevel(int level)
         {
+            //stops any other music and plays gameplay music
+            MediaPlayer.Stop();
+            if (_musicOn)
+                MediaPlayer.Play(_gameplayMusic);
+
             _gameState = GameState.HeadsLevel;
             _coinSide = true;
             _headsLevel = level;
@@ -729,6 +761,10 @@ namespace Nummi
         // Start Tails level
         public void StartTailsLevel(int level)
         {
+            //stops any other music and plays gameplay music
+            MediaPlayer.Stop();
+            if (_musicOn)
+                MediaPlayer.Play(_gameplayMusic);
 
             _gameState = GameState.TailsLevel;
             _coinSide = false;
@@ -788,6 +824,14 @@ namespace Nummi
             _gameState = GameState.Settings;
 
             _SettingsBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 2);
+        }
+        public void StartGameFinished()
+        {
+            // stops music
+            MediaPlayer.Stop();
+
+            _gameState = GameState.GameFinished;
+            _stateTimer = 5f;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -853,6 +897,7 @@ namespace Nummi
                     }
                     break;
                 case GameState.TailsLevel:
+                    tailsFlipButton.Draw();
                     _shopUI.DrawCurrency(10, 10, _currency.Coins, GBL.Content.Load<Texture2D>("Textures\\UI\\Coin Icon"), "g");
                     _shopUI.DrawCurrency(10, 50, _currency.Population, GBL.Content.Load<Texture2D>("Textures\\UI\\Population Icon"), "p");
                     _shopUI.DrawCurrency(10, 90, _currency.Food, GBL.Content.Load<Texture2D>("Textures\\UI\\Food Icon"), "f");
@@ -866,6 +911,7 @@ namespace Nummi
                     break;
                 case GameState.Guide: DrawGuide(); break;
                 case GameState.Settings: DrawSettings(); break;
+                case GameState.GameFinished: DrawGameFinished(); break;
             }
             
             GBL.spriteBatch.End();
@@ -1015,6 +1061,24 @@ namespace Nummi
             FancyText(_titleFont, "GAME OVER", ScreenRelative(0.5f, 0.5f), Color.Red, Color.White);
             FancyText(_menuFont, "Mr Mirrors Reign Continues", ScreenRelative(0.5f, 0.6f), Color.Red, Color.White);
         }
+        public void DrawGameFinished()
+        {
+            Rectangle rect = new Rectangle(0, 0, GBL.GDM.PreferredBackBufferWidth, GBL.GDM.PreferredBackBufferHeight);
+
+            GBL.spriteBatch.Draw(
+                _defaultTxr,
+                rect,
+                null,
+                Color.Gold,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0.95f
+            );
+            FancyText(_titleFont, "GAME OVER", ScreenRelative(0.5f, 0.5f), Color.Red, Color.White);
+            FancyText(_menuFont, "Mr Mirror has Consumed your mind he was never supposed to be beaten", ScreenRelative(0.5f, 0.6f), Color.Red, Color.White);
+        }
+
         // start new game
         public void StartNewGame()
         {
@@ -1073,7 +1137,7 @@ namespace Nummi
 
                 if (_headsLevel > LevelData.LastHeadsLevelIndex)
                 {
-                    StartTitle();
+                    StartGameFinished();
                     return;
                 }
 
@@ -1101,7 +1165,7 @@ namespace Nummi
 
                 if (_headsLevel > LevelData.LastHeadsLevelIndex)
                 {
-                    StartTitle();
+                    StartGameFinished();
                     return;
                 }
 
@@ -1228,6 +1292,7 @@ namespace Nummi
         Guide,
         Paused,
         DeathScreen,
+        GameFinished,
 
     }
 }

@@ -339,6 +339,7 @@ namespace Nummi
 
         public void PawSwipe()
         {
+            
             float direction = (_gameRoot._player._position.X < _position.X) ? -16f : 16f;
             WaiterPawSwipe swipe = new WaiterPawSwipe(_gameRoot, _position + new Vector2(direction, 0));
             _gameRoot._newSpriteList.Add(swipe);

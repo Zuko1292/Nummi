@@ -107,6 +107,9 @@ namespace Nummi
             Stats = existingStats;
             LevelSystem = existingLevel;
             LevelSystem.OnLevelUp += HandleLevelUp;
+
+            Stats.Vitality.Modify(+_gameRoot.buildingSystem._barracksPlaced);
+            Stats.Strength.Modify(+_gameRoot.buildingSystem._housesPlaced);
         }
 
         #endregion ***** Constructors *****
@@ -517,6 +520,9 @@ namespace Nummi
         {
             //DroppedWeapon droppedWeapon = new DroppedWeapon(_gameRoot, _position, new Random().Next(0, 5));
             _gameRoot._newSpriteList.Add(collectable);
+
+            if (_gameRoot._soundeffectsOn)
+                _gameRoot._pickUpSound.Play();
         }
 
         private void HandleLevelUp()
@@ -568,7 +574,7 @@ namespace Nummi
             Vitality = new Stat("Vitality", vit, 99);
         }
 
-        public int MaxHP => (int)(Vitality.CurrentValue * 7.5f);
+        public int MaxHP => (int)(Vitality.CurrentValue * 7.5);
         public int WeaponDmg => (int)(Strength.CurrentValue * 2.5f);
 
         public int Posture => (int)(Strength.CurrentValue * 5f);

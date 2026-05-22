@@ -185,7 +185,7 @@ namespace Nummi
 
             _growlCooldown -= GBL.DeltaTime;
             if (_tempState == TempState.Frozen) UpdateFrozen();
-            else                                 UpdateThawed();
+            else UpdateThawed();
 
             base.Update(gameTime);
         }
@@ -222,13 +222,13 @@ namespace Nummi
 
             switch (_phase)
             {
-                case Phase.Mode1Approach:   UpdateApproach();  break;
-                case Phase.Mode1Wail:       UpdateWail();      break;
-                case Phase.Mode1Tired:      UpdateTired();     break;
-                case Phase.Mode1Retreat:    UpdateRetreat();   break;
-                case Phase.Mode2WaterIdle:  UpdateWaterIdle(); break;
-                case Phase.Mode2Charge:     UpdateCharge();    break;
-                case Phase.Mode2Slots:      UpdateSlots();     break;
+                case Phase.Mode1Approach:UpdateApproach();  break;
+                case Phase.Mode1Wail:   UpdateWail();      break;
+                case Phase.Mode1Tired:  UpdateTired();     break;
+                case Phase.Mode1Retreat:UpdateRetreat();   break;
+                case Phase.Mode2WaterIdle:UpdateWaterIdle(); break;
+                case Phase.Mode2Charge: UpdateCharge();    break;
+                case Phase.Mode2Slots:  UpdateSlots();     break;
             }
         }
 
@@ -281,7 +281,7 @@ namespace Nummi
             if (_tiredHits >= TiredHitsToShove)
             {
                 _phase = Phase.Mode2WaterIdle;
-                _moveTarget = HammockSpot();   // walk back, don't teleport
+                _moveTarget = HammockSpot();   
                 _slotWaveTimer = 0f;
                 SetAnimation(5);
                 return;
@@ -296,15 +296,12 @@ namespace Nummi
 
         private void UpdateRetreat()
         {
-            // Sprint toward the nearest water tile on all fours.
             Vector2 target = NearestWaterTile(_position);
             Vector2 dir = target - _position;
             if (dir != Vector2.Zero) dir.Normalize();
             _velocity = dir * _retreatSpeed;
             SetAnimation(5);
 
-            // Once we're actually in water, walk the rest of the way to the
-            // hammock corner via the transit target.
             if (IsInWater(_position))
             {
                 _phase = Phase.Mode2WaterIdle;
@@ -323,7 +320,6 @@ namespace Nummi
 
             _slotWaveTimer += GBL.DeltaTime;
 
-            // Open with a slot-wave + charge combination.
             if (_slotWaveTimer >= 1.5f)
             {
                 _slotWaveTimer = 0f;
@@ -334,7 +330,6 @@ namespace Nummi
 
         private void UpdateSlots()
         {
-            // Stays napping while the slot wave plays out.
             _velocity = Vector2.Zero;
             SetAnimation(7);
 
@@ -345,11 +340,8 @@ namespace Nummi
                 _phase = Phase.Mode2Charge;
                 _chargeTimer = ChargeDuration;
                 _chargeFlipTimer = 0f;
-                // Decide which edge to charge from based on the croc's own
-                // current position - not the player's.
+
                 _chargeDirection = (_gameRoot._player._position.X >= _spawnPos.X) ? -1 : 1;
-                // Walk to a charge-start point that's close to home so the
-                // croc never crosses a wall to get there.
                 _moveTarget = ChargeStartTarget();
                 SetAnimation(6);
             }
@@ -361,11 +353,8 @@ namespace Nummi
             _chargeFlipTimer += GBL.DeltaTime;
             SetAnimation(6);
 
-            // Dash horizontally along the brick path.
             _velocity = new Vector2(_chargeDirection * _chargeSpeed, 0f);
 
-            // Reverse around the croc's home base so it covers a band of path
-            // near the spawn position, without depending on any rectangle.
             float chargeHalfWidth = 160f;
             float minX = _spawnPos.X - chargeHalfWidth;
             float maxX = _spawnPos.X + chargeHalfWidth;
@@ -385,9 +374,6 @@ namespace Nummi
 
             if (_chargeTimer <= 0f)
             {
-                // Decide next move: drop back to water for another slot wave,
-                // or commit to a Mode 1 wail. Either way the croc *walks*
-                // to its destination via _moveTarget rather than teleporting.
                 if (new Random().NextDouble() < 0.5)
                 {
                     _phase = Phase.Mode2WaterIdle;
@@ -407,7 +393,6 @@ namespace Nummi
 
         private void SpawnWailHitbox()
         {
-            // Wide hitbox slightly in front of the croc.
             Vector2 facing = _gameRoot._player._position - _position;
             if (facing == Vector2.Zero) facing = new Vector2(1f, 0f);
             facing.Normalize();
@@ -474,8 +459,6 @@ namespace Nummi
                 if (IsInWater(down)) return down;
             }
 
-            // No water found within range - fall back to the spawn position
-            // (which IS the boss's home water tile).
             return _spawnPos;
         }
 
@@ -483,7 +466,6 @@ namespace Nummi
 
         protected override void OnCollideEvent(Sprite otherSprite)
         {
-            // Frozen: bounce hits off and growl sleepily.
             if (_tempState == TempState.Frozen && otherSprite is Attack && _growlCooldown <= 0f)
             {
                 _growlCooldown = GrowlCooldownDuration;
@@ -491,8 +473,6 @@ namespace Nummi
                 return;
             }
 
-            // During the tired opening, count damage and shove the croc
-            // toward the nearest water bank for every hit.
             if (_tempState == TempState.Thawed
                 && _phase == Phase.Mode1Tired
                 && otherSprite is Attack atk)
@@ -509,24 +489,22 @@ namespace Nummi
         protected override void OnAnimationFinished()
         {
             base.OnAnimationFinished();
-            if (_animIndex == 1) SetAnimation(0); // growl -> sleep
+            if (_animIndex == 1) SetAnimation(0);
 
             if (_animIndex == 8) Dead = true;
         }
 
         public void OnDeath()
         {
-            // Death animation (fall backwards + snot bubble) handled by anim 8.
             SetAnimation(8);
 
-            // Spawn chest under the croc and the mirror exit two tiles next to it.
-            var groundLayer = _gameRoot._tilemap.Layers[0];
+            var groundLayer = _gameRoot._tilemap.Layers[1];
             int tx = (int)(_position.X / 32f);
             int ty = (int)(_position.Y / 32f);
 
-            // Use the same tile IDs the other bosses use for chest + mirror exit.
-            groundLayer.SetTile(tx, ty, 14);          // chest
-            groundLayer.SetTile(tx + 2, ty, 22);      // mirror exit
+            groundLayer.SetTile(tx, ty, 24);    // chest
+            groundLayer.SetTile(tx + 2, ty, 39);    // mirror exit
+            groundLayer.SetTile(tx + 2, ty - 1, 47);
         }
     }
 
@@ -611,8 +589,6 @@ namespace Nummi
 
         private void FireCoinPattern()
         {
-            // Simple straight-line pattern early, diagonal pattern later for
-            // diamond safe-spots (per the spec).
             bool diagonal = _patternStep >= 4;
             float[] angles = diagonal
                 ? new float[] { MathHelper.PiOver4, 3 * MathHelper.PiOver4, 5 * MathHelper.PiOver4, 7 * MathHelper.PiOver4 }

@@ -23,8 +23,8 @@ namespace Nummi
 
         protected override bool IsDashing() => _isDashing;
 
-        public TallPurpleSlime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Purple Slime Anim-Sheet-Tall"), position, true, 10000, 220, 10, false, 50, 400f, 0f, 50000)
+        public TallPurpleSlime(Game1 gameRoot, Vector2 position, int health = 10000, float xpValue = 1000f,int _goldValue = 50000)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Purple Slime Anim-Sheet-Tall"), position, true, health, 220, 10, false, 50, 400f, xpValue, _goldValue)
         {
             _walkingArea = 100f;
             _canPatrol = true;

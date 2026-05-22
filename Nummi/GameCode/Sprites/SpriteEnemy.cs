@@ -249,8 +249,8 @@ namespace Nummi
             InitBounds(position, canCollide: true, collisionScale: Vector2.One);
 
             _collisionBounds = new Rectangle(
-                (int)(position.X - width / 2f),
-                (int)(position.Y - height / 2f),
+                (int)position.X,
+                (int)position.Y,
                 width,
                 height
             );
@@ -261,10 +261,10 @@ namespace Nummi
 
             _isHidden = true;
             _canMove = false;
-            _canCollide = true; 
+            _canCollide = true;
 
-            CollisionLayer = CollisionLayer.None;  
-            CollisionMask = CollisionLayer.Enemy;  
+            CollisionLayer = CollisionLayer.None;
+            CollisionMask = CollisionLayer.Enemy;
         }
         public override void Update(GameTime gameTime)
         {
@@ -314,6 +314,9 @@ namespace Nummi
             _enemiesInside.Clear();
             foreach (SpriteEnemy e in currentlyInside) _enemiesInside.Add(e);
         }
+        
+    
+     
 
         public bool HasEnemyInside => _enemiesInside.Count > 0;
 
@@ -340,6 +343,9 @@ namespace Nummi
     public class DetectionZone : TriggerZone
     {
         private bool _triggered = false;
+
+
+
         int _roomNum;
         public DetectionZone(Game1 gameRoot, Vector2 position, int width, int height, int roomNum)
             : base(gameRoot, position, width, height)

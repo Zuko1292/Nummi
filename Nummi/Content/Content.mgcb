@@ -13,6 +13,9 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Maps/BossFight3.xml
+/copy:Maps/BossFight3.xml
+
 #begin Maps/Dungeon1-BossRoom.xml
 /copy:Maps/Dungeon1-BossRoom.xml
 
@@ -58,11 +61,47 @@
 /processorParam:TextureFormat=Compressed
 /build:SmallMenuFont.spritefont
 
+#begin Sounds/Game Level Music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/Game Level Music.mp3
+
+#begin Sounds/Game Level Music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/Game Level Music.mp3
+
 #begin Sounds/Getting Hit.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/Getting Hit.wav
+
+#begin Sounds/Item_Pickup.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Item_Pickup.wav
+
+#begin Sounds/Slam.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Slam.wav
+
+#begin Sounds/Title Music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/Title Music.mp3
+
+#begin Sounds/Title Music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds/Title Music.mp3
 
 #begin Textures/Animations/Acid Drink.png
 /importer:TextureImporter
@@ -148,18 +187,6 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Croc_Boss.png
 
-#begin Textures/Animations/Croc_Boss.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Animations/Croc_Boss.png
-
 #begin Textures/Animations/Down Slash-Sheet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -171,6 +198,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Down Slash-Sheet.png
+
+#begin Textures/Animations/Drunken Rat Sheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Drunken Rat Sheet.png
 
 #begin Textures/Animations/GreenCrystal.png
 /importer:TextureImporter

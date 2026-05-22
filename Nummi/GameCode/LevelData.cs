@@ -77,6 +77,7 @@ namespace Nummi
                             // Loads the player always load it like this
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(45, 45), true);
                             gameRoot._spriteList.Add(gameRoot._player);
+
                             // always load enemies and Npcs like this and set their position using the TilePos helper method. Make sure to add them to the _spriteList so they get updated and drawn.
                             gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(7, 44)));
                             gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(7, 4)));
@@ -260,6 +261,8 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 10), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
+                            
+
                             // Room 1 Enemies
                             gameRoot._spriteList.Add(new Security_Guard(gameRoot, TilePos(25, 7), Security_Guard.TempState.Frozen));
                             gameRoot._spriteList.Add(new Security_Guard(gameRoot, TilePos(25, 13), Security_Guard.TempState.Frozen));
@@ -339,13 +342,66 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(7, 27), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            var zone = new DetectionZone(gameRoot, TilePos(28, 17), 576, 672, 1);
+                            // Room 1 Enemies 
+
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(39, 19)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(35, 27)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(39, 23)));
+
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(34, 23), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(32, 25), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(41, 28), 500, 300f, 300));
+
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(32, 20), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(33, 27), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(21, 22), 300, 300f, 300));
+
+                            // Room 2 Enemies
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(58, 19)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(54, 27)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(58, 23)));
+
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(52, 23), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(51, 25), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(60, 28), 500, 300f, 300));
+
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(51, 20), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(52, 27), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(40, 22), 300, 300f, 300));
+
+                            // Room 3 Enemies
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(77, 19)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(73, 27)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(77, 23)));
+
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(71, 23), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(70, 25), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(79, 28), 500, 300f, 300));
+
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(70, 20), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(71, 27), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(59, 22), 300, 300f, 300));
+
+                            // Room 4 Enemies
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(96, 19)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(92, 27)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(96, 23)));
+
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(90, 23), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(89, 25), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(98, 28), 500, 300f, 300));
+
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(89, 20), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(90, 27), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(78, 22), 300, 300f, 300));
+
+                            var zone = new DetectionZone(gameRoot, TilePos(37, 27), 576, 672, 1);
                             gameRoot._spriteList.Add(zone);
-                            var zone2 = new DetectionZone(gameRoot, TilePos(47, 17), 576, 672, 2);
+                            var zone2 = new DetectionZone(gameRoot, TilePos(56, 27), 576, 672, 2);
                             gameRoot._spriteList.Add(zone2);
-                            var zone3 = new DetectionZone(gameRoot, TilePos(66, 17), 576, 672, 3);
+                            var zone3 = new DetectionZone(gameRoot, TilePos(75, 27), 576, 672, 3);
                             gameRoot._spriteList.Add(zone3);
-                            var zone4 = new DetectionZone(gameRoot, TilePos(85, 17), 576, 672, 4);
+                            var zone4 = new DetectionZone(gameRoot, TilePos(94, 27), 576, 672, 4);
                             gameRoot._spriteList.Add(zone4);
 
                             gameRoot._spriteList.Add(new Bartender(gameRoot, TilePos(36, 18)));
@@ -365,7 +421,9 @@ namespace Nummi
                             var map = gameRoot._tilemap.Layers[1];
 
                             map.SetTile(115, 26, -1);
-                            map.SetTile(115, 27, -1); 
+                            map.SetTile(115, 27, -1);
+                            map.SetTile(4, 26, 16);
+                            map.SetTile(4, 27, 12);
 
                             var map2 = gameRoot._tilemap.Layers[0];
 
@@ -373,6 +431,68 @@ namespace Nummi
 
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(113, 27), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
+
+                            // Room 1 Enemies 
+
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(39, 19)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(35, 27)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(39, 23)));
+
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(34, 23), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(32, 25), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(41, 28), 500, 300f, 300));
+
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(32, 20), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(33, 27), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(21, 22), 300, 300f, 300));
+
+                            // Room 2 Enemies
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(58, 19)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(54, 27)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(58, 23)));
+
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(52, 23), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(51, 25), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(60, 28), 500, 300f, 300));
+
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(51, 20), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(52, 27), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(40, 22), 300, 300f, 300));
+
+                            // Room 3 Enemies
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(77, 19)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(73, 27)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(77, 23)));
+
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(71, 23), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(70, 25), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(79, 28), 500, 300f, 300));
+
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(70, 20), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(71, 27), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(59, 22), 300, 300f, 300));
+
+                            // Room 4 Enemies
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(96, 19)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(92, 27)));
+                            gameRoot._spriteList.Add(new Drunken_Rat(gameRoot, TilePos(96, 23)));
+
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(90, 23), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(89, 25), 500, 300f, 300));
+                            gameRoot._spriteList.Add(new BigOrangeSlime(gameRoot, TilePos(98, 28), 500, 300f, 300));
+
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(89, 20), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(90, 27), 300, 300f, 300));
+                            gameRoot._spriteList.Add(new TallPurpleSlime(gameRoot, TilePos(78, 22), 300, 300f, 300));
+
+                            var zone1 = new DetectionZone(gameRoot, TilePos(94, 27), 576, 672, 1);
+                            gameRoot._spriteList.Add(zone1);
+                            var zone22 = new DetectionZone(gameRoot, TilePos(75, 27), 576, 672, 2);
+                            gameRoot._spriteList.Add(zone22);
+                            var zone33 = new DetectionZone(gameRoot, TilePos(56, 27), 576, 672, 3);
+                            gameRoot._spriteList.Add(zone33);
+                            var zone44 = new DetectionZone(gameRoot, TilePos(37, 27), 576, 672, 4);
+                            gameRoot._spriteList.Add(zone44);
 
                             break;
                     }
@@ -399,6 +519,17 @@ namespace Nummi
                             SetBuildingLimits(gameRoot, 1);
 
                             gameRoot._grid.ResetBuildable(); // Clear old data first
+                            GenerateBuildableFromTilemap(gameRoot._grid, gameRoot._tilemap, 0);
+
+                            gameRoot._spriteList.Add(new Grid(gameRoot, new Vector2(1024 + (5 * 32), 1024)));
+                            break;
+                        case 2:
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
+                            gameRoot._spriteList.Add(gameRoot._player);
+
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
+                            SetBuildingLimits(gameRoot, 2);
+
                             GenerateBuildableFromTilemap(gameRoot._grid, gameRoot._tilemap, 0);
 
                             gameRoot._spriteList.Add(new Grid(gameRoot, new Vector2(1024 + (5 * 32), 1024)));
@@ -499,6 +630,14 @@ namespace Nummi
                 case 2:
                     gameRoot.buildingSystem.SetLimit("House", 6);
                     gameRoot.buildingSystem.SetLimit("Barracks", 3);
+
+                    gameRoot._shop.AddItem(new ShopItem(
+                        "House",
+                        "Increases Population",
+                        GBL.Content.Load<Texture2D>("Textures\\Houses\\House1"),
+                        cost: 50,
+                        building: new BuildingType("House", GBL.Content.Load<Texture2D>("Textures\\Houses\\House1"), new Point(2, 2))
+                    ));
                     // Add more items or higher limits for level 1
                     break;
             }
