@@ -206,7 +206,7 @@ namespace Nummi
         }
 
         public PossessingSlime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\PossessingSlime"), position, true, 250, 220, 20, true, 100, 200f, 0f, 0)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\PossessingSlime"), position, true, 250, 220, 20, true, 100, 1000f, 0f, 0)
         {
         }
 
