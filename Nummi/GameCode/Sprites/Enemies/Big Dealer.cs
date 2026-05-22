@@ -35,7 +35,7 @@ namespace Nummi
 
         public Big_Dealer(Game1 gameRoot, Vector2 pos, TempState tempState)
             : base(gameRoot,
-                   GBL.Content.Load<Texture2D>("Textures\\Animations\\Big Dealer"),
+                   GBL.Content.Load<Texture2D>("Textures\\Animations\\Snake Dealer"),
                    pos,
                    canMove: false,
                    speechTimer: 3f,
@@ -43,6 +43,7 @@ namespace Nummi
                    walkingTime: 1f,
                    dialogue: new List<string>() { "..." })
         {
+            _drawScale = new Vector2(1.5f, 1.5f);
             _tempState = tempState;
             // SpriteNPC doesn't take damage from Attacks by default, so no
             // additional invincibility flag is needed here - attacks just
@@ -56,13 +57,11 @@ namespace Nummi
 
             // 0 - Idle / Asleep (placeholder rectangles, swap for the real sheet)
             animations.Add(new List<Rectangle>());
-            for (int i = 0; i < 4; i++)
-                animations[0].Add(new Rectangle(i * 64, 0, 64, 64));
+            animations[0].Add(new Rectangle(0, 0, 32, 64));
 
             // 1 - Chuckle reaction (thawed) / sleepy growl (frozen)
             animations.Add(new List<Rectangle>());
-            for (int i = 0; i < 4; i++)
-                animations[1].Add(new Rectangle(i * 64, 64, 64, 64));
+               animations[1].Add(new Rectangle(0, 0, 32, 64));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);

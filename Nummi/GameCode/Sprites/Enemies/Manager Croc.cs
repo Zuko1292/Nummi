@@ -8,22 +8,10 @@ using Nummi;
 
 namespace Nummi
 {
-    // Dungeon 2 boss "The Manager".
-    //
-    // Two attack modes (see design doc Dungeon 2 boss fight):
-    //   Mode 1 - On the brick path. Croc wails its arms in a wide area then
-    //            gets tired and exposes itself; player damage stuns/knockbacks
-    //            the croc; sustained punishment shoves it into the water. If
-    //            left alone it gives up the opening and runs back to water.
-    //   Mode 2 - In the water. Croc charges left/right along the brick path
-    //            to fence the player; if the croc touches the player it grabs
-    //            and throws them further down the path. Slot machines rise
-    //            from the water and shoot coin projectiles in patterns.
-    //            Croc can only be damaged while out of the water.
-    // Frozen variant: always asleep, invincible, growls when hit (matches
-    // the other frozen casino enemies).
     public class Manager_Croc : SpriteEnemy
     {
+        // This class is so janky and scuffed
+
         public enum TempState
         {
             Frozen,
@@ -78,23 +66,20 @@ namespace Nummi
         private Vector2? _moveTarget = null;
         private float _transitSpeed = 120f;
         private const float ArriveRadius = 16f;
-
-        // Spawn position recorded in the ctor. ALL "go home" / "surface" / etc
-        // targets are computed relative to this so we never depend on a
-        // hand-tuned rectangle that may not match the actual tilemap.
         private Vector2 _spawnPos;
 
         private const int PathTileID  = 5;
         private const int WaterTileID = 23;
 
         public Manager_Croc(Game1 gameRoot, Vector2 position, TempState tempState)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Croc_Boss"), position, true, 600, 300, 30, true, 80f, 800f, 1000f, 300)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Croc Boss Sheet"), position, true, 1500, 300, 30, true, 80f, 800f, 1000f, 300)
         {
             _tempState = tempState;
             _spawnPos = position;
             _gameRoot._bossName = "THE MANAGER";
             _gameRoot._currentBoss = this;
             _gameRoot._bossDead = false;
+            _flipEffect = SpriteEffects.FlipHorizontally;
 
             if (_tempState == TempState.Frozen)
             {
@@ -125,39 +110,65 @@ namespace Nummi
 
             // 0 - Frozen sleep
             a.Add(new List<Rectangle>());
-            a[0].Add(new Rectangle(0, 0, 64, 96));
+            a[0].Add(new Rectangle(320, 0, 64, 96));
 
             // 1 - Sleepy growl reaction (frozen)
             a.Add(new List<Rectangle>());
-            a[1].Add(new Rectangle(0, 0, 64, 96));
+            a[1].Add(new Rectangle(320, 0, 64, 96));
 
             // 2 - Mode 1 walk (toothy grin, bipedal)
             a.Add(new List<Rectangle>());
-            a[2].Add(new Rectangle(0, 0, 64, 96));
+            a[2].Add(new Rectangle(0, 208, 96, 64));
+            a[2].Add(new Rectangle(96, 208, 96, 64));
+            a[2].Add(new Rectangle(192, 208, 96, 64));
+            a[2].Add(new Rectangle(288, 208, 96, 64));
+            a[2].Add(new Rectangle(384, 208, 96, 64));
+            a[2].Add(new Rectangle(480, 208, 96, 64));
+            a[2].Add(new Rectangle(576, 208, 96, 64));
+            a[2].Add(new Rectangle(672, 208, 96, 64));
 
             // 3 - Mode 1 wail-arms attack
             a.Add(new List<Rectangle>());
-            a[3].Add(new Rectangle(0, 0, 64, 96));
+            a[3].Add(new Rectangle(0, 96, 64, 96));
+            a[3].Add(new Rectangle(64, 96, 64, 96));
+            a[3].Add(new Rectangle(128, 96, 64, 96));
+            a[3].Add(new Rectangle(192, 96, 64, 96));
+            a[3].Add(new Rectangle(256, 96, 64, 96));
+            a[3].Add(new Rectangle(320, 96, 64, 96));
 
             // 4 - Mode 1 tired/opening (scared face when hit)
             a.Add(new List<Rectangle>());
             a[4].Add(new Rectangle(0, 0, 64, 96));
+            a[4].Add(new Rectangle(320, 0, 64, 96));
 
             // 5 - Mode 1 retreat (running on all fours, scared/angry)
             a.Add(new List<Rectangle>());
-            a[5].Add(new Rectangle(0, 0, 64, 96));
+            a[5].Add(new Rectangle(0, 208, 96, 64));
+            a[5].Add(new Rectangle(96, 208, 96, 64));
+            a[5].Add(new Rectangle(192, 208, 96, 64));
+            a[5].Add(new Rectangle(288, 208, 96, 64));
+            a[5].Add(new Rectangle(384, 208, 96, 64));
+            a[5].Add(new Rectangle(480, 208, 96, 64));
+            a[5].Add(new Rectangle(576, 208, 96, 64));
+            a[5].Add(new Rectangle(672, 208, 96, 64));
+
 
             // 6 - Mode 2 charge (frantic run along path)
             a.Add(new List<Rectangle>());
-            a[6].Add(new Rectangle(0, 0, 64, 96));
+            a[6].Add(new Rectangle(0, 208, 96, 64));
+            a[6].Add(new Rectangle(96, 208, 96, 64));
+            a[6].Add(new Rectangle(192, 208, 96, 64));
+            a[6].Add(new Rectangle(288, 208, 96, 64));
+            a[6].Add(new Rectangle(384, 208, 96, 64));
+            a[6].Add(new Rectangle(480, 208, 96, 64));
+            a[6].Add(new Rectangle(576, 208, 96, 64));
+            a[6].Add(new Rectangle(672, 208, 96, 64));
 
             // 7 - Mode 2 nap on hammock
             a.Add(new List<Rectangle>());
-            a[7].Add(new Rectangle(0, 0, 64, 96));
+            a[7].Add(new Rectangle(640, 0, 64, 96));
+            a[7].Add(new Rectangle(704, 0, 64, 96));
 
-            // 8 - Death (falls backwards, snot bubble)
-            a.Add(new List<Rectangle>());
-            a[8].Add(new Rectangle(0, 0, 64, 96));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < a.Count; i++) _nextAnim.Add(i);
@@ -490,13 +501,10 @@ namespace Nummi
         {
             base.OnAnimationFinished();
             if (_animIndex == 1) SetAnimation(0);
-
-            if (_animIndex == 8) Dead = true;
         }
 
         public void OnDeath()
         {
-            SetAnimation(8);
 
             var groundLayer = _gameRoot._tilemap.Layers[1];
             int tx = (int)(_position.X / 32f);

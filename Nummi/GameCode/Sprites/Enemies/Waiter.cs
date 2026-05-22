@@ -436,7 +436,7 @@ namespace Nummi
 
             // Splat / AOE
             animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(0, 16, 16, 16));
+            animations[1].Add(new Rectangle(16, 0, 16, 16));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);

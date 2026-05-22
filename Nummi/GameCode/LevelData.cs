@@ -84,10 +84,10 @@ namespace Nummi
                             gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(42, 4)));
                             gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(24, 11)));
 
-                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House2_v2"), TilePos(14, 18)));
-                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House1_v2"), TilePos(20, 18)));
-                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House3_v2"), TilePos(26, 18)));
-                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\BlackSmith_HeadsTown"), TilePos(37, 18)));
+                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House2_v2"), TilePos(14, 18), new Vector2(1f, 1f)));
+                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House1_v2"), TilePos(20, 18), new Vector2(1f, 1f)));
+                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House3_v2"), TilePos(26, 18), new Vector2(1f, 1f)));
+                            gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\BlackSmith_HeadsTown"), TilePos(37, 18), new Vector2(1f, 1f)));
 
                             gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
                                 GBL.Content.Load<Texture2D>("Textures\\Animations\\TownPerson1"),
@@ -321,10 +321,60 @@ namespace Nummi
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[6]);
                             gameRoot._tilemap.SetRules(Rules2);
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(24, 5), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(150, 47), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            //TilePos(150, 47)
+                            gameRoot._spriteList.Add(new Big_Dealer(gameRoot, TilePos(55, 53), Big_Dealer.TempState.Thawed));
+
+                            // Room 1 Enemies
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(71, 45), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(95, 45), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(119, 45), Waiter.TempState.Thawed));
+
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(64, 52), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(73, 54), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(88, 53), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(96, 54), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(101, 50), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(112, 53), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(120, 50), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(126, 56), Waiter.TempState.Thawed));
+
+                            gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(67, 60), Dealer.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(75, 60), Dealer.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(91, 60), Dealer.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(99, 60), Dealer.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(115, 60), Dealer.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(123, 60), Dealer.TempState.Thawed));
+
+                            // Room 2 Enemies
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(64, 25), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(62, 27), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(63, 30), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(64, 33), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(62, 35), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(64, 38), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(62, 39), Waiter.TempState.Thawed, true));
+
+                            // Room 3 Enemies
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(42, 6), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(43, 13), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(61, 15), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(63, 14), Waiter.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(65, 15), Waiter.TempState.Thawed));
+
+                            // Room 4 Enemies
+                            gameRoot._spriteList.Add(new Security_Guard(gameRoot, TilePos(25, 7), Security_Guard.TempState.Frozen));
+                            gameRoot._spriteList.Add(new Security_Guard(gameRoot, TilePos(25, 13), Security_Guard.TempState.Frozen));
+
+                            // Trap room enemies
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(84, 25), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(82, 27), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(83, 30), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(84, 33), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(82, 35), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(84, 38), Waiter.TempState.Thawed, true));
+                            gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(82, 39), Waiter.TempState.Thawed, true));
 
                             SpriteEnemy boss2 = new Manager_Croc(gameRoot, TilePos(9, 10), Manager_Croc.TempState.Thawed);
                             gameRoot._currentBoss = boss2;
@@ -341,6 +391,8 @@ namespace Nummi
                             gameRoot._tilemap.SetRules(Rules3);
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(7, 27), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
+
+                            
 
                             // Room 1 Enemies 
 
