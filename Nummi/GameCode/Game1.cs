@@ -317,7 +317,6 @@ namespace Nummi
             {
                 SetPaused(true);
             }
-            if (GBL.KeyPress(Keys.D1)) _player._currentWeapon = 4;
             // Goes through every sprite in sprite list
             foreach (Sprite eachSprite in _spriteList.ToList())
             {
@@ -538,21 +537,6 @@ namespace Nummi
                     map1.SetTile(chestTile.X, chestTile.Y, openedChest);
                 }
             }
-            // TESTING PURPOSES ONLY
-            // for testing purposes to skip to tails level
-            if (GBL.KeyPress(Keys.Tab))
-            {
-                StartTailsLevel(1);
-            }
-            if(GBL.KeyPress(Keys.P))
-            {
-                NextLevel();
-            }
-            // for testing boss fight
-            if (GBL.KeyPress(Keys.G))
-            {
-                _bossDead = true;
-            }
         }
 
         public void UpdateTailsLevel(GameTime gameTime)
@@ -579,18 +563,6 @@ namespace Nummi
                 StartTailsLevel(_prepForNextLevel);
                 _prepForNextLevel = -1;
             }
-            //TESTING
-            // for testing purposes to skip to heads level
-            if (GBL.KeyPress(Keys.LeftControl))
-            {
-                StartHeadsLevel(0);
-            }
-            if (GBL.KeyPress(Keys.P))
-            {
-                NextLevel();
-            }
-            // TESTING CLOSE
-            // updates all sprites inside the spritelist not really useful as the tails level doesnt use sprite for the houses
 
             var mouse = GBL.mscurr;
 

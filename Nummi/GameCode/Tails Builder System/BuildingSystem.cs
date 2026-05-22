@@ -64,15 +64,6 @@ namespace Nummi
             _farmsPlaced = GetPlacedCount("Farm");
             _nuclearReactorsPlaced = GetPlacedCount("Nuclear Reactor");
             _blacksmithsPlaced = GetPlacedCount("Blacksmith");
-            // For hotkey placement aka testing as hotkey placement will not be in the game
-            foreach (var pair in hotkeys)
-            {
-                if (keyboard.IsKeyDown(pair.Key))
-                {
-                    selectedBuilding = pair.Value;
-                    buildMode = true;
-                }
-            }
             // for exiting building mode and deselecting building
             if (GBL.KeyPress(Keys.Escape))
             {
