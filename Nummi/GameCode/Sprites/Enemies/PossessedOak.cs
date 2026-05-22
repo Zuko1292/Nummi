@@ -95,11 +95,6 @@ namespace Nummi
             {
                 Dead = true;
             }
-
-            if (GBL.KeyPress(Keys.Space))
-            {
-                Dead = true;
-            }
             base.Update(gameTime);
 
             if (_gameRoot._slimeOffHead)

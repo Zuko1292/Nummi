@@ -311,6 +311,7 @@ namespace Nummi
             Vector2 playerCentre = new Vector2(_player._collisionBounds.X + _player._collisionBounds.Width / 2f,
                     _player._collisionBounds.Y + _player._collisionBounds.Height / 2f);
 
+
             // Pausing game
             if (GBL.KeyPress(Keys.Escape))
             {
@@ -402,12 +403,7 @@ namespace Nummi
             {
                 NextLevel();
             }
-            // Trap room handling - supports any number of trap doors per level.
-            // While the player stands on a trap-door tile a per-tile timer ticks;
-            // when it elapses the tile is sealed (tile id 17) and pushed onto
-            // _sealedTrapDoors. Walking off the tile cancels the countdown.
-            // The matching chest pickup pops the most-recent door and restores
-            // it (tile id 3) so the player can exit.
+
             if (_player != null)
             {
                 int tileSize = (int)map.TileWidth;
@@ -420,10 +416,7 @@ namespace Nummi
 
                 if (onTrapDoor)
                 {
-                    // Player just stepped onto this door (or a different one):
-                    // record the tile they came from so we can later tell
-                    // which side of the door they exit to. While they're
-                    // still standing on the door no countdown runs.
+
                     if (_pendingTrapDoor != trapDoorTile)
                     {
                         _pendingTrapDoor = trapDoorTile;
@@ -435,18 +428,13 @@ namespace Nummi
                 }
                 else if (_pendingTrapDoor.HasValue)
                 {
-                    // They've walked off the door. Wait the grace period,
-                    // then check if they actually crossed THROUGH it.
+
                     _trapRoomDoorTimer += GBL.DeltaTime;
                     if (_trapRoomDoorTimer >= _trapDoorTimer)
                     {
                         Point door  = _pendingTrapDoor.Value;
                         Point entry = _pendingTrapEntryTile;
 
-                        // entry -> door points one way; door -> current
-                        // points the same way only if the player kept going.
-                        // A positive dot product means they crossed through;
-                        // zero/negative means they backed out within grace.
                         int dot = (door.X - entry.X) * (curTile.X - door.X)
                                 + (door.Y - entry.Y) * (curTile.Y - door.Y);
 
@@ -469,7 +457,6 @@ namespace Nummi
                             _sealedTrapDoors.Push(door);
                             _player._isInTrapRoom = true;
                         }
-                        // else: backed out within the grace window, leave open.
 
                         _pendingTrapDoor = null;
                         _trapRoomDoorTimer = 0f;
@@ -496,10 +483,7 @@ namespace Nummi
                     if (_keys.Count >= 2) _tilemap.UnlockAllDoors();
                 }
 
-                // Chest pickup: the chest is a "trap room chest" if the player
-                // is currently sealed inside a trap room. That drops a random
-                // weapon and re-opens the most recently-sealed trap door so
-                // the player can leave. Otherwise it's a normal (boss) chest.
+
                 if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile))
                 {
                     if(!_isBossLevel) _player.ChestOpened(_player._position, new DroppedWeapon(this, _player._position, new Random().Next(0, 5)));

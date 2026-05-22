@@ -265,6 +265,7 @@ namespace Nummi
         public void OnDeath()
         {
             _gameRoot._bossesDeadNum += 1;
+
         }
 
         protected override void OnTileCollideEvent(int tileX, int tileY)

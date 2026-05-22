@@ -179,9 +179,9 @@ namespace Nummi
         {
             set
             {
+                OnDeath();
                 _gameRoot._bossDead = true;
                 _gameRoot._isNextLevelTails = true;
-                OnDeath();
                 _gameRoot._player.OnEnemyKilled(_xpValue, _goldValue);
                 _dead = value;
             }
