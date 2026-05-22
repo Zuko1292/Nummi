@@ -85,6 +85,35 @@ namespace Nummi
             return false;
         }
 
+        public bool IsKeyAtWorld(int x, int y)
+        {
+            foreach (var layer in _layers)
+                if (layer.IsKeyAtWorld(x, y)) return true;
+            return false;
+        }
+
+        public bool IsLockedDoorAtWorld(int x, int y)
+        {
+            foreach (var layer in _layers)
+                if (layer.IsLockedDoorAtWorld(x, y)) return true;
+            return false;
+        }
+
+        public int UnlockAllDoors()
+        {
+            int total = 0;
+            foreach (var layer in _layers) total += layer.UnlockAllDoors();
+            return total;
+        }
+
+        public bool TryGetKeyTileAtWorld(int x, int y, out Point tile)
+        {
+            foreach (var layer in _layers)
+                if (layer.TryGetKeyTileAtWorld(x, y, out tile)) return true;
+            tile = Point.Zero;
+            return false;
+        }
+
         public bool TryGetTrapDoorTileAtWorld(int x, int y, out Point tile)
         {
             foreach (var layer in _layers)

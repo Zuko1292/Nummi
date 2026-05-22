@@ -50,13 +50,15 @@ namespace Nummi
 
         public float _trapRoomDoorTimer = 0f;
         public float _trapDoorTimer = 1f;
-        public bool _justGoneOverTrapDoor = false;
-        public bool _alreadyGoneIntoTrapDoor = false;
-        public Point _trapDoorTile;
+        public Point? _pendingTrapDoor = null;
+        public Point _pendingTrapEntryTile;
+        public Point _lastPlayerTile;
+        public Stack<Point> _sealedTrapDoors = new Stack<Point>();
         public bool _isTrapLevel = false;
         public Tilemap map => _tilemap.Layers[0];
 
         public bool _bossDead = true;
+        public bool _isBossLevel = false;
         public SpriteEnemy _currentBoss;
         public string _bossName = "";
 
@@ -104,6 +106,10 @@ namespace Nummi
 
         // Boss-drop unlocks survive shop rebuilds when changing levels.
         public List<ShopItem> _unlockedBossItems = new List<ShopItem>();
+
+        // Keys the player has picked up from the tilemap. Each entry represents
+        // one key; the count is what the Big Dealer uses for its dialogue.
+        public List<int> _keys = new List<int>();
 
         public SoundEffect _weaponHitSound, _gettingHitSound;
         public bool _musicOn = true;
@@ -306,6 +312,7 @@ namespace Nummi
             {
                 SetPaused(true);
             }
+            if (GBL.KeyPress(Keys.D1)) _player._currentWeapon = 4;
             // Goes through every sprite in sprite list
             foreach (Sprite eachSprite in _spriteList.ToList())
             {
@@ -379,50 +386,156 @@ namespace Nummi
             {
                 NextLevel();
             }
-            // used to check if the player just went into a trap room
-            // TODO this only can handle one trap room per level right now and is a bit janky so maybe fix that
+            // Trap room handling - supports any number of trap doors per level.
+            // While the player stands on a trap-door tile a per-tile timer ticks;
+            // when it elapses the tile is sealed (tile id 17) and pushed onto
+            // _sealedTrapDoors. Walking off the tile cancels the countdown.
+            // The matching chest pickup pops the most-recent door and restores
+            // it (tile id 3) so the player can exit.
             if (_player != null)
             {
-                if (_tilemap.TryGetTrapDoorTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point trapDoorTile))
+                int tileSize = (int)map.TileWidth;
+                Point curTile = new Point((int)_player._position.X / tileSize,
+                                          (int)_player._position.Y / tileSize);
+
+                bool onTrapDoor = _tilemap.TryGetTrapDoorTileAtWorld(
+                    (int)_player._position.X, (int)_player._position.Y,
+                    out Point trapDoorTile);
+
+                if (onTrapDoor)
                 {
-                    _justGoneOverTrapDoor = true;
-                    _trapDoorTile = trapDoorTile;
+                    // Player just stepped onto this door (or a different one):
+                    // record the tile they came from so we can later tell
+                    // which side of the door they exit to. While they're
+                    // still standing on the door no countdown runs.
+                    if (_pendingTrapDoor != trapDoorTile)
+                    {
+                        _pendingTrapDoor = trapDoorTile;
+                        _pendingTrapEntryTile = (_lastPlayerTile == trapDoorTile)
+                            ? _pendingTrapEntryTile
+                            : _lastPlayerTile;
+                        _trapRoomDoorTimer = 0f;
+                    }
                 }
-                if (_justGoneOverTrapDoor && _isTrapLevel)
+                else if (_pendingTrapDoor.HasValue)
                 {
+                    // They've walked off the door. Wait the grace period,
+                    // then check if they actually crossed THROUGH it.
                     _trapRoomDoorTimer += GBL.DeltaTime;
                     if (_trapRoomDoorTimer >= _trapDoorTimer)
                     {
-                        _justGoneOverTrapDoor = false;
-                        _trapRoomDoorTimer = 0f;
+                        Point door  = _pendingTrapDoor.Value;
+                        Point entry = _pendingTrapEntryTile;
 
-                        if (!_alreadyGoneIntoTrapDoor)
+                        // entry -> door points one way; door -> current
+                        // points the same way only if the player kept going.
+                        // A positive dot product means they crossed through;
+                        // zero/negative means they backed out within grace.
+                        int dot = (door.X - entry.X) * (curTile.X - door.X)
+                                + (door.Y - entry.Y) * (curTile.Y - door.Y);
+
+                        if (dot > 0)
                         {
-                            map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 17);
-                            _alreadyGoneIntoTrapDoor = true;
-                        }
+                            int trapped = 0;
+                            switch (_headsLevel)
+                            {
+                                case 0: trapped = 17; break;
+                                case 1: trapped = 17; break;
+                                case 2: trapped = 17; break;
+                                case 3: trapped = 17; break;
+                                case 4: trapped = 0;  break;
+                                case 5: trapped = 0;  break;
+                                case 6: trapped = 0;  break;
+                                case 7: trapped = 0;  break;
+                            }
 
+                            map.SetTile(door.X, door.Y, trapped);
+                            _sealedTrapDoors.Push(door);
+                            _player._isInTrapRoom = true;
+                        }
+                        // else: backed out within the grace window, leave open.
+
+                        _pendingTrapDoor = null;
+                        _trapRoomDoorTimer = 0f;
                     }
                 }
 
-                // when getting the chest in the trap room it opens the chest and then resets the trap door so you can go back out
-                if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile))
+                _lastPlayerTile = curTile;
+
+                // the backroom on _keys.Count.
+                if (_tilemap.TryGetKeyTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point keyTile))
                 {
-                    if (_isTrapLevel)
+                    _keys.Add(1);
+                    // Clear it from whichever layer holds it.
+                    foreach (var layer in _tilemap.Layers)
                     {
-                        _player.ChestOpened(_player._position, new DroppedWeapon(this, _player._position, new Random().Next(0, 5)));
+                        if (layer.TryGetKeyTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point kt))
+                        {
+                            layer.SetTile(kt.X, kt.Y, -1);
+                            break;
+                        }
                     }
 
-                    else
+                    // Two keys unlocks every locked-door tile on the map.
+                    if (_keys.Count >= 2) _tilemap.UnlockAllDoors();
+                }
+
+                // Chest pickup: the chest is a "trap room chest" if the player
+                // is currently sealed inside a trap room. That drops a random
+                // weapon and re-opens the most recently-sealed trap door so
+                // the player can leave. Otherwise it's a normal (boss) chest.
+                if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile))
+                {
+                    if(!_isBossLevel) _player.ChestOpened(_player._position, new DroppedWeapon(this, _player._position, new Random().Next(0, 5)));
+
+                    if (_player._isInTrapRoom)
+                    {
+                        if(_isBossLevel)_player.ChestOpened(_player._position, new DroppedWeapon(this, _player._position, new Random().Next(0, 5)));
+
+                        if (_sealedTrapDoors.Count > 0)
+                        {
+                            var openedTrapDoor = 0;
+                            switch (_headsLevel)
+                            {
+                                case 0: openedTrapDoor = 0; break;
+                                case 1: openedTrapDoor = 0; break;
+                                case 2: openedTrapDoor = 0; break;
+                                case 3: openedTrapDoor = 0; break;
+                                case 4: openedTrapDoor = 2; break;
+                                case 5: openedTrapDoor = 2; break;
+                                case 6: openedTrapDoor = 1; break;
+                                case 7: openedTrapDoor = 1; break;
+                            }
+
+
+                            Point door = _sealedTrapDoors.Pop();
+                            map.SetTile(door.X, door.Y, openedTrapDoor);
+                        }
+
+                        // Only "in" a trap room while at least one is sealed.
+                        if (_sealedTrapDoors.Count == 0) _player._isInTrapRoom = false;
+                    }
+                    else if (_isBossLevel)
                     {
                         _player.ChestOpened(_player._position, new PossessedOakDrop(this, _currentCrystalTex, _player._position + new Vector2(0, -50))); //Creates drop using the right texture
                     }
 
+                    var openedChest = 0;
+
+                    switch (_headsLevel)
+                    {
+                        case 0: openedChest = 0; break;
+                        case 1: openedChest = 0; break;
+                        case 2: openedChest = 0; break;
+                        case 3: openedChest = 0; break;
+                        case 4: openedChest = 2; break;
+                        case 5: openedChest = 2; break;
+                        case 6: openedChest = 1; break;
+                        case 7: openedChest = 1; break;
+                    }
+
                     var map1 = _tilemap.Layers[1];
-
-                    map1.SetTile(chestTile.X, chestTile.Y, 0);
-
-                    if (_alreadyGoneIntoTrapDoor) map.SetTile(_trapDoorTile.X, _trapDoorTile.Y, 3);
+                    map1.SetTile(chestTile.X, chestTile.Y, openedChest);
                 }
             }
             // TESTING PURPOSES ONLY
@@ -589,9 +702,10 @@ namespace Nummi
         {
             // used to reset values between levels
 
-            _alreadyGoneIntoTrapDoor = false;
-            _justGoneOverTrapDoor = false;
+            _pendingTrapDoor = null;
+            _sealedTrapDoors.Clear();
             _trapRoomDoorTimer = 0f;
+            if (_player != null) _player._isInTrapRoom = false;
         }
         // Starts Heads level
         public void StartHeadsLevel(int level)

@@ -138,7 +138,7 @@ namespace Nummi
             base.Update(gameTime);
         }
         // When the player interacts with the NPC, the speech timer is set to the talking duration, the talking cooldown is set to 2 seconds, and a dialog box is created with a message. The player can't move while the dialog box is open.
-        public void DialogueTrigger()
+        public virtual void DialogueTrigger()
         {
             _speechTimer = _talkingDuration;
             _talkingCooldown = 2f;

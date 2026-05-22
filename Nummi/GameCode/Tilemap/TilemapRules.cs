@@ -14,6 +14,8 @@ namespace Nummi
         private HashSet<int> _exitTiles = new HashSet<int>();
         private HashSet<int> _chestTiles = new HashSet<int>();
         private HashSet<int> _trapDoorTiles = new HashSet<int>();
+        private HashSet<int> _keyTiles = new HashSet<int>();
+        private HashSet<int> _lockedDoorTiles = new HashSet<int>();
 
         // Which collision layers are affected by this tilemap
         public CollisionLayer AffectsLayers { get; private set; } = CollisionLayer.All;
@@ -48,9 +50,26 @@ namespace Nummi
             return this;
         }
 
+        public TilemapRules AddKey(params int[] ids)
+        {
+            foreach (var id in ids) _keyTiles.Add(id);
+            return this;
+        }
+
+        // Locked door tiles are solid until the player has picked up enough
+        // keys; Game1 clears them from the map when _keys.Count >= 2. Add
+        // the same IDs to AddSolid(...) so they block movement until unlocked.
+        public TilemapRules AddLockedDoor(params int[] ids)
+        {
+            foreach (var id in ids) _lockedDoorTiles.Add(id);
+            return this;
+        }
+
         public bool IsSolid(int id) => _solidTiles.Contains(id);
         public bool IsExit(int id) => _exitTiles.Contains(id);
         public bool IsChest(int id) => _chestTiles.Contains(id);
         public bool IsTrapDoor(int id) => _trapDoorTiles.Contains(id);
+        public bool IsKey(int id) => _keyTiles.Contains(id);
+        public bool IsLockedDoor(int id) => _lockedDoorTiles.Contains(id);
     }
 }

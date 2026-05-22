@@ -19,14 +19,17 @@ namespace Nummi
             .AddExit(14, 22)
             .AddChest(7)
             .AddTrapDoor(3)
+            .AddKey()
             .SetAffectsLayers(CollisionLayer.Player | CollisionLayer.Enemy);
 
         // Rules for dungeon 1 section 1, 2 and 3 (which share the same tileSet)
         public static readonly TilemapRules Rules2 = new TilemapRules()
-            .AddSolid(0, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 25, 26, 27, 28, 29, 30, 35, 36, 37, 43, 44, 45, 51, 52, 53, 56, 57, 58, 60, 61)
+            .AddSolid(0, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 22, 25, 26, 27, 28, 29, 30, 35, 36, 37, 43, 44, 45, 51, 52, 53, 56, 57, 58, 60, 61, 62)
             .AddExit(39, 47)
             .AddChest(24)
             .AddTrapDoor(46)
+            .AddKey(31)
+            .AddLockedDoor(62)
             .SetAffectsLayers(CollisionLayer.Player | CollisionLayer.Enemy);
 
         public static readonly TilemapRules Rules3 = new TilemapRules()
@@ -34,6 +37,8 @@ namespace Nummi
             .AddExit(12, 16)
             .AddChest(3)
             .AddTrapDoor(18)
+            .AddKey(4)
+            .AddLockedDoor(19)
             .SetAffectsLayers(CollisionLayer.Player | CollisionLayer.Enemy);
 
 
@@ -62,6 +67,7 @@ namespace Nummi
                         case 0:
                             // If is trap level more it true
                             gameRoot._isTrapLevel = false;
+                            gameRoot._isBossLevel = false;
                             // If is a lighting level make it true and set torch positions, if not set to false and empty array, set the torch position. light positions like I did in case 3.
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
@@ -136,7 +142,7 @@ namespace Nummi
                             break;
                         case 1:
                             gameRoot._isTrapLevel = true;
-
+                            gameRoot._isBossLevel = false;
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[2]);
                             gameRoot._tilemap.SetRules(Rules1);
 
@@ -181,7 +187,7 @@ namespace Nummi
                         case 2:
 
                             gameRoot._isTrapLevel = true;
-
+                            gameRoot._isBossLevel = false;
                             gameRoot._useLighting = true;
                             gameRoot._torchPositions = new Vector2[]
                             {
@@ -227,6 +233,7 @@ namespace Nummi
                         case 3:
                             // When its a boss level make sure you do the _bossDead variable to false and set the current boss to the boss you want in the level.
                             gameRoot._bossDead = false;
+                            gameRoot._isBossLevel = true;
                             gameRoot._isTrapLevel = false;
 
                             gameRoot._useLighting = false;
@@ -244,7 +251,7 @@ namespace Nummi
                             break;
                         case 4:
                             gameRoot._isTrapLevel = false;
-
+                            gameRoot._isBossLevel = false;
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
 
@@ -297,21 +304,33 @@ namespace Nummi
 
                             gameRoot._spriteList.Add(new Security_Guard(gameRoot, TilePos(131, 53), Security_Guard.TempState.Frozen));
 
+                            SpriteEnemy bossFrozen = new Manager_Croc(gameRoot, TilePos(149, 53), Manager_Croc.TempState.Frozen);
+                            gameRoot._spriteList.Add(bossFrozen);
+
                             break;
                         case 5:
                             gameRoot._isTrapLevel = true;
+                            gameRoot._isBossLevel = true;
+                            gameRoot._bossDead = false;
 
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[6]);
                             gameRoot._tilemap.SetRules(Rules2);
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(150, 47), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(24, 5), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
+
+                            //TilePos(150, 47)
+
+                            SpriteEnemy boss2 = new Manager_Croc(gameRoot, TilePos(9, 10), Manager_Croc.TempState.Thawed);
+                            gameRoot._currentBoss = boss2;
+                            gameRoot._bossName = "Manager Croc";
+                            gameRoot._spriteList.Add(boss2);
                             break;
                         case 6:
                             gameRoot._isTrapLevel = true;
-
+                            gameRoot._isBossLevel = false;
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
 
@@ -337,7 +356,7 @@ namespace Nummi
                             break;
                         case 7:
                             gameRoot._isTrapLevel = true;
-
+                            gameRoot._isBossLevel = false;
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
 

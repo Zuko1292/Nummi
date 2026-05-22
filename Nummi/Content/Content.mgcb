@@ -100,6 +100,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Bartender-Sheet.png
 
+#begin Textures/Animations/Bear.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Bear.png
+
 #begin Textures/Animations/Bunny Guard.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -123,6 +135,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Chip Projectile.png
+
+#begin Textures/Animations/Croc_Boss.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Croc_Boss.png
 
 #begin Textures/Animations/Croc_Boss.png
 /importer:TextureImporter

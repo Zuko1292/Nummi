@@ -75,15 +75,23 @@ namespace Nummi
         private const float ChargeFlipInterval = 1.25f;
         private float _grabThrowImpulse = 700f;
 
-        // ── Tilemap regions (in tile coords) ───────────────────────────────
-        private static readonly Rectangle PathTiles      = new Rectangle(1, 7,  18, 7); // x 1..18, y 7..13
-        private static readonly Rectangle WaterTopTiles  = new Rectangle(1, 3,  18, 4); // y 3..6
-        private static readonly Rectangle WaterBotTiles  = new Rectangle(1, 14, 18, 4); // y 14..17
+        private Vector2? _moveTarget = null;
+        private float _transitSpeed = 120f;
+        private const float ArriveRadius = 16f;
 
-        public Manager_Croc(Game1 gameRoot, Texture2D texture, Vector2 position, TempState tempState)
-            : base(gameRoot, texture, position, true, 600, 300, 30, true, 80f, 800f, 0f, 300)
+        // Spawn position recorded in the ctor. ALL "go home" / "surface" / etc
+        // targets are computed relative to this so we never depend on a
+        // hand-tuned rectangle that may not match the actual tilemap.
+        private Vector2 _spawnPos;
+
+        private const int PathTileID  = 5;
+        private const int WaterTileID = 23;
+
+        public Manager_Croc(Game1 gameRoot, Vector2 position, TempState tempState)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Croc_Boss"), position, true, 600, 300, 30, true, 80f, 800f, 1000f, 300)
         {
             _tempState = tempState;
+            _spawnPos = position;
             _gameRoot._bossName = "THE MANAGER";
             _gameRoot._currentBoss = this;
             _gameRoot._bossDead = false;
@@ -98,11 +106,10 @@ namespace Nummi
             }
             else
             {
-                // Boss starts in the water napping on the hammock.
+                // Boss stays exactly where LevelData spawned it - no teleport.
                 _phase = Phase.Mode2WaterIdle;
                 _slotWaveTimer = 0f;
                 SetAnimation(7); // Nap
-                MoveToHammockNapSpot();
                 _isIndestructible = true; // out of damage range while in water
             }
 
@@ -118,39 +125,39 @@ namespace Nummi
 
             // 0 - Frozen sleep
             a.Add(new List<Rectangle>());
-            for (int i = 0; i < 4; i++) a[0].Add(new Rectangle(i * 64, 0, 64, 64));
+            a[0].Add(new Rectangle(0, 0, 64, 96));
 
             // 1 - Sleepy growl reaction (frozen)
             a.Add(new List<Rectangle>());
-            for (int i = 0; i < 4; i++) a[1].Add(new Rectangle(i * 64, 64, 64, 64));
+            a[1].Add(new Rectangle(0, 0, 64, 96));
 
             // 2 - Mode 1 walk (toothy grin, bipedal)
             a.Add(new List<Rectangle>());
-            for (int i = 0; i < 6; i++) a[2].Add(new Rectangle(i * 64, 128, 64, 64));
+            a[2].Add(new Rectangle(0, 0, 64, 96));
 
             // 3 - Mode 1 wail-arms attack
             a.Add(new List<Rectangle>());
-            for (int i = 0; i < 8; i++) a[3].Add(new Rectangle(i * 64, 192, 64, 64));
+            a[3].Add(new Rectangle(0, 0, 64, 96));
 
             // 4 - Mode 1 tired/opening (scared face when hit)
             a.Add(new List<Rectangle>());
-            for (int i = 0; i < 4; i++) a[4].Add(new Rectangle(i * 64, 256, 64, 64));
+            a[4].Add(new Rectangle(0, 0, 64, 96));
 
             // 5 - Mode 1 retreat (running on all fours, scared/angry)
             a.Add(new List<Rectangle>());
-            for (int i = 0; i < 6; i++) a[5].Add(new Rectangle(i * 64, 320, 64, 64));
+            a[5].Add(new Rectangle(0, 0, 64, 96));
 
             // 6 - Mode 2 charge (frantic run along path)
             a.Add(new List<Rectangle>());
-            for (int i = 0; i < 6; i++) a[6].Add(new Rectangle(i * 64, 384, 64, 64));
+            a[6].Add(new Rectangle(0, 0, 64, 96));
 
             // 7 - Mode 2 nap on hammock
             a.Add(new List<Rectangle>());
-            for (int i = 0; i < 4; i++) a[7].Add(new Rectangle(i * 64, 448, 64, 64));
+            a[7].Add(new Rectangle(0, 0, 64, 96));
 
             // 8 - Death (falls backwards, snot bubble)
             a.Add(new List<Rectangle>());
-            for (int i = 0; i < 6; i++) a[8].Add(new Rectangle(i * 64, 512, 64, 64));
+            a[8].Add(new Rectangle(0, 0, 64, 96));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < a.Count; i++) _nextAnim.Add(i);
@@ -172,17 +179,15 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
+            _isPatrolling = true;
+
+            if (_gameRoot._bossDead) Dead = true;
 
             _growlCooldown -= GBL.DeltaTime;
+            if (_tempState == TempState.Frozen) UpdateFrozen();
+            else                                 UpdateThawed();
 
-            if (_tempState == TempState.Frozen)
-            {
-                UpdateFrozen();
-                return;
-            }
-
-            UpdateThawed();
+            base.Update(gameTime);
         }
 
         // ── Frozen ──────────────────────────────────────────────────────────
@@ -197,8 +202,23 @@ namespace Nummi
 
         private void UpdateThawed()
         {
-            // Only damageable while out of water (i.e. on the brick path).
             _isIndestructible = !IsOnPath(_position);
+
+            if (_moveTarget.HasValue)
+            {
+                Vector2 to = _moveTarget.Value - _position;
+                if (to.LengthSquared() <= ArriveRadius * ArriveRadius)
+                {
+                    _moveTarget = null;
+                    _velocity = Vector2.Zero;
+                }
+                else
+                {
+                    to.Normalize();
+                    _velocity = to * _transitSpeed;
+                    return;
+                }
+            }
 
             switch (_phase)
             {
@@ -221,7 +241,6 @@ namespace Nummi
             if (dir != Vector2.Zero) dir.Normalize();
             _velocity = dir * _moveSpeed;
 
-            // Once close enough, begin the wail wind-up.
             if (Vector2.Distance(_position, _gameRoot._player._position) < 64f)
             {
                 _phase = Phase.Mode1Wail;
@@ -262,9 +281,9 @@ namespace Nummi
             if (_tiredHits >= TiredHitsToShove)
             {
                 _phase = Phase.Mode2WaterIdle;
-                MoveToHammockNapSpot();
+                _moveTarget = HammockSpot();   // walk back, don't teleport
                 _slotWaveTimer = 0f;
-                SetAnimation(7);
+                SetAnimation(5);
                 return;
             }
 
@@ -277,17 +296,19 @@ namespace Nummi
 
         private void UpdateRetreat()
         {
-            // Sprint toward the nearest water bank on all fours.
+            // Sprint toward the nearest water tile on all fours.
             Vector2 target = NearestWaterTile(_position);
             Vector2 dir = target - _position;
             if (dir != Vector2.Zero) dir.Normalize();
             _velocity = dir * _retreatSpeed;
             SetAnimation(5);
 
-            if (!IsOnPath(_position))
+            // Once we're actually in water, walk the rest of the way to the
+            // hammock corner via the transit target.
+            if (IsInWater(_position))
             {
                 _phase = Phase.Mode2WaterIdle;
-                MoveToHammockNapSpot();
+                _moveTarget = HammockSpot();
                 _slotWaveTimer = 0f;
                 SetAnimation(7);
             }
@@ -313,8 +334,7 @@ namespace Nummi
 
         private void UpdateSlots()
         {
-            // Stays napping while the slot wave plays out. The waking moment
-            // is the cue the wave is ending (see Phase.Mode2Charge below).
+            // Stays napping while the slot wave plays out.
             _velocity = Vector2.Zero;
             SetAnimation(7);
 
@@ -325,8 +345,12 @@ namespace Nummi
                 _phase = Phase.Mode2Charge;
                 _chargeTimer = ChargeDuration;
                 _chargeFlipTimer = 0f;
-                _chargeDirection = _gameRoot._player._position.X > _position.X ? 1 : -1;
-                EnterChargeStartPosition();
+                // Decide which edge to charge from based on the croc's own
+                // current position - not the player's.
+                _chargeDirection = (_gameRoot._player._position.X >= _spawnPos.X) ? -1 : 1;
+                // Walk to a charge-start point that's close to home so the
+                // croc never crosses a wall to get there.
+                _moveTarget = ChargeStartTarget();
                 SetAnimation(6);
             }
         }
@@ -340,9 +364,11 @@ namespace Nummi
             // Dash horizontally along the brick path.
             _velocity = new Vector2(_chargeDirection * _chargeSpeed, 0f);
 
-            // Reverse on path edges or periodically to "cover the entire path".
-            float minX = PathTiles.Left * 32f + 16f;
-            float maxX = (PathTiles.Right) * 32f - 16f;
+            // Reverse around the croc's home base so it covers a band of path
+            // near the spawn position, without depending on any rectangle.
+            float chargeHalfWidth = 160f;
+            float minX = _spawnPos.X - chargeHalfWidth;
+            float maxX = _spawnPos.X + chargeHalfWidth;
             if (_position.X <= minX) _chargeDirection = 1;
             else if (_position.X >= maxX) _chargeDirection = -1;
             else if (_chargeFlipTimer >= ChargeFlipInterval)
@@ -360,16 +386,19 @@ namespace Nummi
             if (_chargeTimer <= 0f)
             {
                 // Decide next move: drop back to water for another slot wave,
-                // or surface for a Mode 1 wail.
+                // or commit to a Mode 1 wail. Either way the croc *walks*
+                // to its destination via _moveTarget rather than teleporting.
                 if (new Random().NextDouble() < 0.5)
                 {
                     _phase = Phase.Mode2WaterIdle;
-                    MoveToHammockNapSpot();
+                    _moveTarget = HammockSpot();
                     SetAnimation(7);
                 }
                 else
                 {
-                    SurfaceForMode1();
+                    _phase = Phase.Mode1Approach;
+                    _moveTarget = SurfaceTarget();
+                    SetAnimation(2);
                 }
             }
         }
@@ -388,71 +417,66 @@ namespace Nummi
 
         private void SpawnSlotMachines()
         {
-            // A few machines spaced along the path.
             int count = 3;
+            Vector2 pos = LevelData.TilePos(9, 5);
             for (int i = 0; i < count; i++)
             {
-                float t = (i + 1) / (float)(count + 1);
-                float x = MathHelper.Lerp(PathTiles.Left * 32f, PathTiles.Right * 32f, t);
-                float y = PathTiles.Center.Y * 32f;
-                _gameRoot._newSpriteList.Add(new ManagerSlotMachine(_gameRoot, new Vector2(x, y)));
+                float offset = (i - 1) * 96f; // -96, 0, +96
+                _gameRoot._newSpriteList.Add(
+                    new ManagerSlotMachine(_gameRoot, new Vector2(pos.X + offset, pos.Y)));
             }
         }
 
         private void GrabAndThrow()
         {
-            // Throw the player further down the path in the direction the
-            // croc is moving, so the player must dodge past again.
             Vector2 throwDir = new Vector2(_chargeDirection, 0f);
             _gameRoot._player._velocity += throwDir * _grabThrowImpulse;
             _gameRoot._health -= _damageStrength;
         }
 
-        private void SurfaceForMode1()
+        private Vector2 SurfaceTarget()
         {
-            // Climb back up onto the brick path and start Mode 1.
-            float midY = PathTiles.Center.Y * 32f;
-            _position = new Vector2(_gameRoot._player._position.X, midY);
-            _phase = Phase.Mode1Approach;
-            SetAnimation(2);
+            Vector2 toPlayer = _gameRoot._player._position - _spawnPos;
+            if (toPlayer == Vector2.Zero) toPlayer = new Vector2(1f, 0f);
+            toPlayer.Normalize();
+            return _spawnPos + toPlayer * 48f;
         }
 
-        private void EnterChargeStartPosition()
+        private Vector2 ChargeStartTarget()
         {
-            // Position at one edge of the path on the player's row.
-            float startX = _chargeDirection > 0
-                ? PathTiles.Left * 32f + 16f
-                : PathTiles.Right * 32f - 16f;
-            float y = MathHelper.Clamp(_gameRoot._player._position.Y,
-                PathTiles.Top * 32f + 16f,
-                PathTiles.Bottom * 32f - 16f);
-            _position = new Vector2(startX, y);
+            return _spawnPos + new Vector2(_chargeDirection * -160f, 0f);
         }
 
-        private void MoveToHammockNapSpot()
+        private Vector2 HammockSpot()
         {
-            // Hammock napping spot - corner of the top water area.
-            _position = new Vector2(WaterTopTiles.Left * 32f + 16f,
-                                    WaterTopTiles.Top  * 32f + 16f);
+            return _spawnPos;
         }
 
-        private static bool IsInTileRect(Vector2 worldPos, Rectangle tileRect)
+        private int TileIdAt(Vector2 worldPos)
         {
-            int tx = (int)(worldPos.X / 32f);
-            int ty = (int)(worldPos.Y / 32f);
-            return tx >= tileRect.Left && tx < tileRect.Right
-                && ty >= tileRect.Top  && ty < tileRect.Bottom;
+            return _gameRoot._tilemap.Layers[0].GetTileIDAtWorld(
+                (int)worldPos.X, (int)worldPos.Y);
         }
 
-        private static bool IsOnPath(Vector2 worldPos) => IsInTileRect(worldPos, PathTiles);
+        private bool IsOnPath(Vector2 worldPos)  => TileIdAt(worldPos) == PathTileID;
+        private bool IsInWater(Vector2 worldPos) => TileIdAt(worldPos) == WaterTileID;
 
-        private static Vector2 NearestWaterTile(Vector2 worldPos)
+        private Vector2 NearestWaterTile(Vector2 worldPos)
         {
-            // Pick whichever water bank (top or bottom) is closer in Y.
-            float topY = (WaterTopTiles.Top + WaterTopTiles.Height / 2f) * 32f;
-            float botY = (WaterBotTiles.Top + WaterBotTiles.Height / 2f) * 32f;
-            float targetY = Math.Abs(worldPos.Y - topY) <= Math.Abs(worldPos.Y - botY) ? topY : botY;
-            return new Vector2(worldPos.X, targetY);
+            const int maxSteps = 32;
+            float ts = 32f;
+
+            for (int i = 1; i <= maxSteps; i++)
+            {
+                Vector2 up   = worldPos + new Vector2(0f, -i * ts);
+                Vector2 down = worldPos + new Vector2(0f,  i * ts);
+                if (IsInWater(up))   return up;
+                if (IsInWater(down)) return down;
+            }
+
+            // No water found within range - fall back to the spawn position
+            // (which IS the boss's home water tile).
+            return _spawnPos;
         }
 
         // ── Collision events ────────────────────────────────────────────────
@@ -486,9 +510,9 @@ namespace Nummi
         {
             base.OnAnimationFinished();
             if (_animIndex == 1) SetAnimation(0); // growl -> sleep
-        }
 
-        // ── Death ───────────────────────────────────────────────────────────
+            if (_animIndex == 8) Dead = true;
+        }
 
         public void OnDeath()
         {
@@ -512,7 +536,7 @@ namespace Nummi
         float _life = 0.2f;
 
         public ManagerWailHit(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Waiter Smash"), position, false, 10000, 400, 30, false, 0, 400f, 80f, 0)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Waiter Smash"), position, false, 10000, 400, 30, false, 0, 400f, 0f, 0)
         {
             SetAnimation(0);
             _drawScale = new Vector2(2.5f, 2.5f);
@@ -546,7 +570,7 @@ namespace Nummi
         private float _lifeTimer = 0f;
         private const float Lifetime = 6f;
         private float _fireTimer = 0f;
-        private const float FireInterval = 0.5f;
+        private const float FireInterval = 1.6f;
         private int _patternStep = 0;
 
         public ManagerSlotMachine(Game1 gameRoot, Vector2 position)
@@ -606,7 +630,7 @@ namespace Nummi
     public class ManagerCoin : SpriteEnemyProjectile
     {
         public ManagerCoin(Game1 gameRoot, Vector2 position, Vector2 direction)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Coin"), position, 220f, 12)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss Projectile"), position, 220f, 12)
         {
             if (direction != Vector2.Zero) direction.Normalize();
             _velocity = direction * _moveSpeed;
@@ -617,7 +641,7 @@ namespace Nummi
             _frameDuration = 1f / 8f;
             var a = new List<List<Rectangle>>();
             a.Add(new List<Rectangle>());
-            a[0].Add(new Rectangle(0, 0, 16, 16));
+            a[0].Add(new Rectangle(0, 0, 8, 8));
             _nextAnim = new List<int>();
             for (int i = 0; i < a.Count; i++) _nextAnim.Add(i);
             return a;

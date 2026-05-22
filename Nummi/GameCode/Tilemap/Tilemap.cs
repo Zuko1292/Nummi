@@ -110,6 +110,61 @@ namespace Nummi
         public bool IsExitTileID(int tileID) => _rules.IsExit(tileID);
         public bool IsChestTileID(int tileID) => _rules.IsChest(tileID);
         public bool IsTrapDoorTileID(int tileID) => _rules.IsTrapDoor(tileID);
+        public bool IsKeyTileID(int tileID) => _rules.IsKey(tileID);
+        public bool IsLockedDoorTileID(int tileID) => _rules.IsLockedDoor(tileID);
+
+        public bool IsLockedDoorAtWorld(int worldX, int worldY)
+        {
+            int tileX = (int)(worldX / TileWidth);
+            int tileY = (int)(worldY / TileHeight);
+            if (tileX < 0 || tileY < 0 || tileX >= Columns || tileY >= Rows) return false;
+            return IsLockedDoorTileID(_tiles[tileY * Columns + tileX]);
+        }
+
+        // Clears every locked door tile on this layer (used when the player
+        // collects enough keys to unlock the doors). Returns how many were
+        // unlocked.
+        public int UnlockAllDoors()
+        {
+            int count = 0;
+            for (int y = 0; y < Rows; y++)
+            {
+                for (int x = 0; x < Columns; x++)
+                {
+                    int idx = y * Columns + x;
+                    if (IsLockedDoorTileID(_tiles[idx]))
+                    {
+                        SetTile(x, y, 3);
+                        count++;
+                    }
+                }
+            }
+            return count;
+        }
+
+        // Mirrors IsChestAtWorld / TryGetChestTileAtWorld for keys.
+        public bool IsKeyAtWorld(int worldX, int worldY)
+        {
+            int tileX = (int)(worldX / TileWidth);
+            int tileY = (int)(worldY / TileHeight);
+            if (tileX < 0 || tileY < 0 || tileX >= Columns || tileY >= Rows) return false;
+            return IsKeyTileID(_tiles[tileY * Columns + tileX]);
+        }
+
+        public bool TryGetKeyTileAtWorld(int worldX, int worldY, out Point tilePos)
+        {
+            int tileX = (int)(worldX / TileWidth);
+            int tileY = (int)(worldY / TileHeight);
+            if (tileX < 0 || tileY < 0 || tileX >= Columns || tileY >= Rows)
+            {
+                tilePos = Point.Zero;
+                return false;
+            }
+            int tileID = _tiles[tileY * Columns + tileX];
+            if (IsKeyTileID(tileID)) { tilePos = new Point(tileX, tileY); return true; }
+            tilePos = Point.Zero;
+            return false;
+        }
 
 
         // Gets the ID of the Tiles in the world.
