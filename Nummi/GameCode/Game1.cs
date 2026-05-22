@@ -126,7 +126,7 @@ namespace Nummi
             "Maps/Dungeon2-Section1.xml",
             "Maps/Dungeon2-Section2.xml",
             "Maps/Dungeon3-Section1.xml",
-            "Maps/BossFight3.xml,"
+            "Maps/BossFight3.xml",
         };
 
         // Sprite lists
@@ -385,6 +385,18 @@ namespace Nummi
             {
                 PlayerDied();
             }
+
+            if(_bossesDeadNum >= 2)
+            {
+                var groundLayer = _tilemap.Layers[1];
+                int tx = (int)(_player._position.X / 32f);
+                int ty = (int)(_player._position.Y / 32f);
+
+                groundLayer.SetTile(tx, ty, 24);    // chest
+                groundLayer.SetTile(tx - 2, ty, 47);    // mirror exit
+                groundLayer.SetTile(tx - 2, ty - 1, 39);
+            }
+
             // used for going to next level
             if (_tilemap.IsExitAtWorld((int)_player._position.X, (int)_player._position.Y) && _coinLvl)
             {
@@ -595,14 +607,6 @@ namespace Nummi
             }
             // TESTING CLOSE
             // updates all sprites inside the spritelist not really useful as the tails level doesnt use sprite for the houses
-            foreach (Sprite eachSprite in _spriteList)
-            {
-                eachSprite.Update(gameTime);
-                if (_prepForNextLevel >= 0)
-                {
-                    break;
-                }
-            }
 
             var mouse = GBL.mscurr;
 
@@ -957,6 +961,8 @@ namespace Nummi
             Vector2 mouseWorld = _tailsCamera.ScreenToWorld(Mouse.GetState().Position.ToVector2());
 
             buildingSystem.Draw(mouseWorld);
+
+            gridRenderer.Draw();
         }
         public void DrawSettings()
         {
@@ -1076,6 +1082,8 @@ namespace Nummi
         public void StartNewGame()
         {
             _player = null;
+            _bossDead = true;
+            _isBossLevel = false;
 
             _headsLevel = 0;
             _tailsLevel = 0;

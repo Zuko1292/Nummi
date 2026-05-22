@@ -503,8 +503,8 @@ namespace Nummi
             int ty = (int)(_position.Y / 32f);
 
             groundLayer.SetTile(tx, ty, 24);    // chest
-            groundLayer.SetTile(tx + 2, ty, 39);    // mirror exit
-            groundLayer.SetTile(tx + 2, ty - 1, 47);
+            groundLayer.SetTile(tx + 2, ty, 47);    // mirror exit
+            groundLayer.SetTile(tx + 2, ty - 1, 39);
         }
     }
 

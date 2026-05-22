@@ -504,17 +504,19 @@ namespace Nummi
                             gameRoot._torchPositions = Array.Empty<Vector2>();
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[8]);
-                            gameRoot._tilemap.SetRules(Rules3);
+                            gameRoot._tilemap.SetRules(Rules2);
 
-                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(24, 5), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(10, 17), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
                             //TilePos(150, 47)
 
-                            SpriteEnemy boss3 = new Manager_Croc(gameRoot, TilePos(9, 10), Manager_Croc.TempState.Thawed);
+                            SpriteEnemy boss3 = new Anaconda(gameRoot, TilePos(9, 3));
+                            SpriteEnemy boss32 = new Pig(gameRoot, TilePos(11, 3));
                             gameRoot._currentBoss = boss3;
                             gameRoot._bossName = "Anaconda Wedding";
                             gameRoot._spriteList.Add(boss3);
+                            gameRoot._spriteList.Add(boss32);
                             break;
                     }
                     if (gameRoot._player != null) gameRoot._player._currentWeapon = gameRoot.savedWeapon;

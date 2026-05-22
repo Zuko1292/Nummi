@@ -36,14 +36,14 @@ namespace Nummi
             }
         }
         public Anaconda(Game1 gameRoot, Vector2 pos)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Anaconda"), pos, true, 1200, 340, 50, true, 200f, 350f, 1500f, 1500) 
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Anaconda"), pos, true, 1200, 340, 50, true, 50f, 350f, 1500f, 1500) 
         {
 
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
         {
-            _frameDuration = 1f / 15f;
+            _frameDuration = 1f / 8f;
 
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
 
@@ -63,7 +63,7 @@ namespace Nummi
 
             // Swiping
             animations.Add(new List<Rectangle>());
-            animations[1].Add(new Rectangle(192, 128, 32, 64));
+            animations[1].Add(new Rectangle(160, 64, 32, 64));
             animations[1].Add(new Rectangle(0, 128, 32, 64));
             animations[1].Add(new Rectangle(32, 128, 32, 64));
             animations[1].Add(new Rectangle(64, 128, 32, 64));
@@ -82,6 +82,13 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            if(!_attacking)
+            {
+                if (_velocity == Vector2.Zero) SetAnimation(0);
+                else SetAnimation(1);
+                // Makes it so goes back to being idle before stopping update should put this in all enemies that dont patrol however if they have idle animation then make their velocity 0 when not seeing player
+                if (_lastSeenTimer <= 0.2f) SetAnimation(0);
+            }
 
             // Swipe when close
             if (Vector2.Distance(_gameRoot._player._position, _position) < 48f
@@ -150,9 +157,9 @@ namespace Nummi
         }
 
         public Pig(Game1 gameRoot, Vector2 pos)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Pig Spritesheet"), pos, true, 1200, 250, 40, true, 450f, 350f, 1500f, 1500)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Pig Spritesheet"), pos, true, 1200, 250, 40, true, 50f, 350f, 1500f, 1500)
         {
-
+            _slidingCooldown = _slidingIntermission;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -199,7 +206,35 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            if(!_attacking && _sliding)
+            {
+                if (_velocity == Vector2.Zero) SetAnimation(0);
+                else SetAnimation(1);
+                // Makes it so goes back to being idle before stopping update should put this in all enemies that dont patrol however if they have idle animation then make their velocity 0 when not seeing player
+                if (_lastSeenTimer <= 0.2f) SetAnimation(0);
 
+            }
+
+            if (!_sliding)
+            {
+                _slidingCooldown += GBL.DeltaTime;
+                if(_slidingCooldown > _slidingIntermission)
+                {
+                    _slidingCooldown = 0;
+                    _sliding = true;
+                }
+            }
+
+            if(_sliding)
+            {
+                _slidingDuration -= GBL.DeltaTime;
+                if(_slidingDuration > 0f)
+                {
+                    _slidingDuration = 6f;
+                    _sliding = false;
+                }
+                SetAnimation(2);
+            }
 
             // Punch when close
             if (_sliding) return;
@@ -230,6 +265,13 @@ namespace Nummi
         public void OnDeath()
         {
             _gameRoot._bossesDeadNum += 1;
+        }
+
+        protected override void OnTileCollideEvent(int tileX, int tileY)
+        {
+            base.OnTileCollideEvent(tileX, tileY);
+
+            _velocity = -_velocity;
         }
     }
 }

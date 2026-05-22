@@ -222,6 +222,8 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
+
+            if (_gameRoot._gameState == GameState.TailsLevel) return;
             // the blocking Anims dont work and I cant fix them idk how its just not working
             // Blocking
             if (GBL.KeyHold(Keys.F))
