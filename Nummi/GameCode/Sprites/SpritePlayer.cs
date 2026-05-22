@@ -176,9 +176,9 @@ namespace Nummi
             animations.Add(new List<Rectangle>());
             animations[7].Add(new Rectangle(0, 128, 32, 32));
 
-            // Blocking
+            // Block Up
             animations.Add(new List<Rectangle>());
-            animations[8].Add(new Rectangle(96, 0, 32, 32));
+            animations[8].Add(new Rectangle(256, 96, 32, 32));
 
             // Dash Up
             animations.Add(new List<Rectangle>());
@@ -192,6 +192,18 @@ namespace Nummi
             animations.Add(new List<Rectangle>());
             animations[11].Add(new Rectangle(256, 32, 32, 32));
 
+            // Block Down
+            animations.Add(new List<Rectangle>());
+            animations[12].Add(new Rectangle(288, 0, 32, 32));
+
+            // Block Right
+            animations.Add(new List<Rectangle>());
+            animations[13].Add(new Rectangle(288, 32, 32, 32));
+
+            // Block Left
+            animations.Add(new List<Rectangle>());
+            animations[14].Add(new Rectangle(288, 64, 32, 32));
+
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
 
@@ -204,16 +216,31 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
+            // the blocking Anims dont work and I cant fix them idk how its just not working
             // Blocking
             if (GBL.KeyHold(Keys.F))
             {
-                SetAnimation(8);
+                int blockAnim = PickBlockAnim();
+                SetAnimation(blockAnim);
+                _flipEffect = SpriteEffects.None;
+                if (blockAnim == 15) _facingLeft = true;
+                else if (blockAnim == 14) _facingLeft = false;
                 _isBlocking = true;
                 _velocity = Vector2.Zero;
             }
-            else if (_animIndex == 8 && !GBL.KeyHold(Keys.F))
+            else if (IsBlockAnim(_animIndex) && !GBL.KeyHold(Keys.F))
             {
-                SetAnimation(0);
+                // Return to the idle that matches the block direction.
+                int idle;
+                switch (_animIndex)
+                {
+                    case 13: idle = 1; break; // Block UP    -> Idle UP
+                    case 14: idle = 2; break; // Block RIGHT -> Idle RIGHT
+                    case 15: idle = 6; break; // Block LEFT  -> Idle LEFT
+                    default: idle = 0; break; // Block DOWN  -> Idle DOWN
+                }
+                SetAnimation(idle);
+                _flipEffect = SpriteEffects.None;
                 _isBlocking = false;
             }
             // Dashing
@@ -464,10 +491,27 @@ namespace Nummi
             _gameRoot._newSpriteList.Add(atk);
         }
 
+        private int PickBlockAnim()
+        {
+            switch (_animIndex)
+            {
+                case 1: return 13; // Idle UP   -> Block UP
+                case 3: return 13; // Walk UP   -> Block UP
+                case 0: return 12; // Idle DOWN -> Block DOWN
+                case 4: return 12; // Walk DOWN -> Block DOWN
+                case 2: return 14; // Idle RIGHT-> Block RIGHT
+                case 6: return 15; // Idle LEFT -> Block LEFT
+                case 5: return _facingLeft ? 15 : 14; // Walk SIDE
+                default: return _facingLeft ? 15 : 14;
+            }
+        }
+
+        private static bool IsBlockAnim(int idx) => idx >= 12 && idx <= 15;
+
         public void PickupWeapon(int weaponType)
         {
             _currentWeapon = weaponType;
-        } 
+        }
 
         public void ChestOpened(Vector2 pos, SpriteCollectable collectable)
         {

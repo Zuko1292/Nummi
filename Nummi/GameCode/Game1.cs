@@ -88,6 +88,7 @@ namespace Nummi
 
         public CharacterStats savedStats;
         public LevelSystem savedLevelSystem;
+        public int savedWeapon;
 
         public SpritePlayer _player;
         TextButton playButton, guideButton, settingsButton, exitButton, resumeButton;
@@ -100,6 +101,9 @@ namespace Nummi
         public CurrencySystem _currency;
         public Shop _shop;
         public ShopUI _shopUI;
+
+        // Boss-drop unlocks survive shop rebuilds when changing levels.
+        public List<ShopItem> _unlockedBossItems = new List<ShopItem>();
 
         public SoundEffect _weaponHitSound, _gettingHitSound;
         public bool _musicOn = true;
@@ -289,11 +293,6 @@ namespace Nummi
         public void UpdateHeadsLevel(GameTime gameTime)
         {
             if (_player == null) return;
-
-            if(GBL.KeyPress(Keys.D1))
-            {
-                _player._currentWeapon = 4;
-            }
 
             // Adds flickering to the torches
             if (_useLighting)

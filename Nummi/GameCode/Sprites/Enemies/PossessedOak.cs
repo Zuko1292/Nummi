@@ -29,6 +29,7 @@ namespace Nummi
                 _gameRoot._bossDead = true;
                 _gameRoot._isNextLevelTails = true;
                 OnDeath();
+                _gameRoot._player.OnEnemyKilled(_xpValue, _goldValue);
                 _dead = value;
             }
             get
@@ -38,7 +39,7 @@ namespace Nummi
         }
 
         public PossessedTree(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss"), position, false, 10000, 220, 10, true, 0, 400f, 0f, 150)// The tree is a stationary enemy That cant be killed
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Tree Boss"), position, false, 10000, 220, 10, true, 0, 400f, 700f, 150)// The tree is a stationary enemy That cant be killed
         {
             _isIndestructible = true;
         }
@@ -90,7 +91,6 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
 
             if (_gameRoot._bossDead)
             {
@@ -101,6 +101,7 @@ namespace Nummi
             {
                 Dead = true;
             }
+            base.Update(gameTime);
 
             if (_gameRoot._slimeOffHead)
             {
@@ -194,8 +195,9 @@ namespace Nummi
         {
             set
             {
-                _gameRoot._currentBoss._health -= _gameRoot._currentBoss._maxHealth / 4; 
+                _gameRoot._currentBoss._health -= _gameRoot._currentBoss._maxHealth / 4;
                 _gameRoot._slimeOffHead = false; // Reset the flag in Game1 to indicate the slime's head is back on
+                _gameRoot._player.OnEnemyKilled(_xpValue, _goldValue);
                 _dead = value;
             }
             get
@@ -205,7 +207,7 @@ namespace Nummi
         }
 
         public PossessingSlime(Game1 gameRoot, Vector2 position)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\PossessingSlime"), position, true, 250, 220, 20, true, 100, 200f, 200f, 0)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\PossessingSlime"), position, true, 250, 220, 20, true, 100, 200f, 0f, 0)
         {
         }
 

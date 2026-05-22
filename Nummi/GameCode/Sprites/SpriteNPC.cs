@@ -24,6 +24,11 @@ namespace Nummi
         public bool _isBlackSmith;
         private bool _dialogueActive = false;
 
+        // Per-NPC randomisation so wandering NPCs don't all walk in lock-step.
+        private static readonly Random _rng = new Random();
+        private float _walkPhase;
+        private float _walkTimeScale;
+
         public SpriteNPC(
             Game1 gameRoot,
             Texture2D texture,
@@ -45,6 +50,11 @@ namespace Nummi
             _walkingTime = walkingTime;
             _dialogue = dialogue;
             _isBlackSmith = isBlackSmith;
+
+            // Randomise the phase (0..2pi) and stretch the period a bit so each NPC
+            // walks to its own rhythm rather than swinging in unison.
+            _walkPhase = (float)(_rng.NextDouble() * Math.PI * 2.0);
+            _walkTimeScale = 0.75f + (float)_rng.NextDouble() * 0.5f; // 0.75x..1.25x
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -56,18 +66,17 @@ namespace Nummi
             // Idle animation
             animations.Add(new List<Rectangle>());
             animations[0].Add(new Rectangle(0, 0, 32, 32));
-            animations[0].Add(new Rectangle(128, 0, 32, 32));
 
             // Walk animation
             animations.Add(new List<Rectangle>());
+            animations[1].Add(new Rectangle(32, 32, 32, 32));
+            animations[1].Add(new Rectangle(32, 64, 32, 32));
             animations[1].Add(new Rectangle(0, 64, 32, 32));
             animations[1].Add(new Rectangle(32, 64, 32, 32));
             animations[1].Add(new Rectangle(64, 64, 32, 32));
-            animations[1].Add(new Rectangle(96, 64, 32, 32));
-            animations[1].Add(new Rectangle(128, 64, 32, 32));
-            animations[1].Add(new Rectangle(160, 64, 32, 32));
-            animations[1].Add(new Rectangle(192, 64, 32, 32));
-            animations[1].Add(new Rectangle(224, 64, 32, 32));
+            animations[1].Add(new Rectangle(0, 96, 32, 32));
+            animations[1].Add(new Rectangle(32, 96, 32, 32));
+            animations[1].Add(new Rectangle(64, 96, 32, 32));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
@@ -94,7 +103,7 @@ namespace Nummi
             // If the NPC can move and isn't talking, they will walk back and forth in a sine wave pattern. The walking area and time can be adjusted in the constructor.
             if (_canMove && !_isTalking)
             {
-                _velocity.X = _walkingArea * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds / _walkingTime) * 0.5f;
+                _velocity.X = _walkingArea * (float)Math.Sin(gameTime.TotalGameTime.TotalSeconds / (_walkingTime * _walkTimeScale) + _walkPhase) * 0.5f;
                 if (_position.X < _spawnPlace - _walkingArea) _position.X = _spawnPlace - _walkingArea;
                 if (_position.X > _spawnPlace + _walkingArea) _position.X = _spawnPlace + _walkingArea;
                 SetAnimation(1);

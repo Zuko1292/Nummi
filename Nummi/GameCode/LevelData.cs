@@ -50,6 +50,8 @@ namespace Nummi
 
                     gameRoot.savedStats = gameRoot._player?.Stats ?? new CharacterStats(str: 1, vit: 1);
                     gameRoot.savedLevelSystem = gameRoot._player?.LevelSystem ?? new LevelSystem();
+                    if(gameRoot._player != null)
+                        gameRoot.savedWeapon = gameRoot._player._currentWeapon;
 
                     gameRoot._player = null;
                     // When adding enemies or NPCs to the levels, make sure to add them to the _spriteList so they get updated and drawn. Also make sure to set their position using the TilePos helper method to convert tile coordinates to world coordinates. For example, if you want to place an enemy at tile (10, 5), you would use TilePos(10, 5) to get the correct world position for that enemy.
@@ -70,8 +72,10 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(45, 45), true);
                             gameRoot._spriteList.Add(gameRoot._player);
                             // always load enemies and Npcs like this and set their position using the TilePos helper method. Make sure to add them to the _spriteList so they get updated and drawn.
-                            gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(30, 45)));
-                            gameRoot._spriteList.Add(new Slots(gameRoot, TilePos(35, 40), Slots.TempState.Thawed));
+                            gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(7, 44)));
+                            gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(7, 4)));
+                            gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(42, 4)));
+                            gameRoot._spriteList.Add(new Slime(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Slime Anim-Sheet"), TilePos(24, 11)));
 
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House2_v2"), TilePos(14, 18)));
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\House1_v2"), TilePos(20, 18)));
@@ -79,7 +83,7 @@ namespace Nummi
                             gameRoot._spriteList.Add(new HeadsHouse(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Houses\\BlackSmith_HeadsTown"), TilePos(37, 18)));
 
                             gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
-                                GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"),
+                                GBL.Content.Load<Texture2D>("Textures\\Animations\\TownPerson1"),
                                 TilePos(37, 20),
                                 false, 3f, 85f, 0.98f,
                                 new List<string>()
@@ -91,7 +95,7 @@ namespace Nummi
                                 },
                                 isBlackSmith: true));
                             gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
-                                GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"),
+                                GBL.Content.Load<Texture2D>("Textures\\Animations\\TownPerson3"),
                                 TilePos(26, 21),
                                 true, 3f, 85f, 0.98f,
                                 new List<string>()
@@ -105,7 +109,7 @@ namespace Nummi
                                     "*Goes back to screaming*"
                                 }));
                             gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
-                                GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"),
+                                GBL.Content.Load<Texture2D>("Textures\\Animations\\TownPerson4"),
                                 TilePos(14, 20),
                                 true, 3f, 85f, 0.98f,
                                 new List<string>()
@@ -116,7 +120,7 @@ namespace Nummi
                                     "MR MIRROR, MR MIRROR, MR MIRROR"
                                 }));
                             gameRoot._spriteList.Add(new SpriteNPC(gameRoot,
-                                GBL.Content.Load<Texture2D>("Textures\\Animations\\Player_SpriteSheet"),
+                                GBL.Content.Load<Texture2D>("Textures\\Animations\\TownPerson6"),
                                 TilePos(20, 23),
                                 true, 3f, 85f, 0.98f,
                                 new List<string>()
@@ -250,6 +254,8 @@ namespace Nummi
                             gameRoot._spriteList.Add(gameRoot._player);
 
                             // Room 1 Enemies
+                            gameRoot._spriteList.Add(new Security_Guard(gameRoot, TilePos(25, 7), Security_Guard.TempState.Frozen));
+                            gameRoot._spriteList.Add(new Security_Guard(gameRoot, TilePos(25, 13), Security_Guard.TempState.Frozen));
 
                             // Room 2 Enemies
                             gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(42, 6), Waiter.TempState.Frozen));
@@ -288,6 +294,8 @@ namespace Nummi
                             gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(99, 60), Dealer.TempState.Frozen));
                             gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(115, 60), Dealer.TempState.Frozen));
                             gameRoot._spriteList.Add(new Dealer(gameRoot, TilePos(123, 60), Dealer.TempState.Frozen));
+
+                            gameRoot._spriteList.Add(new Security_Guard(gameRoot, TilePos(131, 53), Security_Guard.TempState.Frozen));
 
                             break;
                         case 5:
@@ -349,6 +357,7 @@ namespace Nummi
 
                             break;
                     }
+                    if (gameRoot._player != null) gameRoot._player._currentWeapon = gameRoot.savedWeapon;
                     break;
                 case GameState.TailsLevel:
                     gameRoot._tailsLevel = level;
@@ -376,6 +385,7 @@ namespace Nummi
                             gameRoot._spriteList.Add(new Grid(gameRoot, new Vector2(1024 + (5 * 32), 1024)));
                             break;
                     }
+                    if (gameRoot._player != null) gameRoot._player._currentWeapon = gameRoot.savedWeapon;
                     break;
             }
         }
@@ -420,6 +430,11 @@ namespace Nummi
             gameRoot.buildingSystem.ResetCounts();
             gameRoot._shop.ClearStock();
 
+            // Re-add any items the player has unlocked via boss drops so they
+            // survive the shop rebuild when entering a tails level.
+            foreach (ShopItem unlocked in gameRoot._unlockedBossItems)
+                gameRoot._shop.AddItem(unlocked);
+
             switch (tailsLevel)
             {
                 // Once added Item to case 0 it'll be available in all levels, so we can add all items here and just adjust limits for each level. For now we only have 2 levels so I put everything in case 0 and left case 1 empty for future expansion.
@@ -439,27 +454,27 @@ namespace Nummi
                     ));
 
                     
-                    gameRoot._shop.AddItem(new ShopItem(
-                        "Farmhouse",
-                        "Produces food",
-                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"),
-                        cost: 150,
-                        building: new BuildingType("Farm", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"), new Point(3, 3))
-                    ));
-                    gameRoot._shop.AddItem(new ShopItem(
-                        "Black Smith",
-                        "Produces weapons",
-                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"),
-                        cost: 150,
-                        building: new BuildingType("Black Smith", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"), new Point(3, 3))
-                        ));
-                    gameRoot._shop.AddItem(new ShopItem(
-                        "Nuclear Reactor",
-                        "Generates energy",
-                        GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"),
-                        cost: 150,
-                        building: new BuildingType("Nuclear Reactor", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"), new Point(3, 3))
-                    ));
+                    //gameRoot._shop.AddItem(new ShopItem(
+                    //    "Farmhouse",
+                    //    "Produces food",
+                    //    GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"),
+                    //    cost: 150,
+                    //    building: new BuildingType("Farm", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"), new Point(3, 3))
+                    //));
+                    //gameRoot._shop.AddItem(new ShopItem(
+                    //    "Black Smith",
+                    //    "Produces weapons",
+                    //    GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"),
+                    //    cost: 150,
+                    //    building: new BuildingType("Black Smith", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"), new Point(3, 3))
+                    //    ));
+                    //gameRoot._shop.AddItem(new ShopItem(
+                    //    "Nuclear Reactor",
+                    //    "Generates energy",
+                    //    GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"),
+                    //    cost: 150,
+                    //    building: new BuildingType("Nuclear Reactor", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Nuclear Reactor"), new Point(3, 3))
+                    //));
                     break;
 
                 case 2:
