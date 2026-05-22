@@ -215,7 +215,6 @@ namespace Nummi
 
             if (otherSprite is SpritePlayer player)
             {
-                // TODO prolly make a function for taking damage so you arent hard coding it with the variable
                 _gameRoot._health -= _damageStrength;
             }
 

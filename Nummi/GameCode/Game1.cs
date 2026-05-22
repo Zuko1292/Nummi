@@ -13,12 +13,6 @@ using Nummi;
 
 namespace Nummi
 {
-    // TODO IDEAS
-    // - make tails level scale damage and health and maybe add unique abilites onto the heads level
-    // - make the shop have more things to buy and maybe have some unique items that can only be bought with coins or only with population or whatever else we want to add as a currency`
-    // - make the lighting system more robust and maybe add different types of lights or make it so you can place torches in the tails level and they will provide light in the heads level or something like that
-    
-   
 
     public class Game1 : Game
     {
@@ -234,11 +228,11 @@ namespace Nummi
         {
 
             //Makes sure the crystal texture is right
-            if (_headsLevel == 1)
+            if (_headsLevel == 3)
                 _currentCrystalTex = _shieldCrystalTex;
-            else if (_headsLevel == 2)
+            else if (_headsLevel == 5)
                 _currentCrystalTex = _hayCrystalTex;
-            else if (_headsLevel == 3)
+            else if (_headsLevel == 7)
                 _currentCrystalTex = _smithCrystalTex;
 
             if(exitButton != null)
@@ -624,7 +618,6 @@ namespace Nummi
             }
             _shopUI.Update();
         }
-        // TODO make the other menus
         public void UpdateSettings(GameTime gameTime)
         {
             _SettingsBackground.Update(gameTime);
@@ -777,8 +770,6 @@ namespace Nummi
             LevelData.SpawnLevel(_tailsLevel, this);
 
             _currency.AddCoins(_currency.Population * 50);
-
-            _showTailsIntro = true;
             _box = new DialogBox(this, new List<string>() { "Huh What the where did this gold just appear from...", "welp who cares its mine now hehehhe" });
         }
         // starts pause when true and unpauses when false

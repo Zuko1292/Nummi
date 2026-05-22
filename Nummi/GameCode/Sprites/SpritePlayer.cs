@@ -18,6 +18,8 @@ namespace Nummi
         protected Sprite _floor;
         public Vector2 _playerPos;
         public float _posture;
+        float _regainPostureTimer = 0f;
+        float _regainPostureCooldown = 3f;
 
         // Variable for checking if the player is in the trap room
         public bool _isInTrapRoom = false;
@@ -108,8 +110,9 @@ namespace Nummi
             LevelSystem = existingLevel;
             LevelSystem.OnLevelUp += HandleLevelUp;
 
-            Stats.Vitality.Modify(+_gameRoot.buildingSystem._barracksPlaced);
+            Stats.Vitality.Modify(+_gameRoot.buildingSystem._farmsPlaced);
             Stats.Strength.Modify(+_gameRoot.buildingSystem._housesPlaced);
+            Stats.Strength.Modify(+_gameRoot.buildingSystem._barracksPlaced);
         }
 
         #endregion ***** Constructors *****
@@ -246,6 +249,33 @@ namespace Nummi
                 _flipEffect = SpriteEffects.None;
                 _isBlocking = false;
             }
+            if(_posture <= 0)
+            {
+                // Return to the idle that matches the block direction.
+                int idle;
+                switch (_animIndex)
+                {
+                    case 13: idle = 1; break; // Block UP    -> Idle UP
+                    case 14: idle = 2; break; // Block RIGHT -> Idle RIGHT
+                    case 15: idle = 6; break; // Block LEFT  -> Idle LEFT
+                    default: idle = 0; break; // Block DOWN  -> Idle DOWN
+                }
+                SetAnimation(idle);
+                _isBlocking = false;
+                _posture = 0;
+            }
+            if (_posture < Stats.Posture && !_isBlocking)
+            {
+                _regainPostureTimer += GBL.DeltaTime;
+
+                if (_regainPostureTimer >= _regainPostureCooldown)
+                {
+                    _posture += 5;
+                    _regainPostureTimer = 0;
+                }
+            }
+            else if (_posture > Stats.Posture) _posture = Stats.Posture;
+
             // Dashing
             if (_isDashing)
             {
@@ -425,13 +455,18 @@ namespace Nummi
                 }
                 else if(!_isInvincible && _isBlocking)
                 {
+                    _isInvincible = true;
+                    _damageTimer = _damageCooldown;
+
                     _isKnockedback = true;
                     _knockbackTimer = _knockbackDuration;
 
-                    Vector2 knockbackDirection = Vector2.Normalize(_position - enemy._position);
-                    _velocity += knockbackDirection * enemy._knockbackStrength;
+                    Vector2 knockbackDirection = Vector2.Normalize(enemy._position - _position);
+                    enemy._velocity += knockbackDirection * enemy._knockbackStrength;
 
                     _lockedFlipEffect = _flipEffect;
+
+                    _posture -= 5;
 
                 }
             }
@@ -580,7 +615,6 @@ namespace Nummi
         public int Posture => (int)(Strength.CurrentValue * 5f);
     }
     // Level system for player progression, it uses a simple exponential growth formula for XP requirements, where each level requires 8% more XP than the previous one. The LevelUp method is called when the player has enough XP to level up, which increases the player's level and updates the XP required for the next level. The OnLevelUp event allows other parts of the game to respond to the player leveling up, such as updating the HUD or unlocking new abilities.
-    // TODO I think the scaling is a bit crazy right now so need to fix that
     public class LevelSystem
     {
         public int Level { get; private set; }
@@ -647,6 +681,7 @@ namespace Nummi
 
             DrawHealthBar(player);
             DrawXPBar(player.LevelSystem);
+            DrawPostureBar(player);
 
             SpriteEnemy boss = _gameRoot._currentBoss;
 
@@ -698,6 +733,58 @@ namespace Nummi
             GBL.spriteBatch.DrawString(
                 _font,
                 $"HP {(int)_gameRoot._health}/{player.Stats.MaxHP}",
+                new Vector2(x, y - 14),
+                Color.White,
+                0f,
+                Vector2.Zero,
+                0.75f,   // 75% text scale
+                SpriteEffects.None,
+                uiLayer - 0.002f
+            );
+        }
+
+        private void DrawPostureBar(SpritePlayer player)
+        {
+            if (_gameRoot._player == null) return;
+
+            int barWidth = 225;
+            int barHeight = 9;
+            int x = 20, y = 80;
+
+            float fill = _gameRoot._player._posture / player.Stats.Posture;
+            fill = Math.Clamp(fill, 0f, 1f);
+
+            float uiLayer = 0.1f;
+
+            // Background
+            GBL.spriteBatch.Draw(
+                _pixel,
+                new Rectangle(x, y, barWidth, barHeight),
+                null,
+                Color.DarkRed,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                uiLayer
+            );
+
+            // Fill - changes colour based on health
+            Color fillColor = fill > 0.5f ? Color.Yellow : fill > 0.25f ? Color.Orange : Color.Red;
+            GBL.spriteBatch.Draw(
+                _pixel,
+                new Rectangle(x, y, (int)(barWidth * fill), barHeight),
+                null,
+                fillColor,
+                0f,
+                Vector2.Zero,
+                SpriteEffects.None,
+                uiLayer - 0.001f
+            );
+
+            // Text
+            GBL.spriteBatch.DrawString(
+                _font,
+                $"Posture {(int)player._posture}/{player.Stats.Posture}",
                 new Vector2(x, y - 14),
                 Color.White,
                 0f,

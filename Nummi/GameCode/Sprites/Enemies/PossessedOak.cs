@@ -9,7 +9,6 @@ using Nummi;
 
 namespace Nummi
 {
-    // TODO add comments and finish off the class cause boss still not finished
     public class PossessedTree : SpriteEnemy
     {
 
@@ -145,8 +144,8 @@ namespace Nummi
             // Spawns Mirror to next level
             var map1 = _gameRoot._tilemap.Layers[0];
 
-            map1.SetTile(10, 14, 14);
-            map1.SetTile(10, 15, 22);
+            map1.SetTile(10, 14, 22);
+            map1.SetTile(10, 15, 14);
 
             var map2 = _gameRoot._tilemap.Layers[1];
 

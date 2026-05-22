@@ -511,6 +511,8 @@ namespace Nummi
                         case 0:
                             break;
                         case 1:
+                            gameRoot._showTailsIntro = true;
+
                             //Load the player so the stats save and load properly when going between levels, also make sure to set the position of the player using the TilePos helper method to convert tile coordinates to world coordinates.
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
@@ -524,6 +526,7 @@ namespace Nummi
                             gameRoot._spriteList.Add(new Grid(gameRoot, new Vector2(1024 + (5 * 32), 1024)));
                             break;
                         case 2:
+                            gameRoot._showTailsIntro = false;
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
@@ -588,7 +591,6 @@ namespace Nummi
             switch (tailsLevel)
             {
                 // Once added Item to case 0 it'll be available in all levels, so we can add all items here and just adjust limits for each level. For now we only have 2 levels so I put everything in case 0 and left case 1 empty for future expansion.
-                // TODO probably change it so you only unlock buildings after the dungeons
                 case 0:
                     break;
                 case 1:
@@ -630,6 +632,7 @@ namespace Nummi
                 case 2:
                     gameRoot.buildingSystem.SetLimit("House", 6);
                     gameRoot.buildingSystem.SetLimit("Barracks", 3);
+                    gameRoot.buildingSystem.SetLimit("Farm", 1);
 
                     gameRoot._shop.AddItem(new ShopItem(
                         "House",
@@ -639,6 +642,11 @@ namespace Nummi
                         building: new BuildingType("House", GBL.Content.Load<Texture2D>("Textures\\Houses\\House1"), new Point(2, 2))
                     ));
                     // Add more items or higher limits for level 1
+                    break;
+                case 3:
+                    gameRoot.buildingSystem.SetLimit("House", 9);
+                    gameRoot.buildingSystem.SetLimit("Barracks", 6);
+                    gameRoot.buildingSystem.SetLimit("Farm", 3);
                     break;
             }
         }

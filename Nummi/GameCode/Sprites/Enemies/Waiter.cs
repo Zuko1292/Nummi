@@ -8,7 +8,7 @@ using Nummi;
 
 namespace Nummi
 {
-    // TODO this class lowk a mess gotta clean it up and make it more understandable, also add comments to explain what the different states and timers do. The waiter has two main states: Frozen and Thawed. When frozen, it will stay still and only attack when the player gets close, with a build up animation. When thawed, it will move around and attack more aggressively, with different behaviors if it's in the backroom or outside. The timers are used for controlling the hopping movement, drink throwing, swipe cooldown, and frozen wake up process.
+    
     public class Waiter : SpriteEnemy
     {
         bool _attacking = false;
