@@ -55,6 +55,7 @@ namespace Nummi
         public bool _isBossLevel = false;
         public SpriteEnemy _currentBoss;
         public string _bossName = "";
+        public int _bossesDeadNum = 0;
 
         // Tails Variables
 
@@ -125,6 +126,7 @@ namespace Nummi
             "Maps/Dungeon2-Section1.xml",
             "Maps/Dungeon2-Section2.xml",
             "Maps/Dungeon3-Section1.xml",
+            "Maps/BossFight3.xml,"
         };
 
         // Sprite lists

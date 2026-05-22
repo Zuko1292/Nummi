@@ -318,6 +318,8 @@ namespace Nummi
             _rotation = angle + MathHelper.Pi / 2;
 
             _lifetime = 5f;
+            CollisionLayer = CollisionLayer.Player;
+            CollisionMask = CollisionLayer.Enemy & ~CollisionLayer.Player;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()
@@ -325,10 +327,6 @@ namespace Nummi
             _frameDuration = 1f / 12f;
 
             List<List<Rectangle>> animations = new List<List<Rectangle>>();
-
-            // The arrow only ever uses one animation slot (index 0) - it never calls
-            // SetAnimation. The previous version added lists sequentially but wrote to
-            // animations[2], [3] and [4], which threw IndexOutOfRange on spawn.
             animations.Add(new List<Rectangle>());
             animations[0].Add(new Rectangle(0, 0, 16, 16));
 

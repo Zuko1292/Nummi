@@ -32,9 +32,6 @@ namespace Nummi
         protected float _walkingArea = 50f;
         public bool _canPatrol = false;
 
-        // When true the enemy never self-propels (chase/patrol movement is skipped and its
-        // velocity is forced to zero each frame), but it can still be hit and knocked back.
-        // Used for frozen enemies that must hold their position.
         public bool _isStationary = false;
 
         // Dashing variables
@@ -60,8 +57,7 @@ namespace Nummi
 
         private Vector2 Direction;
 
-        // override like this and if you want to do anything before it dies then do the _dead = value after and if you want to play an animation put the _dead value into the animation finished function
-        public override bool Dead
+       public override bool Dead
         {
             set
             {
@@ -96,8 +92,6 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            // This checks if the enemy can see the player, and if they can, it updates the last seen position to the player's current position. This allows the enemy to continue moving towards the player even if they lose sight of them, creating a more dynamic and engaging combat experience.
-            // This handles the patrolling behavior of the enemy, making them move back and forth within a certain area. The enemy will switch directions when they reach the edge of their walking area, creating a simple but effective patrolling pattern.
             if (_isKnockedback)
             {
                 _knockbackTimer -= GBL.DeltaTime;

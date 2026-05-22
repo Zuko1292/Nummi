@@ -67,12 +67,6 @@
 /processorParam:Quality=Best
 /build:Sounds/Game Level Music.mp3
 
-#begin Sounds/Game Level Music.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Sounds/Game Level Music.mp3
-
 #begin Sounds/Getting Hit.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -97,12 +91,6 @@
 /processorParam:Quality=Best
 /build:Sounds/Title Music.mp3
 
-#begin Sounds/Title Music.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Sounds/Title Music.mp3
-
 #begin Textures/Animations/Acid Drink.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -114,6 +102,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Acid Drink.png
+
+#begin Textures/Animations/Anaconda.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Anaconda.png
 
 #begin Textures/Animations/Arrow.png
 /importer:TextureImporter
@@ -282,6 +282,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Animations/Orange-Slime-Projectile.png
+
+#begin Textures/Animations/Pig Spritesheet.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Animations/Pig Spritesheet.png
 
 #begin Textures/Animations/Player_SpriteSheet.png
 /importer:TextureImporter

@@ -528,6 +528,15 @@ namespace Nummi
             a[0].Add(new Rectangle(0, 0, 16, 16));
             a[0].Add(new Rectangle(16, 0, 16, 16));
             a[0].Add(new Rectangle(32, 0, 16, 16));
+            a[0].Add(new Rectangle(0, 0, 16, 16));
+            a[0].Add(new Rectangle(16, 0, 16, 16));
+            a[0].Add(new Rectangle(32, 0, 16, 16));
+            a[0].Add(new Rectangle(0, 0, 16, 16));
+            a[0].Add(new Rectangle(16, 0, 16, 16));
+            a[0].Add(new Rectangle(32, 0, 16, 16));
+            a[0].Add(new Rectangle(0, 0, 16, 16));
+            a[0].Add(new Rectangle(16, 0, 16, 16));
+            a[0].Add(new Rectangle(32, 0, 16, 16));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < a.Count; i++) _nextAnim.Add(i);

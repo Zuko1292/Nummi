@@ -130,6 +130,7 @@ namespace Nummi
                 _dialogueActive = false;
                 if (_isBlackSmith)
                 {
+                    
                     WeaponSelection ws = new WeaponSelection(_gameRoot);
                     _gameRoot._newSpriteList.Add(ws);
                 }

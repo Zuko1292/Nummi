@@ -68,14 +68,14 @@ namespace Nummi
                     cost: 300,
                     building: new BuildingType("Farm", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\Farm Building"), new Point(3, 3))
                 );
-            //lse if (_gameRoot._tailsLevel == 3)
-            //   item = new ShopItem(
-            //       "Black Smith",
-            //       "Increases Attack",
-            //       GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"),
-            //       cost: 300,
-            //       building: new BuildingType("Black Smith", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"), new Point(3, 3))
-            //   );
+            else if (_gameRoot._tailsLevel == 8)
+                item = new ShopItem(
+                    "Black Smith",
+                    "Increases Attack",
+                    GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"),
+                    cost: 300,
+                    building: new BuildingType("Black Smith", GBL.Content.Load<Texture2D>("Textures\\SpecialBuildings\\BlackSmith"), new Point(3, 3))
+                );
 
             if (item == null) return;
 

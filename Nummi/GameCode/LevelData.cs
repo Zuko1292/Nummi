@@ -11,7 +11,7 @@ namespace Nummi
     {
         // This class is responsible for spawning levels and contains data related to the levels, such as tilemap rules and level-specific settings. It has a method called SpawnLevel which takes in the level number and the game root object, and based on the current game state (HeadsLevel or TailsLevel), it loads the appropriate tilemap, sets up the player, enemies, and other sprites for that level. It also contains helper methods for converting tile coordinates to world coordinates and generating buildable areas from the tilemap.
         // This varible is used to determine the final level
-        public static int LastHeadsLevelIndex = 7;
+        public static int LastHeadsLevelIndex = 8;
 
         // Rules for Heads town and Tails Town and Dungeon 1 section 1 and 2 (which share the same tileSet)
         public static readonly TilemapRules Rules1 = new TilemapRules()
@@ -495,6 +495,27 @@ namespace Nummi
                             gameRoot._spriteList.Add(zone44);
 
                             break;
+                        case 8:
+                            gameRoot._isTrapLevel = true;
+                            gameRoot._isBossLevel = true;
+                            gameRoot._bossDead = false;
+
+                            gameRoot._useLighting = false;
+                            gameRoot._torchPositions = Array.Empty<Vector2>();
+
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[8]);
+                            gameRoot._tilemap.SetRules(Rules3);
+
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(24, 5), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
+                            gameRoot._spriteList.Add(gameRoot._player);
+
+                            //TilePos(150, 47)
+
+                            SpriteEnemy boss3 = new Manager_Croc(gameRoot, TilePos(9, 10), Manager_Croc.TempState.Thawed);
+                            gameRoot._currentBoss = boss3;
+                            gameRoot._bossName = "Anaconda Wedding";
+                            gameRoot._spriteList.Add(boss3);
+                            break;
                     }
                     if (gameRoot._player != null) gameRoot._player._currentWeapon = gameRoot.savedWeapon;
                     break;
@@ -513,9 +534,8 @@ namespace Nummi
                         case 1:
                             gameRoot._showTailsIntro = true;
 
-                            //Load the player so the stats save and load properly when going between levels, also make sure to set the position of the player using the TilePos helper method to convert tile coordinates to world coordinates.
+                            //Load the player so the stats save and load properly when going between levels
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
-                            gameRoot._spriteList.Add(gameRoot._player);
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
                             SetBuildingLimits(gameRoot, 1);
@@ -528,7 +548,17 @@ namespace Nummi
                         case 2:
                             gameRoot._showTailsIntro = false;
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
-                            gameRoot._spriteList.Add(gameRoot._player);
+
+                            gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
+                            SetBuildingLimits(gameRoot, 2);
+
+                            GenerateBuildableFromTilemap(gameRoot._grid, gameRoot._tilemap, 0);
+
+                            gameRoot._spriteList.Add(new Grid(gameRoot, new Vector2(1024 + (5 * 32), 1024)));
+                            break;
+                        case 3:
+                            gameRoot._showTailsIntro = false;
+                            gameRoot._player = new SpritePlayer(gameRoot, TilePos(1000, 1000), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
 
                             gameRoot._tilemap = Tilemap.FromFile(gameRoot.levelFiles[1]);
                             SetBuildingLimits(gameRoot, 2);
