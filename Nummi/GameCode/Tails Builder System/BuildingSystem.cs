@@ -104,6 +104,12 @@ namespace Nummi
                         buildingCounts[selectedBuilding.Name] = 0;
                     buildingCounts[selectedBuilding.Name]++;
 
+                    if (shop != null && shop.Currency != null
+                        && selectedBuilding.Name == "House")
+                    {
+                        shop.Currency.AddPopulation(1);
+                    }
+
                     placedBuildings.Add(new PlacedBuilding
                     {
                         Position = gridPos,

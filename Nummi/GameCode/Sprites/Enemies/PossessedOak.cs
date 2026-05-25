@@ -91,7 +91,7 @@ namespace Nummi
         public override void Update(GameTime gameTime)
         {
 
-            if (_gameRoot._bossDead)
+            if (_gameRoot._bossFightStarted && _gameRoot._bossDead)
             {
                 Dead = true;
             }
@@ -115,6 +115,7 @@ namespace Nummi
             {
                 _shootTimer = 0f;
                 SetAnimation(1);
+                SpawnProjectile();
             }
 
             _slimeSpawnTimer += GBL.DeltaTime;
@@ -125,11 +126,6 @@ namespace Nummi
                 _gameRoot._newSpriteList.Add(slime);
                 SetAnimation(2);
                 _gameRoot._slimeOffHead = true;
-            }
-
-            if (_animIndex == 1 && _frameIndex == 4 && _frameTimer < GBL.DeltaTime)
-            {
-                SpawnProjectile();
             }
         }
 
@@ -203,6 +199,11 @@ namespace Nummi
         public PossessingSlime(Game1 gameRoot, Vector2 position)
             : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\PossessingSlime"), position, true, 250, 220, 20, true, 100, 1000f, 0f, 0)
         {
+            // The slime needs to physically bump into the tree (and any other
+            // enemies), but the existing LOS raycast in Game1.CanSeePlayer
+            // only checks tilemap tiles - sprites never block it - so the
+            // slime keeps clear sight to the player through the tree.
+            CollisionMask = CollisionLayer.All;
         }
 
         protected override List<List<Rectangle>> BuildAnimations()

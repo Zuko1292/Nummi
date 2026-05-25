@@ -333,6 +333,46 @@ namespace Nummi
         public override void Draw(SpriteBatch spriteBatch) { }
     }
 
+    // Activates the boss HUD bar the moment the player enters the zone.
+    // Holds a reference to the boss so it can also (re-)set _currentBoss /
+    // _bossName when triggered, in case the level loaded with stale values.
+    public class BossRoomZone : TriggerZone
+    {
+        private bool _triggered = false;
+        private readonly SpriteEnemy _boss;
+        private readonly string _bossName;
+
+        public BossRoomZone(Game1 gameRoot, Vector2 position, int width, int height,
+                            SpriteEnemy boss, string bossName)
+            : base(gameRoot, position, width, height)
+        {
+            _boss = boss;
+            _bossName = bossName;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            if (_triggered) { base.Update(gameTime); return; }
+
+            // Re-sync bounds in case the zone was moved.
+            _collisionBounds = new Rectangle(
+                (int)(_position.X - Width / 2f),
+                (int)(_position.Y - Height / 2f),
+                Width,
+                Height);
+
+            if (_gameRoot._player != null
+                && _collisionBounds.Intersects(_gameRoot._player._collisionBounds))
+            {
+                _triggered = true;
+                _gameRoot._bossDead = false;
+                _gameRoot._bossFightStarted = true;
+                _gameRoot._currentBoss = _boss;
+                _gameRoot._bossName = _bossName;
+            }
+        }
+    }
+
     public class DetectionZone : TriggerZone
     {
         private bool _triggered = false;

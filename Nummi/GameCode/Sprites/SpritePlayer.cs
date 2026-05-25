@@ -224,6 +224,15 @@ namespace Nummi
         {
 
             if (_gameRoot._gameState == GameState.TailsLevel) return;
+            if (GBL.KeyPress(Keys.T) && _gameRoot._isTesting)
+            {
+                Vector2 mouseWorld = Vector2.Transform(
+                    Mouse.GetState().Position.ToVector2(),
+                    Matrix.Invert(GBL._camera._transform)
+                );
+
+                _position = mouseWorld;
+            }
             // the blocking Anims dont work and I cant fix them idk how its just not working
             // Blocking
             if (GBL.KeyHold(Keys.F))
@@ -624,7 +633,7 @@ namespace Nummi
         public float XPToNextLevel { get; private set; }
 
         private const float BaseXP = 100f;       
-        private const float ScaleRate = 1.08f;   
+        private const float ScaleRate = 1.5f;   
 
         public event Action OnLevelUp;           
 

@@ -15,7 +15,7 @@ namespace Nummi
                 : base(gameRoot, texture, position, false, true) 
         {
             CollisionLayer = CollisionLayer.Solid;
-            CollisionMask = CollisionLayer.Player;
+            CollisionMask = CollisionLayer.Player | CollisionLayer.Enemy;
             _layerDepth = 0.32f;
 
             _drawScale = drawScale;

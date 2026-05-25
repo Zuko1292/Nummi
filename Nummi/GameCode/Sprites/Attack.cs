@@ -26,6 +26,8 @@ namespace Nummi
             // Spawn an arrow projectile for the bow, but guard against an Arrow (itself an
             // Attack constructed with weapon 4) recursively spawning more arrows.
             if(currentWeapon == 4 && !(this is Arrow)) ArrowSpawn();
+
+            if (currentWeapon == 5 && _gameRoot._isTesting) InitBounds(position - new Vector2(160, 160), true, new Vector2(10, 10), new Vector2(10, 10));
         }
 
         public override void Update(GameTime gameTime)
@@ -127,6 +129,12 @@ namespace Nummi
             animations.Add(new List<Rectangle>());
             animations[4].Add(new Rectangle(96, 48, 32, 32));
 
+            // GODMODE for Testing purposes
+            animations.Add(new List<Rectangle>());
+            animations[5].Add(new Rectangle(0, 80, 48, 48));
+            animations[5].Add(new Rectangle(48, 80, 48, 48));
+            animations[5].Add(new Rectangle(96, 80, 48, 48));
+
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
 
@@ -183,6 +191,12 @@ namespace Nummi
             animations.Add(new List<Rectangle>());
             animations[4].Add(new Rectangle(96, 48, 32, 32));
 
+            // GODMODE for Testing purposes
+            animations.Add(new List<Rectangle>());
+            animations[5].Add(new Rectangle(0, 80, 48, 48));
+            animations[5].Add(new Rectangle(48, 80, 48, 48));
+            animations[5].Add(new Rectangle(96, 80, 48, 48));
+
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
 
@@ -238,6 +252,11 @@ namespace Nummi
             animations.Add(new List<Rectangle>());
             animations[4].Add(new Rectangle(96, 144, 32, 32));
 
+            // GODMODE for Testing purposes
+            animations.Add(new List<Rectangle>());
+            animations[5].Add(new Rectangle(0, 176, 48, 48));
+            animations[5].Add(new Rectangle(48, 176, 48, 48));
+            animations[5].Add(new Rectangle(96, 176, 48, 48));
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);
 
@@ -292,6 +311,12 @@ namespace Nummi
             // Bow attack animation
             animations.Add(new List<Rectangle>());
             animations[4].Add(new Rectangle(96, 144, 32, 32));
+
+            // GODMODE for Testing purposes
+            animations.Add(new List<Rectangle>());
+            animations[5].Add(new Rectangle(0, 176, 48, 48));
+            animations[5].Add(new Rectangle(48, 176, 48, 48));
+            animations[5].Add(new Rectangle(96, 176, 48, 48));
 
             _nextAnim = new List<int>();
             for (int i = 0; i < animations.Count; i++) _nextAnim.Add(i);

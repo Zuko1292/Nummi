@@ -38,6 +38,8 @@ namespace Nummi
         private const float SpawnProtectionDuration = 0.1f;
         public bool _showTailsIntro = false;
         public bool _isNextLevelTails = false;
+        // This Value is used for Code testing not actual in game use true means testing mode is on
+        public bool _isTesting = false;
 
         // Global boss variables needed
         public bool _slimeOffHead = false;
@@ -51,11 +53,34 @@ namespace Nummi
         public bool _isTrapLevel = false;
         public Tilemap map => _tilemap.Layers[0];
 
+        // Falling icicle spawners - each entry runs its own 2-second cycle
+        // independently. Add positions via _icicleSpawners.Add(new IcicleSpawner(TilePos(...)));
+        public List<IcicleSpawner> _icicleSpawners = new List<IcicleSpawner>();
+        private const float IcicleSpawnInterval = 2f;
+
+        public class IcicleSpawner
+        {
+            public Vector2 Position;
+            public float Timer;
+            public FallingIcicle Current;
+            public IcicleSpawner(Vector2 position) { Position = position; }
+        }
+
         public bool _bossDead = true;
         public bool _isBossLevel = false;
+        // Set by a BossRoomZone the moment the player enters the boss room.
+        // Bosses should only react to _bossDead becoming true if the fight
+        // has actually started; otherwise they'd auto-die on level load.
+        public bool _bossFightStarted = false;
         public SpriteEnemy _currentBoss;
         public string _bossName = "";
         public int _bossesDeadNum = 0;
+        public bool _boss3ChestSpawned = false;
+        // 2-second grace window after killing a boss before the player can
+        // enter a mirror exit or open the chest that just spawned.
+        private bool _wasBossDead = true;
+        public float _bossKillCooldown = 0f;
+        private const float BossKillCooldownDuration = 2f;
 
         // Tails Variables
 
@@ -325,9 +350,8 @@ namespace Nummi
                     Vector2 enemyCentre = new Vector2(enemy._collisionBounds.X + enemy._collisionBounds.Width / 2,
                     enemy._collisionBounds.Y + enemy._collisionBounds.Height / 2);
 
-                    //Adds an aggro range to enemies
-                    //This checks the distance from the player to the enemy
-                    //and if they are in range and not behind a solid block they can move
+                    if (enemy._health <= 0) enemy.Dead = true;
+
                     float distance = Vector2.Distance(playerCentre, enemyCentre);
 
                     if(enemy._canPatrol) enemy.Update(gameTime);
@@ -380,14 +404,35 @@ namespace Nummi
 
             if (_spawnProtectionTimer > 0f)
                 _spawnProtectionTimer -= GBL.DeltaTime;
+
+            // Falling icicle spawners - each ticks its own 2-second cycle.
+            foreach (IcicleSpawner sp in _icicleSpawners)
+            {
+                bool alive = sp.Current != null && !sp.Current.Dead;
+                if (alive)
+                {
+                    sp.Timer = 0f;
+                }
+                else
+                {
+                    sp.Timer += GBL.DeltaTime;
+                    if (sp.Timer >= IcicleSpawnInterval)
+                    {
+                        sp.Timer = 0f;
+                        sp.Current = new FallingIcicle(this, sp.Position);
+                        _newSpriteList.Add(sp.Current);
+                    }
+                }
+            }
             // Player spawn protection, if the timer is above 0 the player cannot die and it will only start counting down after the player spawns in so they dont die immediately from something they cant see
             if (_spawnProtectionTimer <= 0f && !_spriteList.OfType<SpritePlayer>().Any())
             {
                 PlayerDied();
             }
 
-            if(_bossesDeadNum >= 2)
+            if(_bossesDeadNum >= 2 && !_boss3ChestSpawned)
             {
+                _boss3ChestSpawned = true;
                 var groundLayer = _tilemap.Layers[1];
                 int tx = (int)(_player._position.X / 32f);
                 int ty = (int)(_player._position.Y / 32f);
@@ -397,8 +442,13 @@ namespace Nummi
                 groundLayer.SetTile(tx - 2, ty - 1, 39);
             }
 
+            if (_bossDead && !_wasBossDead) _bossKillCooldown = BossKillCooldownDuration;
+            _wasBossDead = _bossDead;
+            if (_bossKillCooldown > 0f) _bossKillCooldown -= GBL.DeltaTime;
+
             // used for going to next level
-            if (_tilemap.IsExitAtWorld((int)_player._position.X, (int)_player._position.Y) && _coinLvl)
+            if (_tilemap.IsExitAtWorld((int)_player._position.X, (int)_player._position.Y) && _coinLvl
+                && _bossKillCooldown <= 0f)
             {
                 NextLevel();
             }
@@ -483,7 +533,8 @@ namespace Nummi
                 }
 
 
-                if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile))
+                if (_tilemap.TryGetChestTileAtWorld((int)_player._position.X, (int)_player._position.Y, out Point chestTile)
+                    && _bossKillCooldown <= 0f)
                 {
                     if(!_isBossLevel) _player.ChestOpened(_player._position, new DroppedWeapon(this, _player._position, new Random().Next(0, 5)));
 
@@ -531,11 +582,41 @@ namespace Nummi
                         case 5: openedChest = 2; break;
                         case 6: openedChest = 1; break;
                         case 7: openedChest = 1; break;
+                        case 8: openedChest = 2; break;
                     }
 
                     var map1 = _tilemap.Layers[1];
                     map1.SetTile(chestTile.X, chestTile.Y, openedChest);
                 }
+                if(_isTesting)
+                {
+                    // TESTING PURPOSES ONLY
+                    // for testing purposes to skip to tails level
+                    if (GBL.KeyPress(Keys.Tab))
+                    {
+                        StartTailsLevel(1);
+                    }
+                    if (GBL.KeyPress(Keys.P))
+                    {
+                        NextLevel();
+                    }
+                    // for testing boss fight
+                    if (GBL.KeyPress(Keys.G))
+                    {
+                        _bossDead = true;
+                    }
+                    if (GBL.KeyPress(Keys.D1)) _player._currentWeapon = 0;
+                    if (GBL.KeyPress(Keys.D2)) _player._currentWeapon = 1;
+                    if (GBL.KeyPress(Keys.D3)) _player._currentWeapon = 2;
+                    if (GBL.KeyPress(Keys.D4)) _player._currentWeapon = 3;
+                    if (GBL.KeyPress(Keys.D5)) _player._currentWeapon = 4;
+                    if(GBL.KeyPress(Keys.D6)) _player._currentWeapon = 5;
+
+                    _health = 10000;
+                    if (_player._currentWeapon == 5) _player.Stats.Strength.Modify(+99);
+
+                }
+
             }
         }
 
@@ -579,6 +660,19 @@ namespace Nummi
                 _shop.Toggle();
             }
             _shopUI.Update();
+
+            if(_isTesting)
+            {
+                if (GBL.KeyPress(Keys.LeftControl))
+                {
+                    StartHeadsLevel(0);
+                }
+                if (GBL.KeyPress(Keys.P))
+                {
+                    NextLevel();
+                }
+                // TESTING CLOSE
+            }
         }
         public void UpdateSettings(GameTime gameTime)
         {
@@ -635,7 +729,13 @@ namespace Nummi
             _PauseBackground.Update(gameTime);
 
             resumeButton.Update();
-            if (resumeButton.IsClicked) StartHeadsLevel(_headsLevel);
+            // Resume must NOT call StartHeadsLevel - that rebuilds the level
+            // from scratch (resets sprites, player position, stats etc).
+            // Just flip the game state back to HeadsLevel to continue.
+            if (resumeButton.IsClicked || GBL.KeyPress(Keys.Escape))
+            {
+                SetPaused(false);
+            }
         }
 
         public void UpdateDeathScreen(GameTime gameTime)
@@ -700,6 +800,8 @@ namespace Nummi
             _gameState = GameState.HeadsLevel;
             _coinSide = true;
             _headsLevel = level;
+            _bossFightStarted = false;
+            _icicleSpawners.Clear();
             // clears old sprites
             _spriteList.Clear();
             _newSpriteList.Clear();
@@ -732,21 +834,33 @@ namespace Nummi
             LevelData.SpawnLevel(_tailsLevel, this);
 
             _currency.AddCoins(_currency.Population * 50);
+            _currency.AddFood(buildingSystem._farmsPlaced * 100);
             _box = new DialogBox(this, new List<string>() { "Huh What the where did this gold just appear from...", "welp who cares its mine now hehehhe" });
         }
         // starts pause when true and unpauses when false
         public void SetPaused(bool paused)
         {
-            // stops music
-            MediaPlayer.Stop();
-
-            // controls pausing and unpausing
-            if (paused && _gameState == GameState.HeadsLevel || paused && _gameState == GameState.Guide || paused && _gameState == GameState.Settings)
+            if (paused)
             {
-                _gameState = GameState.Paused;
+                // Pause - stop music and freeze the level by switching state.
+                MediaPlayer.Stop();
+                if (_gameState == GameState.HeadsLevel
+                    || _gameState == GameState.Guide
+                    || _gameState == GameState.Settings)
+                {
+                    _gameState = GameState.Paused;
+                }
+                _PauseBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 3);
             }
-
-            _PauseBackground = new Background(this, Content.Load<Texture2D>("Textures\\Backgrounds\\Main Menu"), 3);
+            else
+            {
+                MediaPlayer.Stop();
+                if (_musicOn)
+                    MediaPlayer.Play(_gameplayMusic);
+                // Resume - just flip back to HeadsLevel. Don't rebuild anything.
+                if (_gameState == GameState.Paused)
+                    _gameState = GameState.HeadsLevel;
+            }
         }
         // starts DeathScreen
         public void StartDeathScreen()
@@ -1038,11 +1152,60 @@ namespace Nummi
         public void StartNewGame()
         {
             _player = null;
+            savedStats = new CharacterStats(str: 1, vit: 1);
+            savedLevelSystem = new LevelSystem();
+            savedWeapon = 0;
+
             _bossDead = true;
             _isBossLevel = false;
+            _bossFightStarted = false;
+            _bossesDeadNum = 0;
+            _boss3ChestSpawned = false;
+            _currentBoss = null;
+            _bossName = "";
+            _wasBossDead = true;
+            _bossKillCooldown = 0f;
 
             _headsLevel = 0;
             _tailsLevel = 0;
+            _pendingHeadsLevel = -1;
+            _prepForNextLevel = -1;
+            _coinSide = true;
+            _coinLvl = false;
+            _showTailsIntro = false;
+            _isNextLevelTails = false;
+
+            _slimeOffHead = false;
+
+            _trapRoomDoorTimer = 0f;
+            _pendingTrapDoor = null;
+            _sealedTrapDoors.Clear();
+            _isTrapLevel = false;
+            _lastPlayerTile = Point.Zero;
+            _pendingTrapEntryTile = Point.Zero;
+
+            _unlockedBossItems.Clear();
+            _keys.Clear();
+
+            _health = 100;
+            _spawnProtectionTimer = 0f;
+
+            _box = null;
+
+            if (buildingSystem != null)
+            {
+                buildingSystem.ResetCounts();
+                buildingSystem.placedBuildings.Clear();
+                buildingSystem._housesPlaced = 0;
+                buildingSystem._barracksPlaced = 0;
+                buildingSystem._farmsPlaced = 0;
+                buildingSystem._nuclearReactorsPlaced = 0;
+                buildingSystem._blacksmithsPlaced = 0;
+            }
+            if (_shop != null) _shop.ClearStock();
+            _currency = new CurrencySystem(startingCoins: 200);
+            if (_shop != null) _shop = new Shop(_currency, buildingSystem);
+            if (_shopUI != null) _shopUI = new ShopUI(_shop, _currency, font);
 
             _spriteList.Clear();
             _newSpriteList.Clear();
@@ -1110,11 +1273,15 @@ namespace Nummi
                 if (_pendingHeadsLevel >= 0)
                 {
                     _headsLevel = _pendingHeadsLevel;
-
                     _pendingHeadsLevel = -1;
 
-                    StartHeadsLevel(_headsLevel);
+                    if (_headsLevel > LevelData.LastHeadsLevelIndex)
+                    {
+                        StartGameFinished();
+                        return;
+                    }
 
+                    StartHeadsLevel(_headsLevel);
                     return;
                 }
 

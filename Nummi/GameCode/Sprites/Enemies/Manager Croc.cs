@@ -43,7 +43,7 @@ namespace Nummi
         private float _wailTimer = 0f;
         private const float WailDuration = 1.4f;
         private float _tiredTimer = 0f;
-        private const float TiredDuration = 3.5f;
+        private const float TiredDuration = 5f;
         private float _tiredHits = 0f;            // damage points absorbed during the opening
         private const float TiredHitsToShove = 60f;
 
@@ -76,9 +76,6 @@ namespace Nummi
         {
             _tempState = tempState;
             _spawnPos = position;
-            _gameRoot._bossName = "THE MANAGER";
-            _gameRoot._currentBoss = this;
-            _gameRoot._bossDead = false;
             _flipEffect = SpriteEffects.FlipHorizontally;
 
             if (_tempState == TempState.Frozen)
@@ -192,7 +189,7 @@ namespace Nummi
         {
             _isPatrolling = true;
 
-            if (_gameRoot._bossDead) Dead = true;
+            if (_gameRoot._bossFightStarted && _gameRoot._bossDead) Dead = true;
 
             _growlCooldown -= GBL.DeltaTime;
             if (_tempState == TempState.Frozen) UpdateFrozen();
@@ -606,16 +603,9 @@ namespace Nummi
 
         private void FireCoinPattern()
         {
-            bool diagonal = _patternStep >= 4;
-            float[] angles = diagonal
-                ? new float[] { MathHelper.PiOver4, 3 * MathHelper.PiOver4, 5 * MathHelper.PiOver4, 7 * MathHelper.PiOver4 }
-                : new float[] { 0f, MathHelper.PiOver2, MathHelper.Pi, 3 * MathHelper.PiOver2 };
-
-            foreach (float a in angles)
-            {
-                Vector2 dir = new Vector2(MathF.Cos(a), MathF.Sin(a));
-                _gameRoot._newSpriteList.Add(new ManagerCoin(_gameRoot, _position, dir));
-            }
+            Vector2 dir = _gameRoot._player._position - _position;
+            if (dir == Vector2.Zero) dir = new Vector2(1f, 0f);
+            _gameRoot._newSpriteList.Add(new ManagerCoin(_gameRoot, _position, dir));
         }
     }
 

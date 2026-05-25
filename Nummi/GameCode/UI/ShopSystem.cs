@@ -69,6 +69,7 @@ namespace Nummi
     
         // List for stock
         public IReadOnlyList<ShopItem> Stock => _stock;
+        public CurrencySystem Currency => _currency;
         // This property tracks whether the shop is currently open or closed, which can be used by the UI to determine whether to display the shop interface and by the game logic to prevent purchases when the shop is closed.
         public bool IsOpen { get; private set; }
     

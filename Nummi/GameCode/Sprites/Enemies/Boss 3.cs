@@ -21,6 +21,7 @@ namespace Nummi
         {
             set
             {
+                if (_dead) return;
                 OnDeath();
                 _gameRoot._player.OnEnemyKilled(_xpValue, _goldValue);
                 if (_gameRoot._bossesDeadNum <= 2)
@@ -36,7 +37,7 @@ namespace Nummi
             }
         }
         public Anaconda(Game1 gameRoot, Vector2 pos)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Anaconda"), pos, true, 1200, 340, 50, true, 50f, 350f, 1500f, 1500) 
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Anaconda"), pos, true, 1200, 340, 50, true, 50f, 1000f, 1500f, 1500) 
         {
 
         }
@@ -90,6 +91,8 @@ namespace Nummi
                 if (_lastSeenTimer <= 0.2f) SetAnimation(0);
             }
 
+            if (_gameRoot._bossDead) Dead = true;
+
             // Swipe when close
             if (Vector2.Distance(_gameRoot._player._position, _position) < 48f
                 && _swipeCooldown <= 0f && !_attacking)
@@ -133,13 +136,21 @@ namespace Nummi
         // Sliding
         bool _sliding = false;
         private float _slidingDuration = 6f;
+        private float _slidingTimer = 0f;
         private float _slidingCooldown = 0f;
         private float _slidingIntermission = 10f;
+        private Vector2 _slideDirection = Vector2.Zero;
+        private const float SlideSpeed = 400f;
+        private int _bounceCount = 0;
+        private const int MaxBounces = 2;
+        private float _bounceCooldownTimer = 0f;
+        private const float BounceCooldown = 0.2f;
 
         public override bool Dead
         {
             set
             {
+                if (_dead) return;
                 OnDeath();
                 _gameRoot._player.OnEnemyKilled(_xpValue, _goldValue);
 
@@ -157,7 +168,7 @@ namespace Nummi
         }
 
         public Pig(Game1 gameRoot, Vector2 pos)
-            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Pig Spritesheet"), pos, true, 1200, 250, 40, true, 50f, 350f, 1500f, 1500)
+            : base(gameRoot, GBL.Content.Load<Texture2D>("Textures\\Animations\\Pig Spritesheet"), pos, true, 1200, 250, 40, true, 50f, 1000f, 1500f, 1500)
         {
             _slidingCooldown = _slidingIntermission;
         }
@@ -205,53 +216,76 @@ namespace Nummi
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
-            if(!_attacking && _sliding)
+            if (_sliding)
+            {
+                _isPatrolling = true;
+                if (_bounceCooldownTimer > 0f) _bounceCooldownTimer -= GBL.DeltaTime;
+                _velocity = _slideDirection * SlideSpeed;
+                SetAnimation(2);
+
+                _slidingTimer -= GBL.DeltaTime;
+                if (_slidingTimer <= 0f)
+                {
+                    _sliding = false;
+                    _velocity = Vector2.Zero;
+                    _slidingCooldown = 0f;
+                    SetAnimation(0);
+                }
+
+                base.Update(gameTime);
+                if (_sliding) _velocity = _slideDirection * SlideSpeed;
+                return;
+            }
+
+            if (_gameRoot._bossDead) Dead = true;
+
+            if (!_attacking)
             {
                 if (_velocity == Vector2.Zero) SetAnimation(0);
                 else SetAnimation(1);
-                // Makes it so goes back to being idle before stopping update should put this in all enemies that dont patrol however if they have idle animation then make their velocity 0 when not seeing player
                 if (_lastSeenTimer <= 0.2f) SetAnimation(0);
-
             }
 
-            if (!_sliding)
+            _slidingCooldown += GBL.DeltaTime;
+            if (_slidingCooldown > _slidingIntermission)
             {
-                _slidingCooldown += GBL.DeltaTime;
-                if(_slidingCooldown > _slidingIntermission)
-                {
-                    _slidingCooldown = 0;
-                    _sliding = true;
-                }
+                _slidingCooldown = 0f;
+                StartSlide();
+                base.Update(gameTime);
+                return;
             }
 
-            if(_sliding)
-            {
-                _slidingDuration -= GBL.DeltaTime;
-                if(_slidingDuration > 0f)
-                {
-                    _slidingDuration = 6f;
-                    _sliding = false;
-                }
-                SetAnimation(2);
-            }
-
-            // Punch when close
-            if (_sliding) return;
             if (Vector2.Distance(_gameRoot._player._position, _position) < 48f
                 && _swipeCooldown <= 0f && !_attacking)
             {
                 TriggerPunch();
+                base.Update(gameTime);
                 return;
             }
+
+            base.Update(gameTime);
+        }
+
+        private void StartSlide()
+        {
+            _sliding = true;
+            _slidingTimer = _slidingDuration;
+            _bounceCount = 0;
+            _bounceCooldownTimer = 0f;
+
+            Vector2 dir = _gameRoot._player._position - _position;
+            _slideDirection = dir == Vector2.Zero ? new Vector2(1f, 0f) : Vector2.Normalize(dir);
+            _velocity = _slideDirection * SlideSpeed;
+            SetAnimation(2);
         }
 
         private void TriggerPunch()
         {
             _attacking = true;
             _swipeCooldown = _swipeCooldownDuration;
+            _velocity = Vector2.Zero;
 
-            SetAnimation(2);
+            SetAnimation(3);
         }
 
         public void PawSwipe()
@@ -260,6 +294,17 @@ namespace Nummi
             float direction = (_gameRoot._player._position.X < _position.X) ? -16f : 16f;
             WaiterPawSwipe swipe = new WaiterPawSwipe(_gameRoot, _position + new Vector2(direction, 0));
             _gameRoot._newSpriteList.Add(swipe);
+        }
+
+        protected override void OnAnimationFinished()
+        {
+            base.OnAnimationFinished();
+            if (_animIndex == 3)
+            {
+                PawSwipe();
+                _attacking = false;
+                SetAnimation(0);
+            }
         }
 
         public void OnDeath()
@@ -272,7 +317,34 @@ namespace Nummi
         {
             base.OnTileCollideEvent(tileX, tileY);
 
-            _velocity = -_velocity;
+            if (!_sliding) return;
+            if (_bounceCooldownTimer > 0f) return;
+
+            if (_bounceCount < MaxBounces)
+            {
+                _bounceCount++;
+                _bounceCooldownTimer = BounceCooldown;
+
+                float tileCentreX = tileX * 32f + 16f;
+                float tileCentreY = tileY * 32f + 16f;
+                float dx = Math.Abs(_position.X - tileCentreX);
+                float dy = Math.Abs(_position.Y - tileCentreY);
+
+                if (dx > dy) _slideDirection.X = -_slideDirection.X;
+                else         _slideDirection.Y = -_slideDirection.Y;
+
+                _velocity = _slideDirection * SlideSpeed;
+                _slidingTimer = _slidingDuration;
+            }
+            else
+            {
+                _sliding = false;
+                _slidingCooldown = 0f;
+                _velocity = Vector2.Zero;
+                _bounceCount = 0;
+                _bounceCooldownTimer = 0f;
+                SetAnimation(0);
+            }
         }
     }
 }

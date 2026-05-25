@@ -232,10 +232,9 @@ namespace Nummi
 
                             break;
                         case 3:
-                            // When its a boss level make sure you do the _bossDead variable to false and set the current boss to the boss you want in the level.
-                            gameRoot._bossDead = false;
                             gameRoot._isBossLevel = true;
                             gameRoot._isTrapLevel = false;
+                            gameRoot._bossFightStarted = false;
 
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
@@ -246,9 +245,14 @@ namespace Nummi
                             gameRoot._spriteList.Add(gameRoot._player);
 
                             SpriteEnemy boss = new PossessedTree(gameRoot, TilePos(10, 14));
-                            gameRoot._currentBoss = boss;
-                            gameRoot._bossName = "POSSESSED OAK";
                             gameRoot._spriteList.Add(boss);
+                            gameRoot._spriteList.Add(new BossRoomZone(
+                                gameRoot,
+                                TilePos(10, 14),
+                                width: 20 * 32,
+                                height: 14 * 32,
+                                boss: boss,
+                                bossName: "POSSESSED OAK"));
                             break;
                         case 4:
                             gameRoot._isTrapLevel = false;
@@ -261,7 +265,9 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(6, 10), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            
+                            gameRoot._icicleSpawners.Add(new Game1.IcicleSpawner(TilePos(48, 6)));
+                            gameRoot._icicleSpawners.Add(new Game1.IcicleSpawner(TilePos(52, 6)));
+                            gameRoot._icicleSpawners.Add(new Game1.IcicleSpawner(TilePos(56, 6)));
 
                             // Room 1 Enemies
                             gameRoot._spriteList.Add(new Security_Guard(gameRoot, TilePos(25, 7), Security_Guard.TempState.Frozen));
@@ -314,7 +320,7 @@ namespace Nummi
                         case 5:
                             gameRoot._isTrapLevel = true;
                             gameRoot._isBossLevel = true;
-                            gameRoot._bossDead = false;
+                            gameRoot._bossFightStarted = false;
 
                             gameRoot._useLighting = false;
                             gameRoot._torchPositions = Array.Empty<Vector2>();
@@ -377,9 +383,16 @@ namespace Nummi
                             gameRoot._spriteList.Add(new Waiter(gameRoot, TilePos(82, 39), Waiter.TempState.Thawed, true));
 
                             SpriteEnemy boss2 = new Manager_Croc(gameRoot, TilePos(9, 10), Manager_Croc.TempState.Thawed);
-                            gameRoot._currentBoss = boss2;
-                            gameRoot._bossName = "Manager Croc";
                             gameRoot._spriteList.Add(boss2);
+                            // Boss HUD only shows once the player walks into the boss room.
+                            // Tune the position/size to match the croc arena tile bounds.
+                            gameRoot._spriteList.Add(new BossRoomZone(
+                                gameRoot,
+                                TilePos(9, 10),
+                                width: 18 * 32,
+                                height: 15 * 32,
+                                boss: boss2,
+                                bossName: "Manager Croc"));
                             break;
                         case 6:
                             gameRoot._isTrapLevel = true;
@@ -479,7 +492,7 @@ namespace Nummi
 
                             var map2 = gameRoot._tilemap.Layers[0];
 
-                            map.SetTile(103, 27, 1);
+                            map2.SetTile(103, 27, 1);
 
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(113, 27), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
@@ -561,14 +574,14 @@ namespace Nummi
                             gameRoot._player = new SpritePlayer(gameRoot, TilePos(10, 17), true, gameRoot.savedStats, gameRoot.savedLevelSystem);
                             gameRoot._spriteList.Add(gameRoot._player);
 
-                            //TilePos(150, 47)
-
                             SpriteEnemy boss3 = new Anaconda(gameRoot, TilePos(9, 3));
                             SpriteEnemy boss32 = new Pig(gameRoot, TilePos(11, 3));
                             gameRoot._currentBoss = boss3;
                             gameRoot._bossName = "Anaconda Wedding";
                             gameRoot._spriteList.Add(boss3);
                             gameRoot._spriteList.Add(boss32);
+                            break;
+                        case 9:
                             break;
                     }
                     if (gameRoot._player != null) gameRoot._player._currentWeapon = gameRoot.savedWeapon;
