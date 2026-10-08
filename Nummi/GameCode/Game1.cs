@@ -163,6 +163,7 @@ namespace Nummi
             GBL.GDM = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            GBL.GDM.IsFullScreen = true;
 
             // Sets the resolution to 800x480 and applies the changes. This is a common resolution for 16:9 aspect ratio games, and it ensures that the game will have a consistent window size when it starts.
             GBL.GDM.PreferredBackBufferWidth = 1280;
